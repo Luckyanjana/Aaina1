@@ -1,0 +1,185 @@
+﻿
+@model PlayDto
+@using Aaina.Common;
+@using Newtonsoft.Json;
+@{
+    Model.Emotion = Model.Emotion.HasValue ? (Model.Emotion == 0 ? 1 : Model.Emotion) : 1;
+
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+}
+
+<div class="row">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="GameId" />
+    <input type="hidden" asp-for="Type" />
+    <input type="hidden" asp-for="IsAgenda" />
+    <div class="col-lg-6 col-sm-12">
+        <div class="row">
+            <div class="col-lg-12 col-sm-12">
+
+                <div class="form-group">
+
+                    <div class="row">
+
+                        <div class="col-lg-12 col-sm-12">
+                            <label><i class="fa fa-info-circle"></i>Sub Game</label>
+                            <select asp-for="SubGameId" class="form-control" asp-items="@(new SelectList(Model.SubGameList,"Id","Name"))">
+                                <option value="">Select</option>
+                            </select>
+                            <span asp-validation-for="SubGameId" class="field-validation-error"></span>
+                        </div>
+
+
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-lg-6 col-sm-12">
+                            <label><i class="fa fa-info-circle"></i> Play</label>
+                            <input asp-for="Name" class="form-control mb15" type="text" placeholder="Play Name">
+                            <span asp-validation-for="Name" class="field-validation-error"></span>
+                        </div>
+
+                        <div class="col-lg-6 col-sm-12">
+                            <label><i class="fa fa-info-circle"></i>Parent Play</label>
+                            <select asp-for="ParentId" class="form-control" asp-items="@(new SelectList(Model.ParentList,"Id","Name"))">
+                                <option value="">Select</option>
+                            </select>
+                            <span asp-validation-for="ParentId" class="field-validation-error"></span>
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+
+                    <textarea asp-for="Description" class="form-control mb15"> </textarea>
+                    <span asp-validation-for="Description" class="field-validation-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa fa-info-circle"></i>Accountable</label>
+                    <select asp-for="AccountableId" class="form-control" asp-items="@(new SelectList(Model.AccountableList,"Id","Name"))">
+                        <option value="">Select</option>
+                    </select>
+                    <span asp-validation-for="AccountableId" class="field-validation-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <input type="hidden" asp-for="AccountableId" />
+                    @if (Model.Type == (int)PlayType.Feedback)
+                    {
+                        <label><i class="fa fa-info-circle"></i>Dependancy</label>
+                        <select asp-for="DependancyId" class="form-control" asp-items="@(new SelectList(Model.AccountableList,"Id","Name"))">
+                            <option value="">Select</option>
+                        </select>
+                        <span asp-validation-for="DependancyId" class="field-validation-error"></span>
+
+
+                    }
+
+                </div>
+
+                <div class="form-group">
+
+                    <div class="row">
+                        <div class="col-lg-4 col-sm-12">
+                            <label><i class="fa fa-info-circle"></i> Added On</label>
+                            <input type="text" asp-for="AddedOn" class="form-control datepicker" />
+                            <span asp-validation-for="AddedOn" class="field-validation-error"></span>
+                        </div>
+
+                        <div class="col-lg-4 col-sm-12">
+                            <label><i class="fa fa-info-circle"></i> Start Date</label>
+                            <input type="text" asp-for="StartDate" class="form-control" />
+                            <span asp-validation-for="StartDate" class="field-validation-error"></span>
+                        </div>
+
+                        <div class="col-lg-4 col-sm-12">
+                            <label><i class="fa fa-info-circle"></i> Deadline Date</label>
+                            <input type="text" asp-for="DeadlineDate" class="form-control" />
+                            <span asp-validation-for="DeadlineDate" class="field-validation-error"></span>
+                        </div>
+                    </div>
+                </div>
+
+        
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 col-sm-12">
+        <div class="row">
+            <div class="col-lg-12 col-sm-12">
+                <div class="form-group">
+                    <label><i class="fa fa-info-circle"></i>Priority</label>
+                    <select asp-for="Priority" class="form-control" asp-items="@(new SelectList(Model.PriorityList,"Value","Text"))">
+                        <option value="">Select</option>
+                    </select>
+                    <span asp-validation-for="Priority" class="field-validation-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa fa-info-circle"></i>Status</label>
+                    <select asp-for="Status" class="form-control" asp-items="@(new SelectList(Model.StatusList,"Value","Text"))">
+                        <option value="">Select</option>
+                    </select>
+                    <span asp-validation-for="Status" class="field-validation-error"></span>
+                </div>
+                @if (Model.Type == (int)PlayType.Feedback)
+                {
+                    <div class="form-group">
+                        <label><i class="fa fa-info-circle"></i>Feedback Type</label>
+                        <select asp-for="FeedbackType" class="form-control" asp-items="@(new SelectList(Model.FeedbackList,"Value","Text"))" data-msg-required="*required" data-rule-required="true">
+                            <option value="">Select</option>
+                        </select>
+                        <span asp-validation-for="FeedbackType" class="field-validation-error"></span>
+                    </div>
+                }
+
+                <div class="form-group">
+                    <label><i class="fa fa-info-circle"></i>Emotion</label>
+                    <div class="row wrap_input" style="margin-top: 10px;">
+                        <div class="col-md-12">
+                            <div class="range-wrap">
+                                <div class="range-value" id="view_emotion">
+                                    <span><img src="/DYF/@CurrentUser.CompanyId/EmojiImages/@(Model.Emotion).png" class="imgemoji"></span>
+                                </div>
+                                <input type="range" class="range_change valid" asp-for="Emotion" min="1" max="10" step="1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <label><i class="fa fa-info-circle"></i>Person Involved</label>
+                    <select asp-for="PersonInvolved" class="form-control select2" multiple asp-items="@(new SelectList(Model.AccountableList,"Id","Name"))">
+                    </select>
+                    <span asp-validation-for="PersonInvolved" class="field-validation-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <div class="radio">
+                        <label>
+                            <input type="radio" asp-for="GameType" value="@((int)GameType.Individual)">
+                            @GameType.Individual.GetEnumDescription()
+                        </label>
+
+                        <label>
+                            <input type="radio" asp-for="GameType" value="@((int)GameType.GameLevel)">
+                            @GameType.GameLevel.GetEnumDescription()
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+

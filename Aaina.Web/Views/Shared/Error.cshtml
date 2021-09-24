@@ -1,0 +1,73 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <link href="/css/developer.css" rel="stylesheet" />
+    <title>Aaina - Error</title>
+    <style>
+        #validation-summary {
+            color: red;
+        }
+    </style>
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css" />
+
+    <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/bower_components/Ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="/bower_components/bootstrap-daterangepicker/daterangepicker.css">
+    <link rel="stylesheet" href="/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+    <link rel="stylesheet" href="/bower_components/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+
+
+    <link rel="stylesheet" href="/plugins/iCheck/all.css">
+    <link rel="stylesheet" href="/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+
+
+    <link rel="stylesheet" href="/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="/css/custome.css?v=T-XNH-vcB1YRUbntEFBTZRkDcaFi9OlJhczEsB1Qo2U" />
+
+    <link href="/plugins/waitMe/waitMe.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+
+
+  
+
+
+</head>
+<body class="hold-transition skin-blue sidebar-mini fixed">
+
+        <h1 class="text-danger">@Model.Error.Message</h1>
+        <p class="text-danger" style="display:none;">@Model.Error.StackTrace</p>
+
+        @if (Model.ShowRequestId)
+        {
+            <p>
+                <strong>Request ID:</strong> <code>@Model.RequestId</code>
+            </p>
+        }
+
+        <h3>Development Mode</h3>
+        <p>
+            Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
+        </p>
+        <p>
+            <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
+            It can result in displaying sensitive information from exceptions to end users.
+            For local debugging, enable the <strong>Development</strong> environment by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>
+            and restarting the app.
+        </p>
+
+
+</body>
+</html>

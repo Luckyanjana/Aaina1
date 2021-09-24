@@ -1,0 +1,100 @@
+﻿@model PollFeedbackDisplayDto
+
+@using Aaina.Common;
+@using Newtonsoft.Json;
+
+<script>
+    function set(value) {
+        return value;
+    }
+        var createdUserId = '@Model.UserId' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.UserId)));
+
+</script>
+
+<div id="frm-action-feedback-poll" class="box">
+
+    @Html.Partial("_ModalHeader", new ModalHeader { Heading = $"Add poll feedback for {Model.Name}" })
+
+
+
+
+    <div class="modal-body">
+        <div id="validation-summary"></div>
+        <div class="step1">
+            <div class="step1-in">
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <h5>@Model.Game/@Model.SubGame</h5>
+                        <br />
+                        <h5>Created By: @Model.CreatedBy</h5>
+                        <br />
+                        <h5>Created On: @Model.CreatedOn.ToString("dd/MM/yyyyy")</h5>
+                    </div>
+                </div>
+                @if (Model.ParticipantList.Any())
+                {
+                <div class="row">
+                    <div class="col-lg-12 col-sm-12">
+                        <div class="form-group">
+                            <label>Participants</label>
+                            <select class="form-control" id="participants_ddr" data-pollid="@Model.PollId">
+                                <option value="">Select</option>
+                                @foreach (var item in Model.ParticipantList)
+                                {
+                                    <option value="@item.Id">@item.Name</option>
+                                }
+
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                }
+                <div id="poll_result-div">
+                    @{
+                        int qindex = 1;
+                    }
+                    @foreach (var item in Model.QuestionList)
+                    {
+                        int oindex = 1;
+                        <div class="row">
+                            <div class="col-lg-12 col-sm-12">
+                                <div class="form-group">
+                                    <label>Q. @qindex @item.Name</label>
+
+                                </div>
+                            </div>
+
+                            @foreach (var opt in item.PollQuestionOption)
+                            {
+                                <div class="col-lg-9 col-sm-9">
+                                    (@oindex)  @opt.Name
+                                    @if (!string.IsNullOrEmpty(opt.FilePath))
+                                    {
+                                        <img style="width:100px" src="~/DYF/@CurrentUser.CompanyId/Poll/@Model.UserId/@opt.FilePath" />
+                                    }
+                                </div>
+                                <div class="col-lg-3 col-sm-3">
+                                    <div class="form-group"><label>@opt.Per %</label></div></div>
+
+
+                                oindex++;
+                            }
+
+                        </div>
+                        qindex++;
+                        <hr />
+                        @if (!string.IsNullOrEmpty(item.Remark))
+                        {
+                            <span>@item.Remark</span>
+                            <hr />
+                        }
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+    @Html.Partial("_ModalFooter", new ModalFooter { OnlyCancelButton = true })
+
+</div>

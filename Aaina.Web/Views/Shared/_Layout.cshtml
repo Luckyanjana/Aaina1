@@ -1,0 +1,234 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@using Aaina.Common
+@{
+    bool isAdmin = false;
+    @if (CurrentUser.RoleId == (int)UserType.Admin)
+    {
+        isAdmin = true;
+    }
+    
+}
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Aaina</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,700;0,800;1,600;1,700&display=swap" rel="stylesheet">
+    <link href="~/Themes/Theme1/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="~/Themes/Theme1/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="~/bower_components/bootstrap-daterangepicker/daterangepicker.css">
+    <link rel="stylesheet" href="~/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+    <link rel="stylesheet" href="~/bower_components/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+    <link rel="stylesheet" href="~/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css" />
+    <link href="~/Themes/Theme1/css/style.css" rel="stylesheet" type="text/css">
+    <link href="~/Themes/Theme1/css/responsive.css" rel="stylesheet" type="text/css">
+    <link href="~/plugins/waitMe/waitMe.min.css" rel="stylesheet" />
+    <link href="~/css/custome.css" rel="stylesheet" />
+    <style>
+        .field-validation-error {
+            color: red;
+        }
+
+        .validation-summary-errors {
+            color: red;
+        }
+        #validation-summary {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <input type="hidden" name="IsAdmin" value="@isAdmin" />
+    <div id="dvWaitMe"></div>
+    <div class="footbot2 mobfoot">
+        <ul>
+            <li><a href="javascript:void(0);"><span class="bo-round br-0"></span></a></li>
+            <li><a href="javascript:void(0);"><span class="bo-round br-b"></span></a></li>
+            <li><a href="javascript:void(0);"><span class="bo-round br-y"></span></a></li>
+        </ul>
+        <a href="javascript:void(0);" class="fo-logo"><img src="" @CurrentUser.Avatar "></a>
+        <ul>
+            <li><a href="javascript:void(0);"><span class="bo-round br-g"></span></a></li>
+            <li><a href="javascript:void(0);"><span class="bo-round br-p"></span></a></li>
+            <li><a href="javascript:void(0);"><span class="bo-round"></span></a></li>
+        </ul>
+    </div>
+    <div class="mainwapper">
+        <div class="top-box">
+            <div class="top-boxL">
+                <div class="top-logo"> <img src="/img/logo.png" title="logo" alt="logo"></div>
+                <nav id="column_left">
+                    @await Component.InvokeAsync("GameMenu", new { companyId = CurrentUser.CompanyId, userId = CurrentUser.UserId, gameId = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]), userType = CurrentUser.RoleId })
+                </nav>
+            </div>
+            <div class="top-boxR">
+                <div class="top-Rbox">
+                    @RenderBody()
+                </div>
+            </div>
+            <div class="footbot">
+                <partial name="_Footer" />
+            </div>
+        </div>
+        <partial name="_Notify" />
+        <partial name="_GroupChat" />
+
+        <div style="display:none;">
+            <form id="pdfForm" asp-controller="Common" asp-action="ExporttoPDF" asp-area="">
+                <input type="hidden" name="htmlContent" />
+            </form>
+            <form id="excelForm" asp-controller="Common" asp-action="ExporttoExcel" asp-area="">
+                <input type="hidden" name="htmlContent" />
+            </form>
+        </div>
+    </div>
+    <script src="~/Themes/Theme1/js/jquery.min.js"></script>
+    <script src="/lib/signalr/signalr.js"></script>
+    <script src="/js/usernotification.js"></script>
+
+    <script src="~/Themes/Theme1/js/bootstrap.js"></script>
+    <script src="~/Themes/Theme1/js/custom.js"></script>
+    <script src="~/plugins/input-mask/jquery.inputmask.js" asp-append-version="true"></script>
+    <script src="~/plugins/input-mask/jquery.inputmask.date.extensions.js" asp-append-version="true"></script>
+    <script src="~/plugins/input-mask/jquery.inputmask.extensions.js" asp-append-version="true"></script>
+    <script src="~/bower_components/moment/min/moment.min.js" asp-append-version="true"></script>
+    <script src="~/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js" asp-append-version="true"></script>
+    <script src="~/bower_components/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js" asp-append-version="true"></script>
+
+    <script src="~/bower_components/datatables.net/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+    <script src="~/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js" asp-append-version="true"></script>
+    <script src="https://cdn.datatables.net/buttons/1.6.5/js/dataTables.buttons.min.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js" asp-append-version="true"></script>
+    <script src="https://cdn.datatables.net/buttons/1.6.5/js/buttons.html5.min.js" asp-append-version="true"></script>
+    <script src="https://cdn.datatables.net/buttons/1.6.5/js/buttons.print.min.js" asp-append-version="true"></script>
+    <script src="~/plugins/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/plugins/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/plugins/toastr/toastr.min.js" asp-append-version="true"></script>
+    <script src="~/js/knockout-3.5.1.js" asp-append-version="true"></script>
+    <script src="~/js/knockout.mapping.min.js" asp-append-version="true"></script>
+    <script src="~/js/waitMe.js"></script>
+    <script src="~/js/global.js" asp-append-version="true"></script>
+    <script src="~/js/jquery.custom-datatable.js" asp-append-version="true"></script>
+    <script src="~/js/Layout.js" asp-append-version="true"></script>
+    @RenderSection("scripts", required: false)
+
+    @Html.Partial("_Modal", new Modal { ID = "modal-add-edit-agenda_dynamicLink", AreaLabeledId = "modal-add-edit-agenda_dynamicLink-label", Size = ModalSize.Medium })
+    <a href="javascript:void(0);" style="display:none;" id="status_feedback_btn" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-status-feedback"></a>
+    @Html.Partial("_Modal", new Modal { ID = "modal-status-feedback", AreaLabeledId = "modal-status-feedback-label", Size = ModalSize.Large })
+    @Html.Partial("_Modal", new Modal { ID = "modal-share-dropbox", AreaLabeledId = "modal-share-dropbox-label", Size = ModalSize.Small })
+
+
+    <div aria-hidden="true" aria-labelledby="modal-notification-message-label" role="dialog" tabindex="-1" id="modal-notification-message" class="modal">
+
+        <div class="modal-dialog  modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <style>
+                    #table_detail tr:hover {
+                        background-color: #F2F2F2;
+                    }
+
+                    #table_detail .hidden_row {
+                        display: none;
+                    }
+                </style>
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h4 class="modal-title">Pending Message / List</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="middlebox">
+                        <div class="tablediv notifiation-table-div">
+                            <div class="table-cont">
+                                <input type="hidden" id="notification_tbl_count" value="1" />
+                                <table class="table table-striped" id="notifiation-table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">S.No</th>
+                                            <th scope="col">Send By</th>
+                                            <th scope="col">Send Date</th>
+                                            <th scope="col">Reason</th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    </tbody>
+
+                                </table>
+
+
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <script type="text/javascript">
+                    function showHideRow(row, $this) {
+                        $("#" + row).toggle();
+                        var spantxt = $($this).find('span');
+                        if ($(spantxt).text() == " + ") {
+                            $(spantxt).text(" - ");
+                        }
+                        else if ($(spantxt).text() == " - ") {
+                            $(spantxt).text(" + ");
+                        }
+
+                    }
+
+                </script>
+            </div>
+        </div>
+    </div>
+
+    <partial name="_shareDropboxUrl" />
+
+    @{
+        var model = ViewData["NotificationModel"] as Notification;
+        if (model == null)
+        {
+            if (TempData["NotificationModel"] != null)
+            {
+
+                model = Newtonsoft.Json.JsonConvert.DeserializeObject<Notification>(TempData["NotificationModel"].ToString());
+            }
+        }
+    }
+
+    @if (model != null)
+    {
+
+        <script>
+        $(document).ready(function () {
+            if ('@(model.Type.ToString().ToLower())' == 'success') {
+                Global.ToastrSuccess('@(model.Message)');
+            } else if ('@(model.Type.ToString().ToLower())' == 'danger') {
+                Global.ToastrError('@(model.Message)');
+            }
+            else if ('@(model.Type.ToString().ToLower())' == 'warning') {
+                Global.ToastrWarning('@(model.Message)');
+            } else  {
+                Global.ToastrInfo('@(model.Message)');
+            }
+        });
+
+        </script>
+    }
+    <script type="text/javascript">
+            var roleType = '@isAdmin';
+            if (roleType=='False') {
+                Global.showSessionPendingMsgCount();
+
+         }
+
+    </script>
+</body>
+</html>

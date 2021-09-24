@@ -1,0 +1,106 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "AgendaList";
+}
+
+@model List<PreSessionAgendaListDto>
+@using Aaina.Common;
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>Pre Session</li>
+                <li>/</li>
+                <li>List</li>
+            </ul>
+
+        </div>
+    </div>
+
+</div>
+
+<div class="middlebox">
+    <div class="tablediv">
+        <div class='table-cont' id='table-cont'>
+            <table class="table table-striped" id="tbl_status">
+                <thead>
+                    <tr>
+
+                        <th scope="col">S.No</th>
+                        <th scope="col">Session Name</th>
+                        <th scope="col">Cready By</th>
+                        <th scope="col">Play Feedback Name</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Document</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        int i = 1;
+                        foreach (var item in Model)
+                        {
+                            <tr>
+
+                                <td>
+                                    @i
+                                </td>
+                                <td>@item.SessionName</td>
+                                <td>@item.UserName</td>
+                                <td>@item.Name</td>
+                                <td>@item.Description</td>
+                                <td>
+                                    @foreach (var doc in item.PreSessionAgendaDoc)
+                                    {
+                                        <a href="/DYF/@CurrentUser.CompanyId/Agenda/@item.UserId/@doc.FileName">@doc.FileName</a>
+                                        <br />
+
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.IsCoordinator && !item.IsApproved)
+                                    {
+                                        <a href="javascript:void(0);" data-url="/SessionSchedule/AgendaApprove/@item.Id">Approve </a>
+                                    }
+                                    @if (item.IsApproved)
+                                    {
+                                        <span>Approved</span>
+                                    }
+                                </td>
+                            </tr>
+                            i++;
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7">Pre Session not found</td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+@section scripts{
+
+
+}
+

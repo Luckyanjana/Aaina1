@@ -1,0 +1,45 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@model List<StatusDto>
+@using Aaina.Common;
+
+<table class="table" id="tbl_session">
+    <thead>
+        <tr>
+            <th scope="col">S.No</th>
+            <th scope="col">Name</th>
+            <th scope="col">Status Mode</th>
+            <th scope="col">Status</th>
+            <th scope="col">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+            int i = 1;
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td class="text-center">
+                        @i
+                    </td>
+                    <td>@item.Name</td>
+                    <td>@(((StatusModeType)item.StatusModeId).ToString())</td>
+                    <td>@(item.IsActive?"Active":"In active")</td>
+                    <td>
+                        <a href="/admin/status/AddEdit/@item.Id?parentId=@item.GameId"><i class="fa fa-pencil-square-o mtx"></i></a>
+                    </td>
+                </tr>
+                i++;
+
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5">Status not found</td>
+            </tr>
+        }
+
+
+    </tbody>
+</table>

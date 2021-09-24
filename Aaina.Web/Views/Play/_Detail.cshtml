@@ -1,0 +1,218 @@
+﻿
+@model PlayDto
+@using Aaina.Common;
+@using Newtonsoft.Json;
+@{
+    Model.Emotion = Model.Emotion.HasValue ? (Model.Emotion == 0 ? 1 : Model.Emotion) : 1;
+
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+    int companyId = CurrentUser.CompanyId;
+}
+
+<script>
+    var Emotion = '@Model.Emotion';
+</script>
+<link href="~/css/select2.min.css" rel="stylesheet" />
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>/ Plays / @(Model.Name)  @(Model.ParentId>0 ? " / "+Model.ParentList.FirstOrDefault(x => x.Id == Convert.ToString(Model.ParentId))?.Name:"")</li>
+                <p>@(DateTime.Now.ToString("dd MMMM yy"))</p>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="row">
+        <div class="col-lg-10">
+            <div class="col-lg-2">
+                <p><b>Type</b></p>
+                <p>Action</p>
+            </div>
+
+            <div class="col-lg-2">
+                <p><b>Start Date</b></p>
+                <p>@Model.StartDate.ToFormatDateString()</p>
+            </div>
+            <div class="col-lg-2">
+                <p><b>Deadline</b></p>
+                <p>@Model.DeadlineDate.ToFormatDateString()</p>
+            </div>
+            <div class="col-lg-2">
+                <p><b>Accountability</b></p>
+                <p>@Model.AccountableList.FirstOrDefault(x => x.Id == Convert.ToString(Model.AccountableId))?.Name</p>
+            </div>
+
+            <div class="col-lg-2">
+                <p><b>Dependency</b></p>
+                <p>@Model.DependancyList.FirstOrDefault(x => x.Id == Convert.ToString(Model.DependancyId))?.Name</p>
+            </div>
+
+            <div class="col-lg-8">
+                <p><b>People Involved</b></p>
+                @foreach (var accountable in Model.AccountableList.Where(x => Model.PersonInvolved.Contains(Convert.ToInt32(x.Id))))
+                {
+                    <span class="badge">@accountable.Name</span>
+                }
+            </div>
+        </div>
+        <div class="col-lg-2">
+            <div class="col-lg-6">
+                <p><b>Status</b></p>
+                <p>@Model.StatusList.FirstOrDefault(x => x.Value == Model.Status)?.Text</p>
+            </div>
+            <div class="col-lg-6">
+                <p><b>Priority</b></p>
+                <p>@Model.PriorityList.FirstOrDefault(x => x.Value == Model.Priority)?.Text</p>
+            </div>
+        </div>
+
+
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="top-Rbtn" style="margin-top:15px;">
+                <a href="javascript:void(0);" class="btn btn-primary" id="btnFeedback" style="float:right">ADD FEEDBACK</a>
+            </div>
+        </div>
+        <div class="col-lg-12">
+            <h4 class="title-2">Previous Feedback</h4>
+            <div class="tablediv">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Last Updated</th>
+                            <th>Completion %</th>
+                            <th>Emotion</th>
+                            <th>Description</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>User</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.PlayFeedBack != null)
+                        {
+                            foreach (var item in Model.PlayFeedBack)
+                            {
+                                <tr>
+                                    <td>@item.Date</td>
+                                    <td>@item.Percentage%</td>
+                                    <td>
+                                        @if (Model.EmojiList != null && Model.EmojiList.Count() > 0)
+                                        {
+                                            <img src='/DYF/@companyId/EmojiImages/@Model.EmojiList.Where(x=>x.Rating==item.emoji).FirstOrDefault().Emoji' class='imgemoji'>
+                                        }
+                                        else
+                                        {
+                                            <img src='/DYF/@companyId/EmojiImages/1.png' class='imgemoji'>
+                                        }
+                                    </td>
+                                    <td>@item.Description</td>
+                                    <td>@(((PriorityType)item.FeedbackPriority).GetEnumDescription())</td>
+                                    <td>@(((StatusType)item.FeedbackStatus).GetEnumDescription())</td>
+                                    <td>@item.UserName</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div aria-hidden="true" aria-labelledby="modal-add-edit-status-label" role="dialog" tabindex="-1" id="modal-add-feedback" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="box">
+                <div class="modal-header">
+                    <h4 class="modal-title pull-left" id="">
+                        Plays / @(Model.SubGameId)  @*@(Model.ParentId>0 ? " / "+Model.ParentList.FirstOrDefault(x => x.Id == Convert.ToString(Model.ParentId))?.Name:"")*@
+                        <br />@(DateTime.Now.ToString("dd MMMM yy"))
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+
+                <div class="modal-body box-body">
+                    <div id="validation-summary"></div>
+                    <input type="hidden" id="feedbackplayid" value="@Model.Id">
+                    <input type="hidden" id="feedbackid" value="0">
+                    <div class="row">
+                        <div class="col-lg-12 col-sm-12">
+                            <div id="play_feedback_div">
+
+                            </div>
+
+                            <div class="col-lg-12 col-sm-12 form-group">
+                                <div class="col-lg-6 col-sm-6 ">
+                                    <label id="">Status</label>
+                                    <select id="FeedbackStatus" class="form-control">
+
+                                        @foreach (var item in Model.StatusList)
+                                        {
+                                            if (Model.Status == item.Value)
+                                            {
+
+                                                <option selected="selected" value="@item.Value">@item.Text</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@item.Value">@item.Text</option>
+                                            }
+
+                                        }
+                                    </select>
+
+                                </div>
+                                <div class="col-lg-6 col-sm-6">
+                                    <label id="">Priority</label>
+                                    <select id="FeedbackPriority" class="form-control">
+
+                                        @foreach (var item in Model.PriorityList)
+                                        {
+                                            if (Model.Priority == item.Value)
+                                            {
+
+                                                <option selected="selected" value="@item.Value">@item.Text</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@item.Value">@item.Text</option>
+                                            }
+
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-lg-12 col-sm-12">
+                            <label><i class="fa fa-info-circle"></i> Comments</label>
+                            <textarea id="FeedbackComment" class="form-control mb15"> </textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer justify-content-between">
+                    <button class="btn btn-success" id="btnsubmitFeedBack" type="button" data-url="/@tenant/play/AddUpdateFeedback" data-id="@Model.Id"> Submit </button>
+                    <button data-dismiss="modal" id="btn-cancel" class="btn btn-default" type="button">Cancel</button>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script src="~/js/select2.min.js"></script>
+    <script src="~/js/Customejs/Play/PlayAddEdit.js" asp-append-version="true"></script>
+}

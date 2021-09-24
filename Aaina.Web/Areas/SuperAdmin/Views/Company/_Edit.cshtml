@@ -1,0 +1,54 @@
+﻿@model CompanyDto
+<div id="frm-add-edit-company">
+    <form asp-action="update" asp-controller="company" asp-area="superadmin" method="post">
+        @Html.Partial("_ModalHeader", new ModalHeader { Heading = "Company Add" })
+        <div class="modal-body box-body">
+            <div id="validation-summary"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Name"></label>
+                        <input type="text" asp-for="Name" class="form-control" data-msg-required="*required" data-rule-required="true"/>
+                        <span asp-validation-for="Name" class="field-validation-error"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+
+                        <label asp-for="Desciption"></label>
+                        <input type="text" asp-for="Desciption" class="form-control" />
+                        <span asp-validation-for="Desciption" class="field-validation-error"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Location"></label>
+                        <input type="text" asp-for="Location" class="form-control" />
+                        <span asp-validation-for="Location" class="field-validation-error"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+
+                        <label asp-for="Address"></label>
+                        <input type="text" asp-for="Address" class="form-control" />
+                        <span asp-validation-for="Address" class="field-validation-error"></span>
+                    </div>
+                </div>
+
+            </div>
+
+           
+
+        </div>
+        @Html.Partial("_ModalFooter", new ModalFooter { })
+    </form>
+</div>
+
+
+
+

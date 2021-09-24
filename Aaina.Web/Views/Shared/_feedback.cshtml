@@ -1,0 +1,220 @@
+﻿@model StatusFeedbackDto
+@using Newtonsoft.Json;
+@{  
+
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+}
+
+<script>
+    function set(value) {
+        return value;
+    }
+        var gameListArr = '@Model.GameList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.GameList)));
+        var statusListArr = '@Model.StatusList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.StatusList)));
+
+</script>
+
+<div id="frm-add-edit-role" class="box">
+    <form asp-action="StatusFeedback" asp-controller="Common" asp-route-tenant="@tenant"  asp-area="" method="post" autocomplete="off">
+        @Html.Partial("_ModalHeader", new ModalHeader { Heading = Model.Id.HasValue ? $"Model.Name Hours" : "Add Status with feedback" })
+
+        @if (Model.Id.HasValue)
+        {
+            <h4>By: @Model.By</h4>
+            <h4>For: @Model.For</h4>
+        }
+
+        <div class="modal-body">
+            <div id="validation-summary"></div>
+            <input type="hidden" asp-for="Id" />
+
+            @if (!Model.Id.HasValue)
+            {
+                <div class="col-lg-12 col-sm-12" data-bind="foreach: ststuslistarr">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Status Input</div>
+                        <div class="panel-body">
+                            <div class="step1">
+                                <div class="step1-in">
+                                    <div class="row">
+                                        <div class="col-lg-4 col-sm-12">
+                                            <div class="form-group">
+                                                <label><i class="fa fa-info-circle"></i> Status Name</label>
+                                                <input asp-for="Nonstatus.Name" class="form-control" placeholder="Status Name" data-msg-required="*required" data-rule-required="true" />
+                                                <span asp-validation-for="Nonstatus.Name" class="field-validation-error"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-sm-12">
+                                            <div class="form-group">
+                                                <label><i class="fa fa-info-circle"></i> Parent Game</label>
+                                                <select asp-for="Nonstatus.GameId" class="form-control" asp-items="@(new SelectList(Model.GameList,"Id","Name"))"></select>
+                                                <span asp-validation-for="Nonstatus.GameId" class="field-validation-error"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4 col-sm-12">
+                                            <div class="form-group">
+                                                <label><i class="fa fa-info-circle"></i> Status Mode</label>
+                                                <select asp-for="Nonstatus.StatusModeId" class="form-control" asp-items="@(new SelectList(Model.ModeList,"Id","Name"))"></select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-4 col-sm-12">
+                                            <div class="form-group">
+                                                <label><i class="fa fa-info-circle"></i> Estimated Time (Hours)</label>
+                                                <input asp-for="Nonstatus.EstimatedTime" class="form-control" placeholder="Status Name" />
+                                                <span asp-validation-for="Nonstatus.EstimatedTime" class="field-validation-error"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-sm-12">
+                                            <div class="form-group">
+                                                <label><i class="fa fa-info-circle"></i> Team For</label>
+                                                <select asp-for="Nonstatus.TeamForIds" class="form-control select2" style="width:100%" asp-items="@(new SelectList(Model.TeamList,"Id","Name"))"></select>
+                                                <span asp-validation-for="Nonstatus.TeamForIds" class="field-validation-error"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4 col-sm-12">
+                                            <div class="form-group">
+                                                <label><i class="fa fa-info-circle"></i> User By</label>
+                                                <select asp-for="Nonstatus.UserForIds" class="form-control select2" style="width:100%" asp-items="@(new SelectList(Model.UserList,"Id","Name"))"></select>
+                                                <span asp-validation-for="Nonstatus.UserForIds" class="field-validation-error"></span>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div class="step1">
+                <div class="step1-in">
+                    <div class="row">
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label><i class="fa fa-info-circle"></i> Actual Time (Hours)</label>
+                                <input asp-for="ActualTime" class="form-control" placeholder="Actual Time (Hours)" />
+                                <span asp-validation-for="ActualTime" class="field-validation-error"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                <label><i class="fa fa-info-circle"></i> Estimated Time (Hours)</label>
+                                <input asp-for="EstimatedTime" class="form-control" />
+                            </div>
+                        </div>
+
+
+
+
+                    </div>
+
+
+                </div>
+            </div>
+            <!-- ko if:ststuslistarr().length > 0 -->
+            <div class="col-lg-12 col-sm-12" data-bind="foreach: ststuslistarr">
+                <div class="panel panel-default">
+                    <div class="panel-heading" data-bind="text:'Feebback'+($index()+1)"></div>
+                    <div class="panel-body">
+                        <div class="step1">
+                            <div class="step1-in">
+                                <div class="row">
+                                    <div class="col-lg-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label><i class="fa fa-info-circle"></i> Game</label>
+                                            <select data-bind="value:gameId,options: gameList,optionsText: 'Name',optionsValue: 'Id',optionsCaption:'Select',attr:{name:'Feedback['+$index()+'].gameId','data-id':'Feedback_'+$index()+'_subGameId'}" data-url="/Common/GetsubGameByGameId/" class="form-control statusGame" data-msg-required="*required" data-rule-required="true">
+                                                <option></option>
+                                            </select>
+                                            <span class="field-validation-error field-validation-valid" data-bind="attr:{'data-valmsg-for':'Feedback['+$index()+'].gameId'}" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label><i class="fa fa-info-circle"></i>Sub Game</label>
+                                            <select data-bind="value:subGameId,options: subGameList,optionsText: 'Name',optionsValue: 'Id',optionsCaption:'Select',attr:{name:'Feedback['+$index()+'].subGameId',id:'Feedback_'+$index()+'_subGameId'}" class="form-control" data-msg-required="*required" data-rule-required="true">
+                                                <option></option>
+                                            </select>
+                                            <span class="field-validation-error field-validation-valid" data-bind="attr:{'data-valmsg-for':'Feedback['+$index()+'].subGameId'}" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label><i class="fa fa-info-circle"></i> Date</label>
+                                            <input type="text" class="form-control" data-bind="attr:{name:'Feedback['+$index()+'].feedbackDate'}" value="@(DateTime.Now.ToString("dd/MM/yyyy"))" readonly />
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-12 col-sm-12">
+                                        <div class="form-group">
+                                            <label><i class="fa fa-info-circle"></i> Feedback</label>
+                                            <textarea class="form-control" data-bind="value:feedback ,attr:{name:'Feedback['+$index()+'].feedback'}" data-msg-required="*required" data-rule-required="true"></textarea>
+                                            <span class="field-validation-error field-validation-valid" data-bind="attr:{'data-valmsg-for':'Feedback['+$index()+'].feedback'}" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label><i class="fa fa-info-circle"></i> Status</label>
+                                            <select data-bind="value:status,options: statusList,optionsText: 'Name',optionsValue: 'Id',optionsCaption:'Select',attr:{name:'Feedback['+$index()+'].Status'}" class="form-control" data-msg-required="*required" data-rule-required="true">
+                                                <option></option>
+                                            </select>
+                                            <span class="field-validation-error field-validation-valid" data-bind="attr:{'data-valmsg-for':'Feedback['+$index()+'].Status'}" data-valmsg-replace="true"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label><i class="fa fa-info-circle"></i>Progress</label>
+                                            <p>Value: <span data-bind="html:progress ,attr:{id:'Feedback_'+$index()+'_progress_value'}"></span></p>
+                                            <input type="range" class="range_progress" min="1" max="100" data-bind="value:progress ,attr:{name:'Feedback['+$index()+'].progress',id:'Feedback_'+$index()+'_progress','data-id':'Feedback_'+$index()+'_progress_value'}">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label><i class="fa fa-info-circle"></i> emotion</label>
+                                            <div class="row wrap_input" style="margin-top: 10px;">
+                                                <div class="col-md-12">
+                                                    <div class="range-wrap">
+                                                        <div class="range-value" data-bind="attr:{id:'view_emotion'+$index()}" style="left: calc(0% + 4.5px);">
+                                                            <span><img src="/img/emo-1.png" class="imgemoji"></span>
+                                                        </div>
+                                                        <input type="range" class="range_change valid" data-bind="value:emotion ,attr:{name:'Feedback['+$index()+'].emotion',id:'Feedback_'+$index()+'_emotion','data-id':'view_emotion'+$index()}" min="1" max="10" step="1">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
+            </div>
+            <!-- /ko -->
+            <div class="pull-left">
+                <button type="button" class="btn btn-success" data-bind='click: add'>Add</button>
+            </div>
+        </div>
+        @Html.Partial("_ModalFooter", new ModalFooter { })
+    </form>
+</div>

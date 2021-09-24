@@ -1,0 +1,115 @@
+﻿<form action="/shared/ExporttoPDF" method="post" id="frmExportPdf" class="skip">
+    <input type="hidden" name="uiParameters" value="" />
+</form>
+@*<form action="/shared/ReportAnalytics" method="post" id="frmReportAnalytics" class="skip" target="_blank">
+        <input type="hidden" name="uiParameters" value="" />
+    </form>
+
+
+
+    <form action="/shared/ExporttoCSV" method="post" id="frmExportCsv" class="skip">
+        <input type="hidden" name="uiParameters" value="" />
+    </form>*@
+@*<form action="/shared/GridReport" method="post" id="frmPrintGrid" class="skip">
+        <input type="hidden" name="uiParameters" value="" />
+    </form>*@
+<form action="/shared/ExporttoExcel" method="post" id="frmExportExcel" class="skip">
+    <input type="hidden" name="uiParameters" value="" />
+</form>
+
+<div class="row">
+    <div class="col-md-12">
+
+        @*<div class="modal-body clearfix">
+                <div class="dvprimaryfilterBody-col" data-table="dvprimaryfilterBody">
+
+                </div>
+                <div class="" align="center" style="border:none;">
+                    <button type="button" class="btn btn-flat btn-success" data-table="search" title="Search Record"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+                </div>
+            </div>*@
+
+        <div class="table-wrap-div dataTable-holder" data-scrolly="@Model">
+            <div class="table-responsive">
+                <div class="navbar-custom-menu pull-right" style="float:right;" id="navbar_custom_menu_div">
+                    <ul class="nav navbar-nav custome-nav-header-btn">
+                        <li class="dropdown messages-menu"><a href="javascript:void(0);" id="addnewbutton"> </a></li>
+                    </ul>
+                    <div class="top-Rbox1">
+                        <div class="top-Rbtn">
+                            <div class="dropdown">
+                                <ul class="btn btn btn-primary dropdown-toggle">
+                                    <li class="dropdown messages-menu">
+                                        <a href="javascript:void(0);" class="dropdown-toggle" id="printGrid" data-toggle="dropdown" aria-expanded="true">
+                                            <i class="fa fa-print"></i>&nbsp;Print
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="fa fa-gears"></i>&nbsp;Options </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" data-table="togglefilter" href="javascript:void(0);" style="display:none"><i class="fa fa-filter text-green"></i>&nbsp; Add Filter</a>
+                                    <a class="dropdown-item" href="javascript:void(0);" data-table="reset" style="display:none"><i class="fa fa-filter text-red"></i>&nbsp; Remove Filter (Reset)</a>
+                                    <a class="dropdown-item" href="javascript:void(0);" id="pdfExport"><i class="fa fa-file-pdf text-green"></i>&nbsp; PDF Download</a>
+                                    <a class="dropdown-item" href="javascript:void(0);" id="excellExport"><i class="fa fa-file-excel text-green"></i>&nbsp; Excel Download</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <table class="table table-hover table-header dataTable no-footer display responsive " data-table="grid">
+                    <thead>
+                    </thead>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="modal data-filter-modal" tabindex="-1" data-table="dvfilterBox">
+    <div class="valign">
+        <div>
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Advance Filter</h4>
+                        <button type="button" class="close" aria-label="Close" data-table="close-filter"><span aria-hidden="true">&times;</span></button>
+
+                    </div>
+                    <div class="modal-body clearfix">
+                        <div class="dvfilterBody-col" data-table="dvfilterBody">
+                        </div>
+                        <div class="" align="center" style="border:none;">
+                            <button type="button" class="btn btn-flat btn-success" data-table="search" title="Search Record"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade bs-example-modal-lg" data-table="pdfsetting" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" id="exportPdfModeldiv" style="min-height:150px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="loading">Loading.........</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="myModal1" class="modal  fade bs-example-modal-lg" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="myModalContent">
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+
+}
+

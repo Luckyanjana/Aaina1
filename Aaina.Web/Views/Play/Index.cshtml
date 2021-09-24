@@ -1,0 +1,375 @@
+﻿
+@model PlayMainDto
+@using Aaina.Common;
+@using Newtonsoft.Json;
+@{
+    ViewData["Title"] = "Index";
+
+    ViewData["Title"] = "Index";
+    string iview = Model.ViewType;
+    string ValueType = Model.ValueType;
+    int? gId = Model.GameId;
+
+
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+
+}
+    <script>
+                function set(value) {
+                    return value;
+                }
+        var gameListArr = set(@Html.Raw(JsonConvert.SerializeObject(Model.GameList)));
+        var accountableListArr = set(@Html.Raw(JsonConvert.SerializeObject(Model.AccountableList)));
+        var statusListArr = set(@Html.Raw(JsonConvert.SerializeObject(Model.StatusList)));
+        var priorityListArr = set(@Html.Raw(JsonConvert.SerializeObject(Model.PriorityList)));
+        var iview = set(@Html.Raw(JsonConvert.SerializeObject(iview)));
+    var play_userId = set(@Html.Raw(JsonConvert.SerializeObject(Model.UserId)));
+        var ValueType = set(@Html.Raw(JsonConvert.SerializeObject(Model.ValueType)));
+
+    </script>
+
+<link href="~/css/Stepwizard.css" rel="stylesheet" />
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>
+                    Status & Plan
+                </li>
+
+                <p>@(DateTime.Now.ToString("dd MMMM yy"))</p>
+            </ul>
+        </div>
+    </div>
+    <div class="top-Rbtn">
+        @{
+            int? gameId = null;
+        }
+        @if (!Model.GameId.HasValue && Model.GameList.Any())
+        {
+            gameId = Model.GameList.FirstOrDefault().Value;
+        }
+
+        <a href="/@tenant/play/index?v=@iview"   class="btn btn btn-primary m0"> My Plays</a>
+
+
+        @if (CurrentUser.RoleId == (int)UserType.Admin)
+        {
+            <select id="filter_user" class="form-control">
+                <option value="">Select</option>
+                @foreach (var item in Model.AccountableList)
+                {
+                    @if (Model.UserId == item.Value)
+                    {
+                        <option selected value="@item.Value">@item.Text</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+
+
+                }
+            </select>
+        }
+
+
+        <div class="dropdown">
+            <button class="btn btn btn-primary dropdown-toggle" type="button" id="dropdownFilterMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Filter <i class="fa fa-caret-down"></i> </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownFilterMenuButton">
+                <a class="dropdown-item" href="/@tenant/play/Index?Filter=ALL">ALL</a>
+                <a class="dropdown-item" href="/@tenant/play/Index?Filter=Individual">Individual</a>
+                <a class="dropdown-item" href="/@tenant/play/Index?Filter=GameLevel">GameLevel</a>
+                <a class="dropdown-item" href="/@tenant/play/Index?Filter=Status">Request-Library</a>
+            </div>
+        </div>
+        @if (iview == "today")
+        {
+            @if (CurrentMenuPermission.IsAdd)
+            {
+                <div class="dropdown">
+                    <button class="btn btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Add <i class="fa fa-caret-down"></i> </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="/@tenant/play/Add?t=1">Action Plays</a>
+                        <a class="dropdown-item" href="/@tenant/play/Add?t=2">Feedback Plays</a>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="dropdown">
+                <button class="btn btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Add <i class="fa fa-caret-down"></i> </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    @if (CurrentMenuPermission.IsAdd)
+                    {
+                        <a class="dropdown-item" href="/@tenant/play/Add?t=1">Action Plays</a>
+                        <a class="dropdown-item" href="/@tenant/play/Add?t=2">Feedback Plays</a>
+                    }
+                    <a class="dropdown-item" href="javascript:void(0);" data-url="/@tenant/play/MoveToday" id="btn_add_today">Add to Today's Plan</a>
+                </div>
+            </div>
+
+        }
+        @if (Model.GameId.HasValue)
+        {
+            <input type="hidden" value="@Model.GameId" class="gameselect" />
+        }
+    </div>
+</div>
+
+<div class="tablediv tablediv1 tabledivbtn">
+    <div class="stepbox">
+        <div class="responsive-tabs-container accordion-xs accordion-sm">
+            <ul class="nav nav-tabs responsive-tabs">
+                <li class="@(iview=="today"?"active":"")"><a href="@(iview=="today"?"javascript:void(0);":$"/{tenant}/play/index?v=today&uid={Model.UserId}&Filter={Model.ValueType}")"><span>1</span> Today's Plan & Status </a></li>
+                <li class="@(iview=="action"?"active":"")"><a href="@(iview=="action"?"javascript:void(0);":$"/{tenant}/play/index?v=action&uid={Model.UserId}&Filter={Model.ValueType}")"><span>2</span> Action Plays</a></li>
+                <li class="@(iview=="feedback"?"active":"")"><a href="@(iview=="feedback"?"javascript:void(0);":$"/{tenant}/play/index?v=feedback&uid={Model.UserId}&Filter={Model.ValueType}")"><span>2</span> Feedback Plays</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-12 col-sm-12">
+                                <div class="step1">
+                                    <div class="dt-buttons">
+
+                                        @*<button class="dt-button buttons-excel buttons-html5" type="button" data-id="div_table"><span>Excel</span></button>*@
+                                        @*<button class="dt-button buttons-pdf buttons-html5" data-id="div_table" type="button"><span>PDF</span></button>
+                                            <button class="dt-button buttons-print" type="button" data-id="div_table"><span>Print</span></button>
+                                            <button class="dt-button buttons-excel" type="button" data-url="/@tenant/play/ExcelExport?v=@iview&uid=@Model.UserId"><span>Excel Export</span></button>
+                                            <a href="/@tenant/Common/ShareUsers/?popupurl=/@tenant/play/SharePlay/?id=@CurrentUser.CompanyId&v=@iview&uid=Model.UserId" class="btn btn btn-primary" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-share-users">Share</a>*@
+                                        @Html.Partial("_Modal", new Modal { ID = "modal-share-users", AreaLabeledId = "modal-share-users-label", Size = ModalSize.Large })
+                                    </div>
+
+                                    @*@this.Html.Partial("_PlayDataTableGrid")*@
+                                    @this.Html.Partial("_DataTableGrid")
+
+                                    @*<table class="table" id="tbl_filter">
+                                            <thead>
+                                                <tr>
+                                                    @if (iview != "today")
+                                                    {
+                                                        <th scope="col">
+                                                            <input type="checkbox" class="all_action_check" />
+                                                        </th>
+                                                    }
+                                                    <th scope="col">Play Id</th>
+                                                    <th scope="col">Game</th>
+                                                    <th scope="col">Sub Game</th>
+                                                    <th scope="col">Play</th>
+                                                    <th scope="col">Description</th>
+                                                    <th scope="col">Person Involved</th>
+                                                    <th scope="col">Accountable Persion</th>
+                                                    @if (iview == "feedback")
+                                                    {
+                                                        <th scope="col">Dependancy</th>
+                                                    }
+                                                    <th scope="col">Priority</th>
+                                                    <th scope="col">
+                                                        Realtime
+                                                        Status
+                                                    </th>
+                                                    <th scope="col">
+                                                        Planned Start
+                                                    </th>
+                                                    <th scope="col">
+                                                        Deadline
+                                                    </th>
+                                                    <th scope="col">
+                                                        Actual Start
+                                                    </th>
+
+                                                    <th scope="col">Actual  End</th>
+                                                    <th scope="col">Emotion</th>
+                                                    <th scope="col">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model.Result.Any())
+                                                {
+                                                    int index = 1;
+                                                    foreach (var item in Model.Result)
+                                                    {
+                                                        <tr>
+                                                            @if (iview != "today")
+                                                            {
+                                                                <td>
+                                                                    <input type="checkbox" class="action_check" value="@item.Id" />
+                                                                </td>
+                                                            }
+                                                            <td>
+                                                                @item.Id
+                                                            </td>
+                                                            <td>
+                                                                @item.Game
+                                                            </td>
+                                                            <td>
+                                                                @item.SubGame
+                                                            </td>
+                                                            <td>
+                                                                @item.Name
+                                                            </td>
+                                                            <td>
+                                                                @item.Description
+                                                            </td>
+                                                            <td>@item.PersonInvolvedStr</td>
+                                                            <td>
+                                                                @item.Accountable
+                                                            </td>
+                                                            @if (iview == "feedback")
+                                                            {
+                                                                <td>@item.Dependancy</td>
+                                                            }
+                                                            <td>@(((PriorityType)item.Priority).GetEnumDescription())</td>
+                                                            <td>
+                                                                @if (iview == "today")
+                                                                {
+                                                                    <select class="form-control action_play_status"
+                                                                            data-id="@item.Id" data-accountable="@item.Accountable"
+                                                                            data-accountableid="@item.AccountableId" data-text="@(((StatusType)item.Status).GetEnumDescription())">
+                                                                        @foreach (var st in StatusList)
+                                                                        {
+                                                                            if (st.Value == item.Status.Value)
+                                                                            {
+                                                                                <option value="@st.Value" selected>@st.Text</option>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <option value="@st.Value">@st.Text</option>
+                                                                            }
+
+                                                                        }
+
+                                                                    </select>
+                                                                }
+                                                                else
+                                                                {
+                                                                    @(((StatusType)item.Status).GetEnumDescription())
+                                                                }
+
+                                                            </td>
+                                                            <td>
+                                                                @(item.StartDate.HasValue?item.StartDate.Value.ToString("dd/MM/yyyy"):"")
+
+                                                            </td>
+                                                            <td>
+                                                                @(item.DeadlineDate.HasValue?item.DeadlineDate.Value.ToString("dd/MM/yyyy"):"")
+
+                                                            </td>
+                                                            <td>
+                                                                @(item.ActualStartDate.HasValue?item.ActualStartDate.Value.ToString("dd/MM/yyyy"):"")
+
+                                                            </td>
+                                                            <td>
+                                                                @(item.ActualEndDate.HasValue?item.ActualEndDate.Value.ToString("dd/MM/yyyy"):"")
+
+                                                            </td>
+                                                            <td>
+                                                                <img src="/DYF/@CurrentUser.CompanyId/EmojiImages/@(item.Emotion).png" class="imgemoji" />
+                                                            </td>
+                                                            <td>
+                                                                @if (CurrentMenuPermission.IsEdit)
+                                                                {
+                                                                    <a href="/@tenant/play/Edit/@item.Id"><i class="fa fa-pencil-square-o mtx"></i></a>
+                                                                }
+                                                                @if (CurrentMenuPermission.IsDelete)
+                                                                {
+                                                                    <a href="/@tenant/play/Delete/@item.Id" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-action-delete-play"><i class="fa fa-trash-o mtx"></i></a>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                        index++;
+
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <tr>
+                                                        @if (iview != "today")
+                                                        {
+                                                            <td colspan="16">Record not found</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td colspan="15">Record not found</td>
+                                                        }
+
+                                                    </tr>
+                                                }
+
+                                            </tbody>
+                                        </table>*@
+
+
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div aria-hidden="true" aria-labelledby="modal-add-edit-status-label" role="dialog" tabindex="-1" id="modal-add-edit-status" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="box">
+
+                <div class="modal-header">
+                    <h4 class="modal-title pull-left" id="sub_title"></h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+
+                <div class="modal-body box-body">
+                    <div id="validation-summary"></div>
+                    <input type="hidden" id="playid" value="">
+                    <input type="hidden" id="playstatus" value="">
+                    <input type="hidden" id="accountableid" value="">
+
+                    <div class="row">
+                        <div class="col-lg-12 col-sm-12">
+
+                            <div class="form-group">
+                                <label><i class="fa fa-info-circle"></i> Comments</label>
+                                <textarea id="comments_status" class="form-control mb15"> </textarea>
+                            </div>
+
+                            <div class="form-group" id="div_delegate">
+                                <label id="delegate_label"><i class="fa fa-info-circle"></i>Delegate from  to</label>
+                                <select id="delegate_status" class="form-control">
+                                    <option value="">Select</option>
+                                    @foreach (var item in Model.AccountableList)
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+
+                                    }
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer justify-content-between">
+                    <button class="btn btn-success" id="btnsubmit" type="button" data-url="/@tenant/play/UpdateStatus"> Submit </button>
+                    <button data-dismiss="modal" id="btn-cancel" class="btn btn-default" type="button">Cancel</button>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("_Modal", new Modal { ID = "modal-action-delete-play", AreaLabeledId = "modal-action-delete-play-label", Size = ModalSize.Small })
+
+@section scripts{
+    <script src="~/js/Customejs/Play/ActionPlay.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,372 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@model PreSessionDto
+@{
+    ViewData["Title"] = "Index";
+    List<PreSessionAgendaListDto> agendaList = (List<PreSessionAgendaListDto>)ViewBag.agendaList;
+
+}
+@using Aaina.Common;
+@using Newtonsoft.Json;
+
+<script>
+    function set(value) {
+        return value;
+    }
+    var participantListarr = '@Model.PreSessionParticipant' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.PreSessionParticipant)));
+        var PreSessionAgendaListarr = '@Model.PreSessionAgendaList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.PreSessionAgendaList)));
+</script>
+
+<link href="~/css/Stepwizard.css" rel="stylesheet" />
+
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li><b>Agenda</b></li>
+                <li>/</li>
+                <li><b>@Model.SessionName</b></li>
+            </ul>
+            <p>@DateTime.Now.Day @DateTime.Now.ToString("MMMM") '@DateTime.Now.Year</p>
+        </div>
+    </div>
+    <div class="top-Rbtn">
+        <a href="/admin/SessionSchedule/AgendaList?sessionId=@Model.SessionId&start=@Model.StartDate.ToString("MM/dd/yyyy HH:mm")&end=@Model.EndDate.Value.ToString("MM/dd/yyyy HH:mm")" class="btn btn btn-primary"><i class="fa fa-eye"></i> View All</a>
+
+    </div>
+</div>
+
+<div id="frm-add-edit-agenda">
+    <form asp-action="agenda" asp-controller="SessionSchedule" asp-area="admin" method="post" autocomplete="off" enctype="multipart/form-data">
+        <div id="validation-summary"></div>
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="SessionId" />
+        <input type="hidden" asp-for="StartDate" />
+        <input type="hidden" asp-for="EndDate" />
+
+
+        <div class="middlebox">
+            <div class="tablediv tablediv1 tabledivbtn">
+                <div class="stepbox">
+                    <ul class="nav nav-tabs responsive-tabs">
+                        <li class="active"><a href="#tab1"><span>1</span> Participants</a></li>
+                        <li><a href="#tab2"><span>2</span>Agenda</a></li>
+                    </ul>
+
+                    <div class="tab-content">
+
+                        <div class="tab-pane active" id="tab1">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-12 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+                                                <div class="table-responsive" id="sub_tbl">
+
+                                                    <table class="table">
+
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Id</th>
+                                                                <th>Type</th>
+                                                                <th>Players</th>
+                                                                <th>Participant Type</th>
+                                                                <th>Status</th>
+                                                                <th>Remarks</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                        </thead>
+
+                                                        <!-- ko if:participantlist().length > 0 -->
+                                                        <tbody data-bind="foreach: participantlist">
+                                                            <tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <input type="hidden" data-bind="value:id ,attr:{name:'PreSessionParticipant['+$index()+'].id'}" />
+                                                                    <input type="hidden" data-bind="value:userId ,attr:{name:'PreSessionParticipant['+$index()+'].userId'}" />
+                                                                    <input type="hidden" data-bind="value:typeId ,attr:{name:'PreSessionParticipant['+$index()+'].typeId'}" />
+                                                                    <input type="hidden" data-bind="value:participantTyprId ,attr:{name:'PreSessionParticipant['+$index()+'].participantTyprId'}" />
+                                                                    <input type="hidden" data-bind="value:status ,attr:{name:'PreSessionParticipant['+$index()+'].status'}" />
+                                                                    <input type="hidden" data-bind="value:remarks ,attr:{name:'PreSessionParticipant['+$index()+'].remarks'}" />
+                                                                </td>
+                                                                <td data-bind="html:type"></td>
+                                                                <td data-bind="html:user"></td>
+                                                                <td data-bind="html:participantType"></td>
+                                                                <td data-bind="html:statusStr"></td>
+                                                                <td data-bind="html:remarks"></td>
+                                                                <td> <a href="javascript:void(0);" data-bind="click: $parent.remove"><i class="fa fa-trash-o"></i> </a> </td>
+                                                            </tr>
+
+                                                        </tbody>
+                                                        <!-- /ko -->
+                                                    </table>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="tab2">
+                            <div class="container add-agenda">
+                                <div class="row">
+                                    <div class="col-lg-12 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+
+                                                <table class="table" id="agenda_feedback_play_grid">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Play Id</th>
+                                                            <th>Game</th>
+                                                            <th>Agenda Item</th>
+                                                            <th>Description</th>
+                                                            <th>Priority</th>
+                                                            <th>Delegate</th>
+                                                            <th>Status</th>
+                                                            <th>Type</th>
+                                                            <th>Deadline</th>
+                                                            <th>Ref Doc</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody>
+                                                        @{
+                                                            int pindex = 0;
+                                                        }
+                                                        @foreach (var item in Model.PreSessionAgenda)
+                                                        {
+                                                            <tr>
+                                                                <td>
+
+                                                                    <input type="hidden" name="PreSessionAgenda[@pindex].Id" value="@item.Id" />
+                                                                    <input type="hidden" name="PreSessionAgenda[@pindex].GameId" value="@item.GameId" />
+                                                                    <input type="hidden" name="PreSessionAgenda[@pindex].AccountableId" value="@item.AccountableId" />
+                                                                    <input type="hidden" name="PreSessionAgenda[@pindex].ActualEndDate" value="@item.ActualEndDate" />
+                                                                    <input type="hidden" name="PreSessionAgenda[@pindex].ActualStartDate" value="@item.ActualStartDate" />
+                                                                    <input type="hidden" name="PreSessionAgenda[@pindex].AddedOn" value="@item.AddedOn" />
+                                                                    <input type="hidden" name="PreSessionAgenda[@pindex].DeadlineDate" value="@item.DeadlineDate" />
+                                                                    <input type="hidden" name="PreSessionAgenda[@pindex].DependancyId" value="@item.DependancyId" />
+                                                                    <input type="hidden" name="PreSessionAgenda[@pindex].Description" value="@item.Description" />
+                                                                    <input type="hidden" name="PreSessionAgenda[@pindex].FeedbackType" value="@item.FeedbackType" />
+                                                                    <input type="hidden" name="PreSessionAgenda[@pindex].Name" value="@item.Name" />
+                                                                    <input type="hidden" name="PreSessionAgenda[@pindex].Priority" value="@item.Priority" />
+                                                                    <input type="hidden" name="PreSessionAgenda[@pindex].StartDate" value="@item.StartDate" />
+                                                                    <input type="hidden" name="PreSessionAgenda[@pindex].Status" value="@item.Status" />
+                                                                    <input type="hidden" name="PreSessionAgenda[@pindex].SubGameId" value="@item.SubGameId" />
+                                                                    <input type="hidden" name="PreSessionAgenda[@pindex].Type" value="@item.Type" />
+
+
+                                                                </td>
+                                                                <td>@item.Game</td>
+                                                                <td>@item.Name</td>
+                                                                <td>@item.Description</td>
+                                                                <td>@(((PriorityType)item.Priority).GetEnumDescription())</td>
+                                                                <td>@item.Dependancy</td>
+                                                                <td>@(((StatusType)item.Status).GetEnumDescription())</td>
+                                                                <td>@(((FeedbackType)item.Type).GetEnumDescription())</td>
+                                                                <td>@(item.DeadlineDate.ToString("dd/MM/yyyy"))</td>
+                                                                <td>
+                                                                    <input type="file" multiple id="PreSessionAgenda_@(pindex)_files" name="PreSessionAgenda[@pindex].files" accept="application/pdf" />
+                                                                    @{
+                                                                        int docIndex = 0;
+                                                                    }
+                                                                    @foreach (var doc in item.PreSessionAgendaDoc)
+                                                                    {
+                                                                        <input type="hidden" name="PreSessionAgenda[@pindex].PreSessionAgendaDoc[@docIndex].FileName" value="@doc.FileName" />
+                                                                        <a href="/DYF/@CurrentUser.CompanyId/Agenda/@CurrentUser.UserId/@doc.FileName">@doc.FileName</a>
+                                                                        <br />
+                                                                        docIndex++;
+
+                                                                    }
+                                                                </td>
+                                                            </tr>
+                                                            pindex++;
+                                                        }
+                                                    </tbody>
+
+                                                </table>
+
+                                            </div>
+                                        </div>
+                                        <button type="button" id="add_agenda_feedback">Add</button>
+                                        <a href="/admin/play/AddEdit?t=2&gid=" target="_blank" class="btn btn-primary">Add Feedback Play</a>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="container list-agenda" style="display:none;">
+                                <div class="row">
+                                    <div class="col-lg-12 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+
+                                                <table class="table table-striped" id="tbl_status">
+                                                    <thead>
+                                                        <tr>
+
+                                                            <th scope="col">S.No</th>
+                                                            <th scope="col">Session Name</th>
+                                                            <th scope="col">Cready By</th>
+                                                            <th scope="col">Play Feedback Name</th>
+                                                            <th scope="col">Description</th>
+                                                            <th scope="col">Document</th>
+                                                            <th scope="col">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @if (agendaList.Any())
+                                                        {
+                                                            int i = 1;
+                                                            foreach (var item in agendaList)
+                                                            {
+                                                                <tr>
+
+                                                                    <td>
+                                                                        @i
+                                                                    </td>
+                                                                    <td>@item.SessionName</td>
+                                                                    <td>@item.UserName</td>
+                                                                    <td>@item.Name</td>
+                                                                    <td>@item.Description</td>
+                                                                    <td>
+                                                                        @foreach (var doc in item.PreSessionAgendaDoc)
+                                                                        {
+                                                                            <a href="/DYF/@CurrentUser.CompanyId/Agenda/@item.UserId/@doc.FileName">@doc.FileName</a>
+                                                                            <br />
+
+                                                                        }
+                                                                    </td>
+                                                                    <td>
+                                                                        @if (item.IsCoordinator && !item.IsApproved)
+                                                                        {
+                                                                            <a href="javascript:void(0);" data-url="/SessionSchedule/AgendaApprove/@item.Id">Approve </a>
+                                                                        }
+                                                                        @if (item.IsApproved)
+                                                                        {
+                                                                            <span>Approved</span>
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+                                                                i++;
+
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <tr>
+                                                                <td colspan="7">Pre Session not found</td>
+                                                            </tr>
+                                                        }
+
+                                                    </tbody>
+
+                                                </table>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="top-Rbox1 botdiv">
+            <div class="top-Rbtn">
+                <a href="javascript:void(0);" class="btn btn-secondary backBtn">Back</a>
+                <button class="btn btn-primary btn-submit" id="btn-submit" type="submit">Submit</button>
+                <a href="javascript:void(0);" class="btn btn-primary nextBtn">Next</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<div aria-hidden="true" aria-labelledby="modal-agenda_feedback_play-label" role="dialog" tabindex="-1" id="modal-agenda_feedback_play" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="box">
+
+                <div class="modal-header">
+                    <h4 class="modal-title pull-left">Agenda</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+
+                <div class="modal-body box-body">
+                    <div id="validation-summary"></div>
+
+                    <div class="row">
+                        <div class="col-lg-12 col-sm-12">
+
+
+
+                        </div>
+                    </div><div class="row">
+                        <div class="col-lg-12 col-sm-12 table-responsive">
+                            <div class="step1">
+                                <div class="step1-in">
+
+                                    <table class="table" id="agenda_feedback_play">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    <input type="checkbox" class="all_check" />
+                                                </th>
+
+                                                <th>Game</th>
+                                                <th>Agenda Item</th>
+                                                <th>Description</th>
+                                                <th>Priority</th>
+                                                <th>Delegate</th>
+                                                <th>Status</th>
+                                                <th>Type</th>
+                                                <th>Deadline</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                        </tbody>
+
+                                    </table>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer justify-content-between">
+                    <button class="btn btn-success" id="btnsubmit" type="button"> Submit </button>
+                    <button data-dismiss="modal" id="btn-cancel" class="btn btn-default" type="button">Cancel</button>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script src="~/js/knockout-3.5.1.js" asp-append-version="true"></script>
+    <script src="~/js/knockout.mapping.min.js" asp-append-version="true"></script>
+    <script src="~/js/Customejs/SessionSchedule/PreSession.js" asp-append-version="true"></script>
+
+}

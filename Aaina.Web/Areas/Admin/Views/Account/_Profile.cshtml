@@ -1,0 +1,132 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@model ProfileDto
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>Profile</li>
+                <li>/</li>
+                <li>@CurrentUser.Name</li>
+            </ul>
+
+        </div>
+    </div>
+
+</div>
+
+<div class="middlebox">
+
+    <div class="row">
+        <div class="col-md-12" id="frm-profile">
+            <div class="box">
+                <form asp-action="profile" asp-controller="account" asp-area="admin" enctype="multipart/form-data" method="post" autocomplete="off">
+                    <div id="validation-summary"></div>
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Fname">First Name</label>
+                                    <input type="text" asp-for="@Model.Fname" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Mname">Middle Name</label>
+                                    <input type="text" asp-for="@Model.Mname" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Lname">Last Name</label>
+                                    <input type="text" asp-for="@Model.Lname" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="MobileNo">Mobile No</label>
+                                    <input type="text" asp-for="@Model.MobileNo" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Dob">Date Of Birth</label>
+                                    <input type="text" asp-for="@Model.Dob" class="form-control datepicker" />
+                                </div>
+                            </div>
+
+
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Address">Address</label>
+                                    <input type="text" asp-for="@Model.Address" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="City">City</label>
+                                    <input type="text" asp-for="@Model.City" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="State">State</label>
+                                    <input type="text" asp-for="@Model.State" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Gender">Gender</label>
+                                    <select asp-for="@Model.Gender" class="form-control">
+                                        <option>Select</option>
+                                        <option value="1">Male</option>
+                                        <option value="2">Female</option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="AvatarUrl">Profile Picture</label>
+                                    <input type="hidden" asp-for="AvatarUrl" />
+                                    <input type="file" name="profileImage" id="profileImage" accept=".Jpg,.png,.jpg,jpeg" />
+                                </div>
+                                @if (!string.IsNullOrEmpty(Model.AvatarUrl))
+                                {
+                                    <img src="~/@Model.CompanyId/EmployeeImages/@Model.AvatarUrl" style="width:100px;height:100px;" />
+                                }
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                    <div class="box-footer">
+                        <button class="btn btn-primary pull-left" id="btn-submit" type="submit">Submit</button>
+                        <a href="/home/index" class="btn btn-default pull-right">Cancel</a>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+
+
+@section scripts{
+    <script src="~/js/Customejs/Account/profile.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,43 @@
+﻿@model List<LookDto>
+@using Aaina.Common;
+
+    <table class="table" id="tbl_look">
+        <thead>
+            <tr>
+                <th scope="col">S.No</th>
+                <th scope="col">Look Name</th>
+                <th scope="col">Look Type</th>
+                <th scope="col">Edit</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Any())
+            {
+                int i = 1;
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="text-center">
+                            @i
+                        </td>
+                        <td>@item.Name</td>
+                        <td>@(((LookType)item.TypeId).ToString())</td>
+                        <td>
+                            <a href="/admin/look/AddEdit/@item.Id?parentId=@item.GameId"><i class="fa fa-pencil-square-o mtx"></i></a>
+                            <a href="/admin/look/AddEdit?copyId=@item.Id"><i class="fa fa-clone mtx"></i></a>
+                        </td>
+                    </tr>
+                    i++;
+
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4">Look not found</td>
+                </tr>
+            }
+
+            
+        </tbody>
+    </table>

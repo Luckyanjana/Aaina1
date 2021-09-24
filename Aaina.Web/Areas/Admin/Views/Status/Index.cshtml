@@ -1,0 +1,265 @@
+﻿@model List<StatusDto>
+@using Aaina.Common;
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>Status</li>
+                <li>/</li>
+                <li>List</li>
+            </ul>
+
+        </div>
+    </div>
+    <div class="top-Rbtn">
+        <a href="javascript:void(0);" class="btn btn btn-primary status_give" data-url="/Common/StatusFeedback">Give</a>
+
+        <a href="/admin/status/AddEdit" class="btn btn btn-primary"><i class="fa fa-plus"></i> Add New</a>
+        <a href="/Common/ShareUsers/?popupurl=/admin/status/ShareStatus/?id=@CurrentUser.CompanyId" class="btn btn btn-primary" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-share-users">Share</a>
+        @Html.Partial("_Modal", new Modal { ID = "modal-share-users", AreaLabeledId = "modal-share-users-label", Size = ModalSize.Large })
+
+    </div>
+</div>
+
+<div class="middlebox">
+    <div class="tablediv">
+        <div class='table-cont' id='table-cont'>
+            <table class="table table-striped" id="tbl_status">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th scope="col">S.No</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Status Mode</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        int i = 1;
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="radio" name="status_radio" value="@item.Id" />
+                                </td>
+                                <td>
+                                    @i
+                                </td>
+                                <td>@item.Name</td>
+                                <td>@(((StatusModeType)item.StatusModeId).ToString())</td>
+                                <td>@(item.IsActive?"Active":"In active")</td>
+                                <td>
+                                    <a href="/admin/status/AddEdit/@item.Id?parentId=@item.GameId"><i class="fa fa-pencil-square-o mtx"></i></a>
+                                    @if (item.IsActive)
+                                    {
+                                        <a href="/admin/status/Delete/@item.Id" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-action-delete-status"><i class="fa fa-trash-o mtx"></i></a>
+                                    }
+                                    <a href="/admin/status/AddEdit?copyId=@item.Id"><i class="fa fa-clone mtx"></i></a>
+
+                                    <a href="/admin/status/Result/@item.Id" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-action-feedback-status">Result</a>
+
+                                </td>
+                            </tr>
+                            i++;
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5">Satatus  not found</td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+    <div id="div_table" style="display:none">
+        <style>
+            .tablediv .table {
+                border: 1px solid #efefef;
+                background: #fff;
+            }
+
+            .table {
+                width: 100%;
+                max-width: 100%;
+                margin-bottom: 20px;
+            }
+
+            table {
+                border-collapse: collapse;
+                border-spacing: 0;
+            }
+
+            tablediv .table tr th {
+                background: #e5e5e5;
+                border-right: 1px solid #efefef;
+                color: #000000;
+            }
+
+            .tablediv .table tr th {
+                font-size: 15px;
+                text-align: center;
+                font-weight: 500;
+            }
+
+            .table > thead > tr > th {
+                vertical-align: bottom;
+                border-bottom: 2px solid #ddd;
+            }
+
+            .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+                padding: 8px;
+                line-height: 1.42857143;
+                vertical-align: top;
+                border-top: 1px solid #ddd;
+            }
+        </style>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Status Mode</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    int i = 1;
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@(((StatusModeType)item.StatusModeId).ToString())</td>
+                            <td>@(item.IsActive?"Active":"In active")</td>
+                            <td>
+                                <a href="/admin/status/AddEdit/@item.Id?parentId=@item.GameId"><i class="fa fa-pencil-square-o mtx"></i></a>
+                                @if (item.IsActive)
+                                {
+                                    <a href="/admin/status/Delete/@item.Id" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-action-delete-status"><i class="fa fa-trash-o mtx"></i></a>
+                                }
+                                <a href="/admin/status/AddEdit?copyId=@item.Id"><i class="fa fa-clone mtx"></i></a>
+                            </td>
+                        </tr>
+                        i++;
+
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5">Satatus  not found</td>
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+    </div>
+</div>
+
+
+@Html.Partial("_Modal", new Modal { ID = "modal-action-delete-status", AreaLabeledId = "modal-action-delete-status-label", Size = ModalSize.Small })
+@Html.Partial("_Modal", new Modal { ID = "modal-action-feedback-status", AreaLabeledId = "modal-action-feedback-status-label", Size = ModalSize.Medium })
+
+@section scripts{
+    <script>
+        $(function () {
+            Global.DataTable('#tbl_status');
+
+            Global.ModelHelper($("#modal-action-delete-status"), function () {
+                form = new Global.FormHelper($("#modal-action-delete-status").find("form"), {
+                    updateTargetId: "validation-summary",
+                    refreshGrid: false,
+                    modelId: 'modal-action-delete-status'
+                }, null, null);
+
+            }, null);
+
+            $(".status_give").on('click', function () {
+                var selectedStatus = $('input[type=radio][name="status_radio"]:checked').val();
+                if (parseInt(selectedStatus) > 0) {
+                    var url = $(this).data('url') + '/' + selectedStatus;
+                    $('#status_feedback_btn').attr('href', url);
+                    $('#status_feedback_btn').click();
+                }
+            });
+
+            Global.ModelHelper($("#modal-action-feedback-status"), function () {
+                form = new Global.FormHelper($("#frm-action-feedback-status").find("form"), {
+                    updateTargetId: "validation-summary",
+                    refreshGrid: false,
+                    modelId: 'modal-action-feedback-status'
+                }, null, null);
+
+                $("#participants_ddr").on('change', function () {
+                    var pollId = $(this).data('pollid');
+                    var $html = $("#poll_result-div");
+                    $html.empty();
+                    $.get('/admin/poll/ViewResult/?id=' + pollId + '&userId=' + $(this).val(), function (response) {
+                        for (var i = 0; i < response.length; i++) {
+                            var question = response[i];
+                            $('<div/>', {
+                                'class': 'row',
+                                html: function () {
+                                    $('<div/>', {
+                                        'class': 'col-lg-12 col-sm-12',
+                                        html: function () {
+                                            $('<div/>', {
+                                                'class': 'form-group',
+                                                html: `<label>Q. ${i + 1} ${question.name} </label>`
+                                            }).appendTo(this);
+                                        }
+                                    }).appendTo(this);
+
+                                    for (var j = 0; j < question.pollQuestionOption.length; j++) {
+                                        var opt = question.pollQuestionOption[j];
+                                        $('<div/>', {
+                                            'class': 'col-lg-9 col-sm-9',
+                                            html: `(${j + 1})  ${opt.name}` + (opt.filePath != null ? `<img style="width:100px" src="/DYF/${companyId}/Poll/${createdUserId}/${opt.filePath}" />` : '')
+                                        }).appendTo(this);
+
+                                        $('<div/>', {
+                                            'class': 'col-lg-3 col-sm-3',
+                                            html: `<div class="form-group"><label>${opt.per} %</label></div></div>`
+                                        }).appendTo(this);
+                                    }
+
+                                    $('<hr/>', {
+                                    }).appendTo(this);
+
+                                    if (question.remark != "") {
+                                        $('<span/>', {
+                                            html: question.remark
+                                        }).appendTo(this);
+                                        $('<hr/>', {
+                                        }).appendTo(this);
+                                    }
+
+                                }
+                            }).appendTo($html)
+                        }
+                    })
+                });
+
+            }, null);
+
+        });
+    </script>
+
+}

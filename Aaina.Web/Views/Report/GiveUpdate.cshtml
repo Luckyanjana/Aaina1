@@ -1,0 +1,405 @@
+﻿@model ReportGiveSaveDto
+@{
+    ViewData["Title"] = "Give";
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+    int userIndex = 0;
+    bool isManual = !Model.Details.Any(a => a.EntityId.HasValue);
+}
+
+
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>@Model.Name</li>
+                <li>/</li>
+                <li>@Model.Game</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="middlebox">
+    <form asp-action="GiveUpdate" asp-controller="Report" asp-area="" asp-route-tenant="@tenant" method="post" id="report_give_update_form">
+
+        <div class="tablediv tablediv1 tabledivbtn">
+            <div class="stepbox">
+                <div class="container">
+                    <div id="frm-add-edit-builder-template" class="row">
+                        <div id="validation-summary"></div>
+                        <input type="hidden" name="IsManual" value="@(isManual?"True":"False")" />
+                        <input type="hidden" asp-for="IsEdit" />
+                        <input type="hidden" asp-for="IsReject" />
+                        <input type="hidden" asp-for="ReportId" />
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="IsDuplicate" />
+                        
+                        <div class="row">
+                            @if (isManual && Model.IsEdit)
+                            {
+                                int index = 0;
+
+                                <table style="display:none;">
+
+                                    <tr id="tr_report_clone">
+                                        @foreach (var item in Model.FormBuilderAttribute)
+                                        {
+                                            <td>
+                                                <input type="hidden" name="Details[#userIndex#].Attribute[@index].FormBuilderAttributeId" value="@item.Id" />
+
+                                                @if (item.DataType == (int)Aaina.Common.OptionType.Dropdown)
+                                                {
+                                                    if (item.IsRequired)
+                                                    {
+                                                        <select class="form-control" name="Details[#userIndex#].Attribute[@index].LookUpId" data-msg-required="*required" data-rule-required="true">
+                                                            <option value=""> Select</option>
+                                                            @foreach (var look in item.FormBuilderAttributeLookUp)
+                                                            {
+                                                                <option value="@look.Id">@look.OptionName </option>
+                                                            }
+                                                        </select>
+                                                        <span class="field-validation-error field-validation-valid" data-valmsg-for="Details[#userIndex#].Attribute[@index].LookUpId" data-valmsg-replace="true"></span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <select class="form-control" name="Details[#userIndex#].Attribute[@index].LookUpId">
+                                                            <option value=""> Select</option>
+                                                            @foreach (var look in item.FormBuilderAttributeLookUp)
+                                                            {
+                                                                <option value="@look.Id">@look.OptionName </option>
+                                                            }
+                                                        </select>
+                                                    }
+                                                }
+                                                else if (item.DataType == (int)Aaina.Common.OptionType.RadioButton)
+                                                {
+                                                    if (item.IsRequired)
+                                                    {
+                                                        foreach (var look in item.FormBuilderAttributeLookUp)
+                                                        {
+                                                            <label> <input type="radio" name="Details[#userIndex#].Attribute[@index].LookUpId" value="@look.Id" data-msg-required="*required" data-rule-required="true" />@look.OptionName </label>
+                                                        }
+                                                        <span class="field-validation-error field-validation-valid" data-valmsg-for="Details[#userIndex#].Attribute[@index].LookUpId" data-valmsg-replace="true"></span>
+                                                    }
+                                                    else
+                                                    {
+                                                        foreach (var look in item.FormBuilderAttributeLookUp)
+                                                        {
+                                                            <label> <input type="radio" name="Details[#userIndex#].Attribute[@index].LookUpId" value="@look.Id" />@look.OptionName </label>
+                                                        }
+                                                    }
+
+                                                }
+                                                else if (item.DataType == (int)Aaina.Common.OptionType.Checkbox)
+
+                                                {
+
+                                                    <input type="checkbox" name="Details[#userIndex#].Attribute[@index].AttributeValue" class="che_box" />
+
+                                                }
+                                                else if (item.DataType == (int)Aaina.Common.OptionType.Emotion)
+                                                {
+                                                    <div class="row wrap_input" style="margin-top: 10px;">
+                                                        <div class="col-md-12">
+                                                            <div class="range-wrap">
+                                                                <div class="range-value" id="view_emotion_#userIndex#_@index" style="left:calc(0% + 4.5px);">
+                                                                    <span><img src="/DYF/@CurrentUser.CompanyId/EmojiImages/1.png" class="imgemoji"></span>
+                                                                </div>
+                                                                <input type="range" class="range_change valid" data-id="view_emotion_#userIndex#_@index" name="Details[#userIndex#].Attribute[@index].AttributeValue" id="report_Give_#userIndex#_@(index)_emotion" value="1" min="1" max="10" step="1">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    if (item.IsRequired)
+                                                    {
+                                                        <input type="@(item.DataType == (int)Aaina.Common.OptionType.Integer ? "number" : "text")" name="Details[#userIndex#].Attribute[@index].AttributeValue" class="form-control @(item.DataType == (int)Aaina.Common.OptionType.Date ? "datepicker" : item.DataType == (int)Aaina.Common.OptionType.Time?"timepicker":"")" placeholder="@item.AttributeName" data-msg-required="*required" data-rule-required="true" />
+                                                        <span class="field-validation-error field-validation-valid" data-valmsg-for="Details[#userIndex#].Attribute[@index].AttributeValue" data-valmsg-replace="true"></span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="@(item.DataType == (int)Aaina.Common.OptionType.Integer ? "number" : "text")" name="Details[#userIndex#].Attribute[@index].AttributeValue" class="form-control @(item.DataType == (int)Aaina.Common.OptionType.Date ? "datepicker" : item.DataType == (int)Aaina.Common.OptionType.Time?"timepicker":"")" placeholder="@item.AttributeName" />
+                                                    }
+                                                }
+
+
+
+
+                                            </td>
+                                            index++;
+                                        }
+                                        <td>
+                                            <input type="text" name="Details[#userIndex#].Remark" class="form-control" placeholder="Remark" />
+                                        </td>
+                                        <td class="td_action">
+                                        </td>
+                                    </tr>
+
+                                </table>
+                            }
+                            <div class="col-md-12">
+                                @if (isManual && Model.IsEdit)
+                                {
+                                    <button type="button" id="add_new_row" class="btn btn-primary pull-right">Add</button>
+                                }
+                                <table class="table table-bordered" id="tbl_report_give">
+                                    <thead>
+                                        <tr>
+                                            @if (Model.Details.Any(a => a.EntityId.HasValue))
+                                            {
+                                                <th>
+                                                    User   Name
+                                                </th>
+                                            }
+                                            @foreach (var item in Model.FormBuilderAttribute)
+                                            {
+                                                <th>
+                                                    @item.AttributeName
+                                                </th>
+                                            }
+
+                                            <th>
+                                                Remark
+                                            </th>
+                                            @if (isManual && Model.IsEdit)
+                                            {
+                                                <th>Action</th>
+                                            }
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        @foreach (var user in Model.Details)
+                                        {
+                                            int index = 0;
+                                            <tr>
+                                                @if (user.EntityId.HasValue)
+                                                {
+                                                    <td>
+                                                        @user.Name
+                                                    </td>
+                                                }
+
+                                                @foreach (var item in Model.FormBuilderAttribute)
+                                                {
+                                                    FormBuilderAttributeValueDto attr = user.Attribute.Any(x => x.FormBuilderAttributeId == item.Id) ? user.Attribute.FirstOrDefault(x => x.FormBuilderAttributeId == item.Id) : new FormBuilderAttributeValueDto();
+
+                                                    if (Model.IsEdit)
+                                                    {
+                                                        <td>
+                                                            <input type="hidden" name="Details[@userIndex].Id" value="@user.Id" />
+                                                            <input type="hidden" name="Details[@userIndex].EntityId" value="@user.EntityId" />
+                                                            <input type="hidden" name="Details[@userIndex].ReportId" value="@Model.ReportId" />
+
+                                                            <input type="hidden" name="Details[@userIndex].Attribute[@index].FormBuilderAttributeId" value="@item.Id" />
+                                                            <input type="hidden" name="Details[@userIndex].Attribute[@index].Id" value="@attr.Id" />
+
+                                                            @if (item.DataType == (int)Aaina.Common.OptionType.Dropdown)
+                                                            {
+                                                                if (item.IsRequired)
+                                                                {
+                                                                    <select class="form-control" name="Details[@userIndex].Attribute[@index].LookUpId" data-msg-required="*required" data-rule-required="true">
+                                                                        <option value=""> Select</option>
+                                                                        @foreach (var look in item.FormBuilderAttributeLookUp)
+                                                                        {
+                                                                            if (attr.LookUpId == look.Id)
+                                                                            {
+                                                                                <option selected value="@look.Id">@look.OptionName </option>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <option value="@look.Id">@look.OptionName </option>
+                                                                            }
+
+                                                                        }
+                                                                    </select>
+                                                                    <span class="field-validation-error field-validation-valid" data-valmsg-for="Details[@userIndex].Attribute[@index].LookUpId" data-valmsg-replace="true"></span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <select class="form-control" name="Details[@userIndex].Attribute[@index].LookUpId">
+                                                                        <option value=""> Select</option>
+                                                                        @foreach (var look in item.FormBuilderAttributeLookUp)
+                                                                        {
+                                                                            if (attr.LookUpId == look.Id)
+                                                                            {
+                                                                                <option selected value="@look.Id">@look.OptionName </option>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <option value="@look.Id">@look.OptionName </option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                }
+                                                            }
+                                                            else if (item.DataType == (int)Aaina.Common.OptionType.RadioButton)
+                                                            {
+                                                                if (item.IsRequired)
+                                                                {
+                                                                    foreach (var look in item.FormBuilderAttributeLookUp)
+                                                                    {
+                                                                        <label> <input type="radio" @(attr.LookUpId == look.Id ? "checked" : "") name="Details[@userIndex].Attribute[@index].LookUpId" value="@look.Id" data-msg-required="*required" data-rule-required="true" />@look.OptionName </label>
+                                                                    }
+                                                                    <span class="field-validation-error field-validation-valid" data-valmsg-for="Details[@userIndex].Attribute[@index].LookUpId" data-valmsg-replace="true"></span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    foreach (var look in item.FormBuilderAttributeLookUp)
+                                                                    {
+                                                                        <label> <input type="radio" @(attr.LookUpId == look.Id ? "checked" : "") name="Details[@userIndex].Attribute[@index].LookUpId" value="@look.Id" />@look.OptionName </label>
+                                                                    }
+                                                                }
+
+                                                            }
+                                                            else if (item.DataType == (int)Aaina.Common.OptionType.Checkbox)
+
+                                                            {
+
+                                                                <input type="checkbox" @(attr.FormBuilderAttributeId == item.Id ? "checked" : "") name="Details[@userIndex].Attribute[@index].AttributeValue" class="che_box" />
+
+                                                            }
+                                                            else if (item.DataType == (int)Aaina.Common.OptionType.Emotion)
+                                                            {
+                                                                <div class="row wrap_input" style="margin-top: 10px;">
+                                                                    <div class="col-md-12">
+                                                                        <div class="range-wrap">
+                                                                            <div class="range-value" id="view_emotion_@(userIndex)_@index" style="left:calc(0% + 4.5px);">
+                                                                                <span><img src="/DYF/@CurrentUser.CompanyId/EmojiImages/@(attr.AttributeValue).png" class="imgemoji"></span>
+                                                                            </div>
+                                                                            <input type="range" class="range_change valid" data-id="view_emotion_@(userIndex)_@index" name="Details[@(userIndex)].Attribute[@index].AttributeValue" id="report_Give_@(userIndex)_@(index)_emotion" value="@attr.AttributeValue" min="1" max="10" step="1">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                if (item.IsRequired)
+                                                                {
+                                                                    <input type="@(item.DataType == (int)Aaina.Common.OptionType.Integer ? "number" : "text")" name="Details[@userIndex].Attribute[@index].AttributeValue" class="form-control @(item.DataType == (int)Aaina.Common.OptionType.Date ? "datepicker" : item.DataType == (int)Aaina.Common.OptionType.Time?"timepicker":"")" placeholder="@item.AttributeName" data-msg-required="*required" data-rule-required="true" value="@attr.AttributeValue" />
+                                                                    <span class="field-validation-error field-validation-valid" data-valmsg-for="Details[@userIndex].Attribute[@index].AttributeValue" data-valmsg-replace="true"></span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input type="@(item.DataType == (int)Aaina.Common.OptionType.Integer ? "number" : "text")" name="Details[@userIndex].Attribute[@index].AttributeValue" class="form-control @(item.DataType == (int)Aaina.Common.OptionType.Date ? "datepicker" : item.DataType == (int)Aaina.Common.OptionType.Time?"timepicker":"")" placeholder="@item.AttributeName" value="@attr.AttributeValue" />
+                                                                }
+                                                            }
+
+
+
+
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>
+                                                            <input type="hidden" name="Details[@userIndex].Id" value="@user.Id" />
+                                                            <input type="hidden" name="Details[@userIndex].EntityId" value="@user.EntityId" />
+                                                            <input type="hidden" name="Details[@userIndex].ReportId" value="@Model.ReportId" />
+
+                                                            <input type="hidden" name="Details[@userIndex].Attribute[@index].FormBuilderAttributeId" value="@item.Id" />
+                                                            <input type="hidden" name="Details[@userIndex].Attribute[@index].Id" value="@attr.Id" />
+
+                                                            @if (item.DataType == (int)Aaina.Common.OptionType.Dropdown || item.DataType == (int)Aaina.Common.OptionType.RadioButton)
+                                                            {
+                                                                <span>@attr.LookUp</span>
+                                                            }
+                                                            else if (item.DataType == (int)Aaina.Common.OptionType.Emotion)
+                                                            {
+                                                                <img src="/DYF/@CurrentUser.CompanyId/EmojiImages/@(attr.AttributeValue).png" class="imgemoji">
+                                                            }
+                                                            else
+                                                            {
+                                                                <span>@attr.AttributeValue</span>
+                                                            }
+
+                                                        </td>
+                                                    }
+
+                                                    index++;
+                                                }
+
+                                                <td>
+                                                    <input type="text" name="Details[@userIndex].Remark" class="form-control" placeholder="Remark" value="@user.Remark" />
+                                                </td>
+                                                @if (Model.IsEdit && isManual)
+                                                {
+                                                    <td class="td_action"></td>
+                                                }
+                                            </tr>
+
+                                            userIndex++;
+                                        }
+
+
+
+
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Remark</label>
+                                    <input type="text" name="Remark" class="form-control" placeholder="Remark" value="@Model.Remark" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="top-Rbox1 botdiv">
+            <div class="top-Rbtn">
+                <a href="/Report/Index" class="btn btn-secondary backBtn">Back</a>
+                @if (Model.IsEdit)
+                {
+                    <button class="btn btn-primary btn-submit" id="btn-submit" type="submit" style="display:none">Submit</button>
+                    <button class="btn btn-primary btn-submit" id="btn-Submit-data" type="button" >Submit</button>
+                }
+                else
+                {
+                    <button class="btn btn-primary btn-submit" id="btn-reject" type="button">Reject</button>
+                    <button class="btn btn-primary btn-submit" id="btn-submit" type="submit">Approve</button>
+                }
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+<div aria-hidden="true" aria-labelledby="" role="dialog" tabindex="-1" id="duplicate-popup" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="" class="box">
+                    <div class="modal-header">
+                        <h4 class="modal-title pull-left" id="sub_title"></h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    </div>
+
+                    <div class="modal-body box-body">
+                      <h1>You want to duplicate record or update record </h1>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button class="btn btn-success" id="btnDuplicate" type="button">
+                            Duplicate
+                        </button>
+                        <button id="btnUpdaterecord" class="btn btn-default" type="button">Update</button>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+
+    <script src="~/js/Customejs/Report/Give.js" asp-append-version="true">
+
+    </script>
+}

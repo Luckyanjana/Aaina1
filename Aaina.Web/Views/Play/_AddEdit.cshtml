@@ -1,0 +1,66 @@
+﻿
+@model PlayDto
+@using Aaina.Common;
+@using Newtonsoft.Json;
+@{
+    Model.Emotion = Model.Emotion.HasValue ? (Model.Emotion == 0 ? 1 : Model.Emotion) : 1;
+    
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+}
+
+<script>
+    var Emotion = '@Model.Emotion';
+</script>
+<link href="~/css/select2.min.css" rel="stylesheet" />
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                @if (Model.Type == (int)PlayType.Feedback)
+                {
+                    <li>Add Feedback Play</li>
+                }
+                else
+                {
+                    <li>/Plays/Add Play</li>
+                }
+                <p>@(DateTime.Now.ToString("dd MMMM yy"))</p>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div id="frm-add-edit-play">
+    <form asp-action="add" asp-controller="play" asp-route-tenant="@tenant" method="post" autocomplete="off">
+        <div id="validation-summary"></div>
+      
+        <div class="middlebox">
+            <div class="tablediv tablediv1 tabledivbtn">
+                <div class="stepbox">
+
+                    <div class="container">
+                        <partial name="_AddByAgenda" for="@Model">
+                    </div>
+                </div>
+            </div>
+            <div class="top-Rbox1 botdiv">
+                <div class="top-Rbtn">
+                    <a href="/@tenant/play/Index" class="btn btn-secondary backBtn">Back</a>
+                    @if (CurrentMenuPermission.IsEdit || CurrentMenuPermission.IsAdd)
+                    {
+                        <button class="btn btn-primary btn-submit" id="btn-submit" type="submit">Submit</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+@section scripts{
+    <script src="~/js/select2.min.js"></script>
+    <script src="~/js/Customejs/Play/PlayAddEdit.js" asp-append-version="true"></script>
+}

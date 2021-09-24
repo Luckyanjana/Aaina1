@@ -1,0 +1,26 @@
+﻿@{
+    Tuple<string, string,string> message;
+    if (ViewBag.PageHeader == null)
+    {
+        message = Tuple.Create(string.Empty, string.Empty,string.Empty);
+    }
+    else
+    {
+        message = ViewBag.PageHeader as Tuple<string, string,string>;
+    }
+}
+
+<section class="content-header">
+    <h1>
+        @message.Item1
+        <small>@message.Item2</small>
+        <br />
+        <small>@message.Item3</small>
+
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#">Forms</a></li>
+        <li class="active">@message.Item1</li>
+    </ol>
+</section>

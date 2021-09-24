@@ -1,0 +1,36 @@
+﻿
+@model PlayDto
+@using Aaina.Common;
+@using Newtonsoft.Json;
+@{
+    Model.Emotion = Model.Emotion.HasValue ? (Model.Emotion == 0 ? 1 : Model.Emotion) : 1;
+
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+}
+
+<script>
+    var Emotion = '@Model.Emotion';
+</script>
+
+
+<div id="frm-add-edit-play" class="box">
+    <form asp-action="add" asp-controller="play" asp-route-tenant="@tenant" method="post" autocomplete="off">
+
+        @Html.Partial("_ModalHeader", new ModalHeader { Heading = "Add Feedback Play" })
+
+        <div class="modal-body">
+            <div id="validation-summary"></div>
+            <div class="col-lg-12 col-sm-12">
+                <div class="step1">
+                    <div class="step1-in">
+                        <partial name="_AddByAgenda" for="@Model">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        @Html.Partial("_ModalFooter", new ModalFooter { })
+    </form>
+</div>
+
+

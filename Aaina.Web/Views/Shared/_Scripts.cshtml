@@ -1,0 +1,54 @@
+﻿<script src="~/bower_components/jquery/dist/jquery.min.js" asp-append-version="true"></script>
+<script src="~/bower_components/bootstrap/dist/js/bootstrap.min.js" asp-append-version="true"></script>
+<script src="~/plugins/input-mask/jquery.inputmask.js" asp-append-version="true"></script>
+<script src="~/plugins/input-mask/jquery.inputmask.date.extensions.js" asp-append-version="true"></script>
+<script src="~/plugins/input-mask/jquery.inputmask.extensions.js" asp-append-version="true"></script>
+<script src="~/bower_components/moment/min/moment.min.js" asp-append-version="true"></script>
+<script src="~/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js" asp-append-version="true"></script>
+<script src="~/bower_components/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js" asp-append-version="true"></script>
+<script src="~/bower_components/datatables.net/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+<script src="~/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js" asp-append-version="true"></script>
+<script src="~/bower_components/jquery-slimscroll/jquery.slimscroll.min.js" asp-append-version="true"></script>
+<script src="~/plugins/iCheck/icheck.min.js" asp-append-version="true"></script>
+<script src="~/bower_components/fastclick/lib/fastclick.js" asp-append-version="true"></script>
+<script src="~/js/adminlte.min.js" asp-append-version="true"></script>
+<script src="~/plugins/toastr/toastr.min.js" asp-append-version="true"></script>
+<script src="~/plugins/jquery-validation/dist/jquery.validate.min.js" asp-append-version="true"></script>
+<script src="~/plugins/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js" asp-append-version="true"></script>
+<script src="~/js/waitMe.js" asp-append-version="true"></script>
+<script src="~/js/global.js" asp-append-version="true"></script>
+
+
+
+@{
+    var model = ViewData["NotificationModel"] as Notification;
+    if (model == null)
+    {
+        if (TempData["NotificationModel"] != null)
+        {
+
+            model = Newtonsoft.Json.JsonConvert.DeserializeObject<Notification>(TempData["NotificationModel"].ToString());
+        }
+    }
+}
+
+@if (model != null)
+{
+
+    <script>
+        $(document).ready(function () {
+            if ('@(model.Type.ToString().ToLower())' == 'success') {
+                Global.ToastrSuccess('@(model.Message)');
+            } else if ('@(model.Type.ToString().ToLower())' == 'danger') {
+                Global.ToastrError('@(model.Message)');
+            }
+            else if ('@(model.Type.ToString().ToLower())' == 'warning') {
+                Global.ToastrWarning('@(model.Message)');
+            } else  {
+                Global.ToastrInfo('@(model.Message)');
+            }
+        });
+
+    </script>
+}
+

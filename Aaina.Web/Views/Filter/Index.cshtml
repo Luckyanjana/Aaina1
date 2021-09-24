@@ -1,0 +1,199 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@model List<FilterDto>
+@using Aaina.Common;
+@{
+    ViewData["Title"] = "Index";
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+}
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>Filter</li>
+                <li>/</li>
+                <li>List</li>
+            </ul>
+
+        </div>
+    </div>
+    <div class="top-Rbtn">
+        @if (CurrentMenuPermission.IsAdd)
+        {
+        <a href="/@tenant/filter/Add" class="btn btn btn-primary add"><i class="fa fa-plus"></i> Add New</a>
+        }
+        <a href="/@tenant/Common/ShareUsers/?popupurl=/@tenant/filter/ShareFilter/?id=@CurrentUser.CompanyId" class="btn btn btn-primary" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-share-users">Share</a>
+        @Html.Partial("_Modal", new Modal { ID = "modal-share-users", AreaLabeledId = "modal-share-users-label", Size = ModalSize.Large })
+    </div>
+</div>
+
+<div class="middlebox">
+    <div class="tablediv">
+        <div class='table-cont' id='table-cont'>
+            <table class="table table-striped" id="tbl_filter">
+
+                <thead>
+                    <tr>
+                        <th scope="col">S.No</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">For</th>
+                        <th scope="col">From</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        int i = 1;
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @i
+                                </td>
+                                <td>
+                                    @item.Name
+
+
+                                </td>
+                                <td>@(((EmotionsFor)item.EmotionsFor).GetEnumDescription())</td>
+                                <td>@(((EmotionsFrom)item.EmotionsFrom).GetEnumDescription())</td>
+                                <td>
+                                    @if (CurrentUser.RoleId == (int)UserType.User && item.CreatedBy == CurrentUser.UserId)
+                                    {
+                                        if (CurrentMenuPermission.IsEdit)
+                                        {
+                                            <a href="/@tenant/filter/Edit/@item.Id" class="edit"><i class="fa fa-pencil-square-o mtx"></i></a>
+
+                                            <a href="/@tenant/filter/Edit?copyId=@item.Id"><i class="fa fa-clone mtx"></i></a>
+                                        }
+                                        if (CurrentMenuPermission.IsDelete)
+                                        {
+                                            <a href="/@tenant/filter/Delete/@item.Id" class="delete" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-action-delete-filter"><i class="fa fa-trash-o mtx"></i></a>
+                                        }
+
+                                    }
+
+                                    @if (CurrentUser.RoleId == (int)UserType.Admin)
+                                    {
+                                        <a href="/@tenant/filter/Edit/@item.Id" class="edit"><i class="fa fa-pencil-square-o mtx"></i></a>
+
+                                        <a href="/@tenant/filter/Edit?copyId=@item.Id"><i class="fa fa-clone mtx"></i></a>
+
+                                        <a href="/@tenant/filter/Delete/@item.Id" class="delete" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-action-delete-filter"><i class="fa fa-trash-o mtx"></i></a>
+                                    }
+
+                                </td>
+                            </tr>
+                            i++;
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5">fiter not found</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="div_table" style="display:none">
+        <style>
+            .tablediv .table {
+                border: 1px solid #efefef;
+                background: #fff;
+            }
+
+            .table {
+                width: 100%;
+                max-width: 100%;
+                margin-bottom: 20px;
+            }
+
+            table {
+                border-collapse: collapse;
+                border-spacing: 0;
+            }
+
+            tablediv .table tr th {
+                background: #e5e5e5;
+                border-right: 1px solid #efefef;
+                color: #000000;
+            }
+
+            .tablediv .table tr th {
+                font-size: 15px;
+                text-align: center;
+                font-weight: 500;
+            }
+
+            .table > thead > tr > th {
+                vertical-align: bottom;
+                border-bottom: 2px solid #ddd;
+            }
+
+            .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+                padding: 8px;
+                line-height: 1.42857143;
+                vertical-align: top;
+                border-top: 1px solid #ddd;
+            }
+        </style>
+        <table class="table table-striped">
+
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">For</th>
+                    <th scope="col">From</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if (Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @item.Name
+                            </td>
+                            <td>@(((EmotionsFor)item.EmotionsFor).GetEnumDescription())</td>
+                            <td>@(((EmotionsFrom)item.EmotionsFrom).GetEnumDescription())</td>
+                            
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5">fiter not found</td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
+@Html.Partial("_Modal", new Modal { ID = "modal-action-delete-filter", AreaLabeledId = "modal-action-delete-filter-label", Size = ModalSize.Small })
+@section scripts{
+   
+<script>
+    $(document).ready(function () {
+        Global.DataTable("#tbl_filter");
+    })
+</script>
+    <script src="~/js/Customejs/Filter/FilterAddEdit.js" asp-append-version="true"></script>
+
+}

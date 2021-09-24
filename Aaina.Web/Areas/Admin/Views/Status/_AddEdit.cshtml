@@ -1,0 +1,512 @@
+﻿@model StatusDto
+@using Aaina.Common;
+@using Newtonsoft.Json;
+
+<script>
+    function set(value) {
+        return value;
+    }
+        var NotificationsListArr = '@Model.NotificationsList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.NotificationsList)));
+        var statusReminderArr = '@Model.StatusReminder' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.StatusReminder)));
+        var NotificationsUnitListArr = '@Model.NotificationsUnitList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.NotificationsUnitList)));
+
+</script>
+
+<link href="~/css/Stepwizard.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li><b>Add Status</b></li>
+            </ul>
+            <p>@DateTime.Now.Day @DateTime.Now.ToString("MMMM") '@DateTime.Now.Year</p>
+        </div>
+    </div>
+</div>
+
+<div id="frm-add-edit-status">
+    <form asp-action="addedit" asp-controller="Status" asp-area="admin" method="post" autocomplete="off">
+        <div id="validation-summary"></div>
+        <input type="hidden" asp-for="Id" />
+        @*<input type="hidden" asp-for="GameId" />*@
+        <div class="middlebox">
+            <div class="tablediv tablediv1 tabledivbtn">
+                <div class="stepbox">
+                    <ul class="nav nav-tabs responsive-tabs">
+                        <li class="active"><a href="#tab1"><span>1</span> Information</a></li>
+                        <li><a href="#tab2"><span>2</span>Scheduler</a></li>
+                        <li><a href="#tab3"><span>3</span>By</a></li>
+                        <li><a href="#tab4"><span>4</span>For</a></li>
+                        <li><a href="#tab5"><span>5</span>Reminders</a></li>
+                    </ul>
+
+                    <div class="tab-content">
+
+                        <div class="tab-pane active" id="tab1">
+                            <div class="container">
+                                <div class="row">
+
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+                                                <div class="form-group">
+                                                    <label><i class="fa fa-info-circle"></i> Status Name</label>
+                                                    <input asp-for="Name" class="form-control" placeholder="Status Name" />
+                                                    <span asp-validation-for="Name" class="field-validation-error"></span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <textarea asp-for="Desciption" class="form-control" placeholder="Desription"></textarea>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label><i class="fa fa-info-circle"></i> Estimated Time (Hours)</label>
+                                                    <input asp-for="EstimatedTime" class="form-control" placeholder="Status Name" />
+                                                    <span asp-validation-for="EstimatedTime" class="field-validation-error"></span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label><i class="fa fa-info-circle"></i> Parent Game</label>
+                                                    <select asp-for="GameId" class="form-control" asp-items="@(new SelectList(Model.GameList,"Id","Name"))"></select>
+                                                    <span asp-validation-for="GameId" class="field-validation-error"></span>
+                                                </div>
+                                                <div class="col-lg-6 col-sm-12">
+                                                    <div class="form-group">
+                                                        <label><i class="fa fa-info-circle"></i> Status Mode</label>
+                                                        <select asp-for="StatusModeId" class="form-control" asp-items="@(new SelectList(Model.ModeList,"Id","Name"))"></select>
+
+                                                    </div>
+                                                </div>
+
+                                                @if (Model.Id > 0)
+                                                {
+                                                    <div class="form-group">
+                                                        <div class="col-lg-4 col-sm-12">
+                                                            <label style="margin-top:25px;">
+                                                                <input type="checkbox" asp-for="IsActive" />
+                                                                Is Active
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+
+                                                <div class="table-responsive">
+                                                    @await Html.PartialAsync("_all", Model.AllRecord)
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="tab2">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+                                                @*<div class="row">
+                                                    <div class="col-lg-4 col-sm-12">
+                                                        <div class="form-group">
+                                                            <label asp-for="StatusScheduler.Venue">Venue</label>
+                                                            <input type="text" asp-for="StatusScheduler.Venue" class="form-control" />
+                                                            <span asp-validation-for="StatusScheduler.Venue" class="field-validation-error"></span>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div class="col-lg-4 col-sm-12">
+                                                        <div class="form-group">
+                                                            <label><i class="fa fa-info-circle"></i> Duration (Min.)</label>
+                                                            <input asp-for="StatusScheduler.Duration" class="form-control" placeholder="Duration" />
+                                                            <span asp-validation-for="StatusScheduler.Duration" class="field-validation-error"></span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-4 col-sm-12">
+                                                        <div class="form-group">
+                                                            <label><i class="fa fa-info-circle"></i> Color Code</label>
+                                                            <input asp-for="StatusScheduler.ColorCode" class="form-control" style="background-color:@(Model.StatusScheduler.ColorCode)" id="StatusScheduler_ColorCode" placeholder="Color Code" />
+                                                            <span asp-validation-for="StatusScheduler.ColorCode" class="field-validation-error"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>*@
+
+                                                @{
+                                                    if (Model.StatusScheduler.Type == 0)
+                                                    {
+                                                        Model.StatusScheduler.Type = (int)ScheduleType.OneTime;
+                                                    }
+                                                }
+                                                <div class="form-group">
+                                                    @{
+                                                        if (Model.StatusScheduler.Type == 0)
+                                                        {
+                                                            Model.StatusScheduler.Type = (int)ScheduleType.OneTime;
+                                                        }
+                                                    }
+                                                    <div class="row lookschednotenable">
+                                                        <div class="form-group">
+                                                            <div class="radio">
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <label>
+                                                                            <input type="radio" asp-for="StatusScheduler.Type" value="@((int)ScheduleType.OneTime)">
+                                                                            @ScheduleType.OneTime.GetEnumDescription()
+                                                                        </label>
+                                                                    </div>
+
+                                                                    <div class="col-md-6">
+                                                                        <label>
+                                                                            <input type="radio" asp-for="StatusScheduler.Type" value="@((int)ScheduleType.Recurring)">
+                                                                            @ScheduleType.Recurring.GetEnumDescription()
+                                                                        </label>
+                                                                    </div>
+                                                                </div>                                                               
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row lookschednotenable">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label asp-for="StatusScheduler.StartDate">Start Date</label>
+                                                                <input type="text" asp-for="StatusScheduler.StartDate" class="form-control datepicker" data-msg-required="*required" data-rule-required="true" />
+                                                                <span asp-validation-for="StatusScheduler.StartDate" class="field-validation-error"></span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label asp-for="StatusScheduler.TimeStart">Start Time</label>
+                                                                <input type="text" asp-for="StatusScheduler.TimeStart" class="form-control timepicker" data-msg-required="*required" data-rule-required="true" />
+                                                                <span asp-validation-for="StatusScheduler.TimeStart" class="field-validation-error"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row lookschednotenable">
+
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label asp-for="StatusScheduler.EndDate">End Date</label>
+                                                                <input type="text" asp-for="StatusScheduler.EndDate" class="form-control datepicker" />
+                                                                <span asp-validation-for="StatusScheduler.EndDate" class="field-validation-error"></span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label asp-for="StatusScheduler.TimeEnd">End Time</label>
+                                                                <input type="text" asp-for="StatusScheduler.TimeEnd" class="form-control timepicker" />
+                                                                <span asp-validation-for="StatusScheduler.TimeEnd" class="field-validation-error"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-lg-6 col-sm-12 lookschedulerrecurring" style="display:@(Model.StatusScheduler.Type==(int)ScheduleType.Recurring?"block":"none");">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label asp-for="StatusScheduler.Frequency">Frequency</label>
+                                                    <select asp-for="StatusScheduler.Frequency" class="form-control" asp-items="@(new SelectList(Model.ScheduleFrequencyList,"Id","Name"))">
+                                                        <option value="">Select</option>
+                                                    </select>
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label asp-for="StatusScheduler.DailyFrequency">Daily Frequency</label>
+                                                    <select asp-for="StatusScheduler.DailyFrequency" class="form-control" asp-items="@(new SelectList(Model.DailyFrequencyList,"Id","Name"))">
+                                                        <option value="">Select</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row Weekly" style="display:@(Model.StatusScheduler.Frequency==(int)ScheduleFrequency.Weekly?"block":"none");">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    @foreach (var item in Model.WeekDayList)
+                                                    {
+                                                        <label>
+                                                            <input type="checkbox" name="StatusScheduler.DaysOfWeekList" @(Model.StatusScheduler.DaysOfWeekList.Any(a => a == int.Parse(item.Id)) ? "checked" : "") class="weekdays" value="@item.Id" />
+                                                            @item.Name
+                                                        </label>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+
+                                            <div class="col-md-6" id="div_LookScheduler_RecurseEvery">
+                                                <div class="form-group">
+                                                    <label asp-for="StatusScheduler.RecurseEvery">Recurse Every</label>
+                                                    <input type="text" asp-for="StatusScheduler.RecurseEvery" class="form-control" />
+                                                    <span asp-validation-for="StatusScheduler.RecurseEvery" class="field-validation-error"></span>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-md-6 Monthly" style="display:@(Model.StatusScheduler.Frequency==(int)ScheduleFrequency.Monthly?"block":"none");">
+                                                <div class="form-group">
+                                                    <label asp-for="StatusScheduler.MonthlyOccurrence">Monthly Occurrence</label>
+                                                    <select asp-for="StatusScheduler.MonthlyOccurrence" class="form-control" asp-items="@(new SelectList(Model.MonthlyOccurrenceList,"Id","Name"))">
+                                                        <option value="">Select</option>
+                                                    </select>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 Monthly" id="div_ExactDateOfMonth" style="display:@( Model.StatusScheduler.Frequency==(int)ScheduleFrequency.Monthly && Model.StatusScheduler.MonthlyOccurrence==(int)ScheduleMonthlyOccurrence.Days?"block":"none");">
+                                                <div class="form-group">
+                                                    <label asp-for="StatusScheduler.ExactDateOfMonth ">Date Of Month </label>
+                                                    <input type="text" asp-for="StatusScheduler.ExactDateOfMonth " class="form-control" />
+                                                    <span asp-validation-for="StatusScheduler.ExactDateOfMonth " class="field-validation-error"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row">
+
+                                            <div class="col-md-6 Monthly" id="div_ExactWeekdayOfMonth" style="display:@(Model.StatusScheduler.MonthlyOccurrence==(int)ScheduleMonthlyOccurrence.Week?"block":"none");">
+                                                <div class="form-group">
+                                                    <label asp-for="StatusScheduler.ExactWeekdayOfMonth ">Week day Of Month </label>
+                                                    <select asp-for="StatusScheduler.ExactWeekdayOfMonth " class="form-control" asp-items="@(new SelectList(Model.WeekDayList,"Id","Name"))">
+                                                        <option value="">Select</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 Monthly" id="div_ExactWeekdayOfMonthEvery" style="display:@(Model.StatusScheduler.MonthlyOccurrence==(int)ScheduleMonthlyOccurrence.Week?"block":"none");">
+                                                <div class="form-group">
+                                                    <label asp-for="StatusScheduler.ExactWeekdayOfMonthEvery ">Week day Of Month Every</label>
+                                                    <input type="text" asp-for="StatusScheduler.ExactWeekdayOfMonthEvery " class="form-control" />
+                                                    <span asp-validation-for="StatusScheduler.ExactWeekdayOfMonthEvery " class="field-validation-error"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row" id="div_OccursEveryTimeUnit" style="display:@(Model.StatusScheduler.DailyFrequency==(int)ScheduleDailyFrequency.Every?"block":"none");">
+
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label asp-for="StatusScheduler.OccursEveryValue  ">Occurs Every Value  </label>
+                                                    <input type="text" asp-for="StatusScheduler.OccursEveryValue" class="form-control" />
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label asp-for="StatusScheduler.OccursEveryTimeUnit ">Occurs Every Time Unit</label>
+                                                    <select asp-for="StatusScheduler.OccursEveryTimeUnit" class="form-control" asp-items="@(new SelectList(Model.OccursEveryTimeUnitList,"Id","Name"))">
+                                                        <option value="">Select</option>
+                                                    </select>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="tab3">
+                            <div class="container">
+                                <div class="row">
+
+                                    <div class="col-lg-4 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+
+                                                <div class="form-group">
+                                                    <label><i class="fa fa-info-circle"></i> Game By</label>
+                                                    <select asp-for="GameByIds" class="form-control select2" style="width:100%" asp-items="@(new SelectList(Model.GameList,"Id","Name"))"></select>
+                                                    <span asp-validation-for="GameByIds" class="field-validation-error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-lg-4 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+
+                                                <div class="form-group">
+                                                    <label><i class="fa fa-info-circle"></i> Team By</label>
+                                                    <select asp-for="TeamByIds" class="form-control select2" style="width:100%" asp-items="@(new SelectList(Model.TeamList,"Id","Name"))"></select>
+                                                    <span asp-validation-for="TeamByIds" class="field-validation-error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+                                                <div class="form-group">
+                                                    <label><i class="fa fa-info-circle"></i> User By</label>
+                                                    <select asp-for="UserByIds" class="form-control select2" style="width:100%" asp-items="@(new SelectList(Model.UserList,"Id","Name"))"></select>
+                                                    <span asp-validation-for="UserByIds" class="field-validation-error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="tab-pane" id="tab4">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+
+                                                <div class="form-group">
+                                                    <label><i class="fa fa-info-circle"></i> Team For</label>
+                                                    <select asp-for="TeamForIds" class="form-control select2" style="width:100%" asp-items="@(new SelectList(Model.TeamList,"Id","Name"))"></select>
+                                                    <span asp-validation-for="TeamForIds" class="field-validation-error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+                                                <div class="form-group">
+                                                    <label><i class="fa fa-info-circle"></i> User For</label>
+                                                    <select asp-for="UserForIds" class="form-control select2" style="width:100%" asp-items="@(new SelectList(Model.UserList,"Id","Name"))"></select>
+                                                    <span asp-validation-for="UserForIds" class="field-validation-error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="tab5">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-12 col-sm-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="step1 sele-r-right">
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>
+                                                                    Notification type
+                                                                </th>
+                                                                <th>
+                                                                    Every
+                                                                </th>
+                                                                <th>
+                                                                    Unit
+                                                                </th>
+                                                                <th>
+                                                                    action
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <!-- ko if:notificationslistarr().length > 0 -->
+                                                        <tbody data-bind="foreach: notificationslistarr">
+
+
+                                                            <tr>
+                                                                <td>
+                                                                    <select data-bind="value:typeId,options: NotificationsTypeList,optionsText: 'Name',optionsValue: 'Id',optionsCaption:'Select',attr:{name:'StatusReminder['+$index()+'].typeId'}" data-msg-required="*required" data-rule-required="true" class="form-control">
+                                                                        <option></option>
+                                                                    </select>
+                                                                    <span class="field-validation-error field-validation-valid" data-bind="attr:{'data-valmsg-for':'StatusReminder['+$index()+'].typeId'}" data-valmsg-replace="true"></span>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" class="form-control" data-bind="value:every ,attr:{name:'StatusReminder['+$index()+'].every'}" data-msg-required="*required" data-rule-required="true" />
+                                                                    <span class="field-validation-error field-validation-valid" data-bind="attr:{'data-valmsg-for':'StatusReminder['+$index()+'].every'}" data-valmsg-replace="true"></span>
+                                                                </td>
+                                                                <td>
+                                                                    <select data-bind="value:unit,options: NotificationsUnitTypeList,optionsText: 'Name',optionsValue: 'Id',optionsCaption:'Select',attr:{name:'StatusReminder['+$index()+'].unit'}" data-msg-required="*required" data-rule-required="true" class="form-control">
+                                                                        <option></option>
+                                                                    </select>
+                                                                    <span class="field-validation-error field-validation-valid" data-bind="attr:{'data-valmsg-for':'StatusReminder['+$index()+'].unit'}" data-valmsg-replace="true"></span>
+                                                                </td>
+                                                                <td> <a href="javascript:void(0);" data-bind="click: $parent.remove"><i class="fa fa-trash-o"></i> </a> </td>
+                                                            </tr>
+
+                                                        </tbody>
+                                                        <!-- /ko -->
+                                                    </table>
+                                                    <div class="pull-left">
+                                                        <button class="btn btn-success" data-bind='click: add'>Add</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="top-Rbox1 botdiv">
+            <div class="top-Rbtn">
+                <a href="javascript:void(0);" class="btn btn-secondary backBtn">Back</a>
+                <button class="btn btn-primary btn-submit" id="btn-submit" type="submit">Submit</button>
+                <a href="javascript:void(0);"  class="btn btn-primary nextBtn">Next</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+
+
+
+
+@section scripts{
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="~/js/knockout-3.5.1.js" asp-append-version="true"></script>
+    <script src="~/js/knockout.mapping.min.js" asp-append-version="true"></script>
+    <script src="~/js/Customejs/Status/AddEdit.js" asp-append-version="true"></script>
+}
+
+

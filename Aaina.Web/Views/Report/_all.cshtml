@@ -1,0 +1,68 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@model List<ReportDto>
+@using Aaina.Common;
+@{
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+}
+<table class="table" id="tbl_session">
+    <thead>
+        <tr>
+            <th scope="col">S.No</th>
+            <th scope="col">Name</th>
+            <th scope="col">Type</th>
+
+            <th scope="col">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+            int i = 1;
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td class="text-center">
+                        @i
+                    </td>
+                    <td>@item.Name</td>
+                    <td>@(((SessionType)item.TypeId).ToString())</td>
+
+                    <td>
+                        @if (CurrentUser.RoleId == (int)UserType.User)
+                        {
+                            if (item.CreatedBy == CurrentUser.UserId)
+                            {
+                                if (CurrentMenuPermission.IsEdit)
+                                {
+                                    <a href="/@tenant/report/Edit/@item.Id"><i class="fa fa-pencil-square-o mtx"></i></a>
+                                }
+
+
+                                if (CurrentMenuPermission.IsDelete)
+                                {
+                                    <a href="/@tenant/report/Delete/@item.Id" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-action-delete-session"><i class="fa fa-trash-o mtx"></i></a>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <a href="/@tenant/report/Edit/@item.Id"><i class="fa fa-pencil-square-o mtx"></i></a>
+                            <a href="/@tenant/report/Delete/@item.Id" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-action-delete-session"><i class="fa fa-trash-o mtx"></i></a>
+                        }
+
+                    </td>
+                </tr>
+                i++;
+
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4">Report not found</td>
+            </tr>
+        }
+
+
+    </tbody>
+</table>

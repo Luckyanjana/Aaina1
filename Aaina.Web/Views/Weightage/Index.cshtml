@@ -1,0 +1,177 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@model List<WeightageDto>
+@using Aaina.Common;
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>Emoji</li>
+                <li>/</li>
+                <li>List</li>
+            </ul>
+
+        </div>
+    </div>
+    <div class="top-Rbtn">
+        <a href="/weightage/AddEdit" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-add-edit-weightage" class="btn btn btn-primary add"><i class="fa fa-plus"></i> Add New</a>
+        <a href="/Common/ShareUsers/?popupurl=/weightage/ShareEmoji/?id=@CurrentUser.CompanyId" class="btn btn btn-primary" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-share-users">Share</a>
+        @Html.Partial("_Modal", new Modal { ID = "modal-share-users", AreaLabeledId = "modal-share-users-label", Size = ModalSize.Large })
+    </div>
+</div>
+
+<div class="middlebox">
+    <div class="tablediv">
+        <div class='table-cont' id='table-cont'>
+            <table class="table table-striped" id="tbl_emoji">
+
+                <thead>
+                    <tr>
+                        <th scope="col">S.No</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Rating</th>
+                        <th scope="col">Emoji</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        int i = 1;
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @i
+                                </td>
+                                <td>@item.Name</td>
+                                <td>@item.Rating</td>
+                                <td>
+                                    <img src="~/DYF/@CurrentUser.CompanyId/EmojiImages/@item.Emoji" id="view_emojiImg" class="imgemoji" />
+                                </td>
+                                <td>
+                                    @(item.IsActive?"Active":"In Active")
+                                </td>
+                                <td>
+                                    <a href="/weightage/AddEdit/@item.Id" class="edit" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-add-edit-weightage"><i class="fa fa-pencil-square-o mtx"></i></a>
+                                   
+                                        <a href="/weightage/Delete/@item.Id" class="delete" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-delete-weightage"><i class="fa fa-trash-o mtx"></i></a>
+                                    
+                                    <a href="/weightage/AddEdit?copyId=@item.Id" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-add-edit-weightage"><i class="fa fa-clone mtx"></i></a>
+                                </td>
+                            </tr>
+                            i++;
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5">Weightage not found</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div id="div_table" style="display:none">
+        <style>
+            .tablediv .table {
+                border: 1px solid #efefef;
+                background: #fff;
+            }
+
+            .table {
+                width: 100%;
+                max-width: 100%;
+                margin-bottom: 20px;
+            }
+
+            table {
+                border-collapse: collapse;
+                border-spacing: 0;
+            }
+
+            tablediv .table tr th {
+                background: #e5e5e5;
+                border-right: 1px solid #efefef;
+                color: #000000;
+            }
+
+            .tablediv .table tr th {
+                font-size: 15px;
+                text-align: center;
+                font-weight: 500;
+            }
+
+            .table > thead > tr > th {
+                vertical-align: bottom;
+                border-bottom: 2px solid #ddd;
+            }
+
+            .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+                padding: 8px;
+                line-height: 1.42857143;
+                vertical-align: top;
+                border-top: 1px solid #ddd;
+            }
+        </style>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Rating</th>
+                    <th scope="col">Emoji</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@item.Rating</td>
+                            <td>
+                                <img src="~/DYF/@CurrentUser.CompanyId/EmojiImages/@item.Emoji" id="view_emojiImg" class="imgemoji" />
+                            </td>
+                            <td>
+                                @(item.IsActive?"Active":"In Active")
+                            </td>
+                            <td>
+                              
+                        </tr>
+
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5">Weightage not found</td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+@Html.Partial("_Modal", new Modal { ID = "modal-add-edit-weightage", AreaLabeledId = "modal-add-edit-weightage-label", Size = ModalSize.Medium })
+@Html.Partial("_Modal", new Modal { ID = "modal-delete-weightage", AreaLabeledId = "modal-action-delete-weightage-label", Size = ModalSize.Small })
+@section scripts{
+    
+    <script src="~/js/Customejs/Weightage/AddEdit.js" asp-append-version="true"></script>
+
+}

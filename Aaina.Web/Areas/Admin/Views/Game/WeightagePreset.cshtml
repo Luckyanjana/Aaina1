@@ -1,0 +1,142 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@model WeightagePresetDto;
+@{
+    ViewData["Title"] = "WeightagePreset";
+    Layout = "/Views/Shared/_AdminLayout1.cshtml";
+}
+@using Aaina.Common;
+@using Newtonsoft.Json;
+
+
+<script>
+    function set(value) {
+        return value;
+    }
+    var gameList = '@Model.GameList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.GameList)));
+    var playerList = '@Model.PlayerList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.PlayerList)));
+    var presetList = '@Model.WeightagePresetDetails' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.WeightagePresetDetails)));
+
+</script>
+
+
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>@Model.GameName</li>
+                <li>/</li>
+                <li>Zinc Football</li>
+                <li>/</li>
+                <li><b>Weightage</b></li>
+            </ul>
+            <p>@(DateTime.Now.ToString("dd MMMM yyyy"))</p>
+        </div>
+    </div>
+</div>
+
+<div id="frm-add-edit-weightagepreset">
+    <form asp-action="WeightagePreset" asp-controller="game" asp-area="admin" method="post" autocomplete="off">
+        <div id="validation-summary"></div>
+
+        <div class="top-Rbox1">
+            <div class="selctbox">
+                <select id="PresetList" asp-for="PresetId" class="form-control" asp-items="@(new SelectList(Model.PresetList,"Id","Name"))"> </select>
+                <input type="hidden" asp-for="GameId" />
+                <input type="hidden" asp-for="PresetId" />
+            </div>
+            <div class="selctbox fright">
+                <input type="text" asp-for="Name" class="form-control" data-msg-required="*required" data-rule-required="true" />
+                <span asp-validation-for="Name" class="field-validation-error"></span>
+            </div>
+        </div>
+
+        <div class="middlebox">
+            <div class="tablediv tabledivbtn">
+                <div class='table-cont' id='table-cont'>
+                    <table class="table table-striped" id="tbl_game">
+
+                        <thead>
+                            <tr>
+                                <th scope="col">S.No</th>
+                                <th scope="col">Game</th>
+                                @foreach (var user in Model.PlayerList)
+                                {
+                                    <th scope="col">@user.Name</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="top-Rbox1 botdiv">
+                <div class="switchbtn"> <a href="javascript:void(0);" data-toggle="modal" data-target="#view-legends">View Legends</a> </div>
+                <div class="top-Rbtn">
+
+
+                    <button class="btn btn-primary" id="btn-submit" type="submit">Submit</button>
+                    <a class="btn btn-secondary" href="/admin/game/gamefeebback/@Model.GameId">Back</a>
+                    @if (Model.PresetId > 0)
+                    {
+                        <a class="btn btn-primary" href="/admin/game/gamefeebback/@Model.GameId?presetId=@Model.PresetId">Preview</a>
+                    }
+
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<!-- Modal -->
+<div class="modal fade allpop" id="view-legends" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Legend</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="tablediv">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+
+                                    <th scope="col">Role</th>
+                                    <th scope="col">Code</th>
+                                    <th scope="col">Default Weightage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.RoleList)
+                                {
+
+                                    <tr>
+                                        <td class="text-center">@item.Name </td>
+                                        <td class="text-center"><span class="tabcrical" style="background:@item.ColorCode"></span></td>
+                                        <td class="text-center">@item.Weightage </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer"> <input type="button" class="btn btn-primary close" data-dismiss="modal" aria-label="Close" value="Back"></div>
+
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/js/Customejs/Game/WeightagePreset.js" asp-append-version="true"></script>
+}
+
+

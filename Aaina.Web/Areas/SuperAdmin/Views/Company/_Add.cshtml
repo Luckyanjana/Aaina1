@@ -1,0 +1,99 @@
+﻿@model CompanyRegisterDto
+<div id="frm-add-edit-company" class="box">
+    <form asp-action="register" asp-controller="company" asp-area="superadmin" method="post">
+        @Html.Partial("_ModalHeader", new ModalHeader { Heading = "Company Add" })
+
+        <div class="modal-body box-body">
+            <div id="validation-summary"></div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Name"></label>
+                        <input type="text" asp-for="Name" class="form-control" data-msg-required="*required" data-rule-required="true"/>
+                        <span asp-validation-for="Name" class="field-validation-error"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+
+                        <label asp-for="Desciption"></label>
+                        <input type="text" asp-for="Desciption" class="form-control" />
+                        <span asp-validation-for="Desciption" class="field-validation-error"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Location"></label>
+                        <input type="text" asp-for="Location" class="form-control" />
+                        <span asp-validation-for="Location" class="field-validation-error"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+
+                        <label asp-for="Address"></label>
+                        <input type="text" asp-for="Address" class="form-control" />
+                        <span asp-validation-for="Address" class="field-validation-error"></span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="divindex">Company Admin </h4>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="Fname">First Name</label>
+                                        <input type="text" asp-for="Fname" class="form-control" data-msg-required="*required" data-rule-required="true" />
+                                        <span asp-validation-for="Fname" class="field-validation-error"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="Lname"></label>
+                                        <input type="text" asp-for="Lname" class="form-control" data-msg-required="*required" data-rule-required="true" />
+                                        <span asp-validation-for="Lname" class="field-validation-error"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="UserName">User Name</label>
+                                        <input type="text" asp-for="UserName" class="form-control" data-msg-required="*required" data-rule-required="true" />
+                                        <span asp-validation-for="UserName" class="field-validation-error"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label asp-for="Email">Email</label>
+                                        <input type="email" asp-for="Email" class="form-control" data-msg-required="*required" data-rule-required="true" />
+                                        <span asp-validation-for="Email" class="field-validation-error"></span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+
+        </div>
+        @Html.Partial("_ModalFooter", new ModalFooter { })
+    </form>
+</div>
+
+
+
+

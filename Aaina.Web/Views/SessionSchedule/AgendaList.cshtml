@@ -1,0 +1,156 @@
+﻿
+@model List<PreSessionAgendaListDto>
+@using Aaina.Common;
+@{
+    ViewData["Title"] = "Index";
+    bool isDecisionMaker = (bool)ViewBag.isDecisionMaker;
+    bool IsCoordinator = Model.Any() && Model.Any(a => a.IsCoordinator);
+    bool isValid = (bool)ViewBag.isValid;
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+}
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>Pre Session</li>
+                <li>/</li>
+                <li>List</li>
+            </ul>
+
+        </div>
+    </div>
+
+</div>
+
+<div class="middlebox">
+    <div class="tablediv">
+        <div class='table-cont' id='table-cont'>
+            <table class="table table-striped" id="tbl_status">
+                <thead>
+                    <tr>
+
+                        <th scope="col">S.No</th>
+                        <th scope="col">Session Name</th>
+                        <th scope="col">Cready By</th>
+                        <th scope="col">Play Feedback Name</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Document</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        int i = 1;
+                        foreach (var item in Model)
+                        {
+                            <tr>
+
+                                <td>
+                                    @i
+                                </td>
+                                <td>@item.SessionName</td>
+                                <td>@item.UserName</td>
+                                <td>@item.Name</td>
+                                <td>@item.Description</td>
+                                <td>
+                                    @foreach (var doc in item.PreSessionAgendaDoc)
+                                    {
+                                        <a href="/DYF/@CurrentUser.CompanyId/Agenda/@item.UserId/@doc.FileName">@doc.FileName</a>
+                                        <br />
+
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.IsCoordinator && !item.IsApproved)
+                                    {
+                                        <a href="javascript:void(0);" class="agenda-approve" data-url="/@tenant/SessionSchedule/AgendaApprove/@item.Id">Approve </a>
+                                    }
+                                    @if (item.IsApproved)
+                                    {
+                                        <span>Approved</span>
+                                    }
+                                </td>
+                            </tr>
+                            i++;
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7">Pre Session not found</td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+        </div>
+        @if (IsCoordinator)
+        {
+            <a href="javascript:void(0);" data-url="/@tenant/Session/SendNotiToDecision?sessionId=@ViewBag.sessionId&start=@ViewBag.start&end=@ViewBag.end" class="btn btn btn-primary agenda-send-noti">Send Noti to Decision Maker</a>
+        }
+        else if (isDecisionMaker)
+        {
+            if (isValid)
+            {
+                <a href="javascript:void(0);" data-url="/@tenant/SessionSchedule/Accept?sessionId=@ViewBag.sessionId&start=@ViewBag.start&end=@ViewBag.end" class="btn btn btn-primary btnAccept">Accept</a>
+                <a href="javascript:void(0);" data-url="/@tenant/SessionSchedule/Reject?sessionId=@ViewBag.sessionId&start=@ViewBag.start&end=@ViewBag.end" class="btn btn btn-primary btnReject">Reject</a>
+                <a href="javascript:void(0);" data-url="/@tenant/SessionSchedule/SendNotiToDecision?sessionId=@ViewBag.sessionId&start=@ViewBag.start&end=@ViewBag.end" class="btn btn btn-primary">Re-schedule</a>
+            }
+        }
+
+    </div>
+
+</div>
+
+
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+
+            $(".agenda-approve").on('click', function () {
+                var url = $(this).data('url');
+                var $that = $(this).parent();
+                $.get(url, function (response) {
+                    if (response.isSucess) {
+                        Global.ToastrSuccess("Approved");
+                        $that.html('Approved');
+                    }
+                });
+            });
+
+            $(".agenda-send-noti").on('click', function () {
+                var url = $(this).data('url');
+                var $that = $(this).parent();
+                $.get(url, function (response) {
+                    Global.ToastrSuccess(response.message);
+                });
+            });
+
+            $(".btnAccept").on('click', function () {
+                var url = $(this).data('url');
+                $.get(url, function (response) {
+                    Global.ToastrSuccess("Accept successfully");
+                    window.location.reload();
+                });
+            });
+
+            $(".btnReject").on('click', function () {
+                var url = $(this).data('url');
+                $.get(url, function (response) {
+                    Global.ToastrSuccess("Reject successfully");
+                    window.location.reload();
+                });
+            });
+        });
+    </script>
+
+}
+

@@ -1,0 +1,46 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@model List<ReportDto>
+@using Aaina.Common;
+
+<table class="table" id="tbl_session">
+    <thead>
+        <tr>
+            <th scope="col">S.No</th>
+            <th scope="col">Name</th>
+            <th scope="col">Type</th>
+
+            <th scope="col">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+            int i = 1;
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td class="text-center">
+                        @i
+                    </td>
+                    <td>@item.Name</td>
+                    <td>@(((SessionType)item.TypeId).ToString())</td>
+
+                    <td>
+                        <a href="/admin/report/AddEdit/@item.Id?parentId=@item.GameId"><i class="fa fa-pencil-square-o mtx"></i></a>
+                        <a href="/admin/report/Delete/@item.Id" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-action-delete-session"><i class="fa fa-trash-o mtx"></i></a>
+                    </td>
+                </tr>
+                i++;
+
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4">Report not found</td>
+            </tr>
+        }
+
+
+    </tbody>
+</table>

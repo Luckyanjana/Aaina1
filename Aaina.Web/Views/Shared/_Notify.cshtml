@@ -1,0 +1,58 @@
+﻿<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4><span class="fa fa-bell"></span> New Notification</h4>
+            </div>
+            <div id="articleList" class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*<div class="modal fade" id="sessionNotificationModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <div id="msgDiv"></div>
+            </div>
+            <form id="form-Session-Notification">
+                <div  class="modal-body">
+                    <textarea id="Remarks" name="Remarks" rows="5" cols="4" class="form-control"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="btnAcceptNotification" onclick="updateNotification('A')">Accept</button>
+                    <button type="button" class="btn btn-danger" id="btnRejectNotification" onclick="updateNotification('R')">Reject</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>*@
+
+
+<input type="hidden" id="signalRConnectionId" />
+<script>
+       function ready() {
+                }
+    var userId = @CurrentUser.UserId;
+    document.addEventListener("DOMContentLoaded", ready);
+
+    //function updateNotification($type) {
+    //    $.ajax({
+    //        url: '/home/updatesessionnotification',
+    //        type: 'get',
+    //        data: { 'acceptType': $type},
+    //        success: function (result) {
+    //            debugger;
+    //            Global.ToastrSuccess(result.message);
+    //        }
+    //    });
+    //}
+
+</script>

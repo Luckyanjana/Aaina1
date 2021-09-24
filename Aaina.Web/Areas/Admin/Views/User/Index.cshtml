@@ -1,0 +1,199 @@
+﻿
+@model List<UserLoginDto>
+@using Aaina.Common;
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>Player Library</li>
+            </ul>
+            <p>@DateTime.Now.ToString("dd MMMM") '@DateTime.Now.Year</p>
+        </div>
+    </div>
+    <div class="top-Rbtn">
+        <a href="/admin/user/AddEdit" class="btn btn btn-primary add"><i class="fa fa-plus"></i> Add New</a>
+        <a href="/Common/ShareUsers/?popupurl=/admin/user/Share/?id=@CurrentUser.CompanyId" class="btn btn btn-primary" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-share-users">Share</a>
+        @Html.Partial("_Modal", new Modal { ID = "modal-share-users", AreaLabeledId = "modal-share-users-label", Size = ModalSize.Large })
+
+    </div>
+</div>
+
+
+<div class="middlebox">
+    <div class="tablediv">
+        <div class='table-cont' id='table-cont'>
+            <table class="table table-striped" id="tbl_user">
+                <thead>
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">User Name</th>
+                        <th scope="col">Doj</th>
+
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        int i = 1;
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @item.Id
+                                </td>
+                                <td>@item.Fname @item.Lname</td>
+                                <td>@(((PlayersType)item.PlayerType ).ToString())</td>
+                                <td>@item.UserName</td>
+                                <td>@(item.Doj.HasValue? item.Doj.Value.ToString("dd/MM/yyyy"):"")</td>
+
+                                <td>@(item.IsActive?"Active":"InActive")</td>
+
+                                <td class="edit">
+                                    <a href="/admin/user/AddEdit/@item.Id"><i class="fa fa-pencil-square-o mtx"></i></a>
+                                </td>
+                            </tr>
+                            i++;
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5">User not found</td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+    <div id="div_table" style="display:none">
+        <style>
+            .tablediv .table {
+                border: 1px solid #efefef;
+                background: #fff;
+            }
+
+            .table {
+                width: 100%;
+                max-width: 100%;
+                margin-bottom: 20px;
+            }
+
+            table {
+                border-collapse: collapse;
+                border-spacing: 0;
+            }
+
+            tablediv .table tr th {
+                background: #e5e5e5;
+                border-right: 1px solid #efefef;
+                color: #000000;
+            }
+
+            .tablediv .table tr th {
+                font-size: 15px;
+                text-align: center;
+                font-weight: 500;
+            }
+
+            .table > thead > tr > th {
+                vertical-align: bottom;
+                border-bottom: 2px solid #ddd;
+            }
+
+            .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+                padding: 8px;
+                line-height: 1.42857143;
+                vertical-align: top;
+                border-top: 1px solid #ddd;
+            }
+        </style>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">User Name</th>
+                    <th scope="col">Doj</th>
+
+                    <th scope="col">Status</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if (Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Fname @item.Lname</td>
+                            <td>@(((PlayersType)item.PlayerType ).ToString())</td>
+                            <td>@item.UserName</td>
+                            <td>@(item.Doj.HasValue? item.Doj.Value.ToString("dd/MM/yyyy"):"")</td>
+
+                            <td>@(item.IsActive?"Active":"InActive")</td>
+
+                            <td class="edit">
+                                <a href="/admin/user/AddEdit/@item.Id"><i class="fa fa-pencil-square-o mtx"></i></a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5">User not found</td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(function () {
+            Global.DataTable('#tbl_user');
+        });
+        $(document).ready(function () {
+            var posturl = '/common/GetPagePermission/'
+            $.ajax({
+                type: "GET",
+                url: posturl,
+                data: {
+                    "controllerName": "User",
+                    "actionName": "Index"
+                },
+                success: function (r) {
+                    var permission = JSON.parse(r.data);
+                    if (permission.CanBeEdit == false) {
+                        $(".edit").css("display", "none")
+                    } else {
+                        $(".edit").css("display", "inline-block")
+                    }
+                    if (permission.CanbeAdd == false) {
+                        $(".add").css("display", "none")
+                    } else {
+                        $(".add").css("display", "inline-block")
+                    }
+                }
+            });
+        });
+    </script>
+
+}

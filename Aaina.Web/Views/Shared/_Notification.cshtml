@@ -1,0 +1,39 @@
+﻿@{
+    var model = ViewData["NotificationModel"] as Notification;
+    if (model == null)
+    {
+        if (TempData["NotificationModel"] != null)
+        {
+
+            model = Newtonsoft.Json.JsonConvert.DeserializeObject<Notification>(TempData["NotificationModel"].ToString());
+        }
+    }
+}
+
+@if (model != null)
+{
+    @*<div class="alert alert-@(model.Type.ToString().ToLower()) alert-dismissable">
+            <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+            @(model.Message)
+        </div>*@
+
+    @section scripts{
+        <script>
+        $(document).ready(function () {
+            if ('@(model.Type.ToString().ToLower())' == 'success') {
+                Global.ToastrSuccess('@(model.Message)');
+            } else if ('@(model.Type.ToString().ToLower())' == 'danger') {
+                Global.ToastrError('@(model.Message)');
+            }
+            else if ('@(model.Type.ToString().ToLower())' == 'warning') {
+                Global.ToastrWarning('@(model.Message)');
+            } else  {
+                Global.ToastrInfo('@(model.Message)');
+            }
+        });
+
+        </script>
+    }
+
+}
+

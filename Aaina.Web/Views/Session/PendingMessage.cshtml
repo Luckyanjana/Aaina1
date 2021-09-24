@@ -1,0 +1,126 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@model List<SessionDto>
+@using Aaina.Common;
+@{
+    ViewData["Title"] = "PendingMessage";
+}
+
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>Pending Message</li>
+                <li>/</li>
+                <li>List</li>
+            </ul>
+
+        </div>
+    </div>
+
+</div>
+
+<div class="middlebox">
+    <div class="tablediv">
+        <div class='table-cont' id='table-cont'>
+            <table class="table table-striped" id="tbl_session-pending-notification">
+                <thead>
+                    <tr>
+                        <th scope="col">S.No</th>
+                        <th scope="col">Session Name</th>
+                        <th scope="col">Message</th>
+                        <th scope="col">Message Status</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        int i = 1;
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @i
+                                </td>
+                                <td>@item.Name</td>
+                                <td>@item.PendingMessage</td>
+                                <td>@(item.MessageStatus==0 ? "Rejected": item.MessageStatus == 1?"Pending":"Accepted")</td>
+                                <td>
+                                    @if (item.MessageStatus == 1)
+                                    {
+                                        <a href="/session/getSessionPendingMessage?id=@item.NotificationId&sessionId=@item.Id" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#pending-session-message-modal"><i class="fa fa-eye mtx"></i></a>
+                                    }
+
+                                </td>
+                            </tr>
+                            i++;
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6">Record not found</td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+</div>
+@{
+    var sessionMessageModal = new Modal { ID = "pending-session-message-modal", AreaLabeledId = "pending-session-message-modal-label", Size = ModalSize.Medium };
+}
+
+<partial name="_Modal" model="sessionMessageModal" />
+
+@section scripts{
+    <script>
+        $(function () {
+            Global.DataTable('#tbl_session-pending-notification');
+            //Global.ModelHelper($("#modal-action-delete-session"), function () {
+            //    form = new Global.FormHelper($("#modal-action-delete-session").find("form"), {
+            //        updateTargetId: "validation-summary",
+            //        refreshGrid: false,
+            //        modelId: 'modal-action-delete-game'
+            //    }, null, null);
+
+            //}, null);
+
+        });
+
+        $('#pending-session-message-modal').on('hidden.bs.modal', function () {
+            $(this).removeData('bs.modal');
+        });
+
+        function updateNotification($userId,$sessionId,$type) {
+
+            $.ajax({
+                url: '/session/updatesessionnotification',
+                type: 'get',
+                data: { 'userId': parseInt($userId), 'sessionId': parseInt($sessionId), 'acceptType': $type, 'remarks': $('#Remarks').val() },
+                success: function (result) {
+                   // debugger;
+                    //showSessionPendingMsgCount();
+                    //var sessionPCount = parseInt($('.session-pending-msg').text());
+                    //debugger;
+                    //if (sessionPCount > 0) {
+                    //    var updatedCount = sessionPCount - 1;
+                    //    $('.session-pending-msg').text(updatedCount);
+                    //}
+                    $('#pending-session-message-modal').modal('hide');
+                    Global.ToastrSuccess(result.message);
+                    window.location.reload();
+                }
+            });
+        }
+    </script>
+
+}
+

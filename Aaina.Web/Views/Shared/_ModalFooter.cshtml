@@ -1,0 +1,13 @@
+﻿@model ModalFooter
+
+    <div class="modal-footer justify-content-between">
+
+        @if (!Model.OnlyCancelButton)
+        {
+            <button class="btn btn-primary" id="@Model.SubmitButtonID" type="submit">
+
+                @Model.SubmitButtonText
+            </button>
+        }
+        <button data-dismiss="modal" id="@Model.CancelButtonID" class="btn btn-secondary" type="button">@Model.CancelButtonText</button>
+    </div>

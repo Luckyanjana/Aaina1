@@ -1,0 +1,81 @@
+﻿@model PollFeedbackDisplayDto
+
+@using Aaina.Common;
+@{
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+}
+
+<div id="frm-action-feedback-poll" class="box">
+    <form asp-action="Feedback" asp-controller="poll" asp-area="" asp-route-tenant="@tenant" method="post" autocomplete="off">
+        @Html.Partial("_ModalHeader", new ModalHeader { Heading = $"Add poll feedback for {Model.Name}" })
+
+        <div class="modal-body">
+            <div id="validation-summary"></div>
+            <input type="hidden" asp-for="PollId" />
+            <div class="step1">
+                <div class="step1-in">
+                    <div class="row">
+                        <div class="col-md-12">
+
+                            <h5>@Model.Game/@Model.SubGame</h5>
+                            <br />
+                            <h5>Created By: @Model.CreatedBy</h5>
+                            <br />
+                            <h5>Created On: @Model.CreatedOn.ToString("dd/MM/yyyyy")</h5>
+                        </div>
+                    </div>
+                    @{
+                        int qindex = 1;
+                    }
+                    @foreach (var item in Model.QuestionList)
+                    {
+                        <div class="row">
+                            <div class="col-lg-12 col-sm-12">
+                                <div class="form-group">
+                                    <label>Q. @qindex</label>
+                                    <label>@item.Name</label>
+                                    <input type="hidden" name="QuestionList[@(qindex-1)].QuestionId" value="@item.Id" />
+                                </div>
+                            </div>
+                            @foreach (var opt in item.PollQuestionOption)
+                            {
+                                <div class="col-lg-3 col-sm-12">
+                                    <div class="form-group">
+                                        <label>
+                                            <input type="radio" name="QuestionList[@(qindex-1)].AnswerId" value="@opt.Id" />
+                                            @opt.Name
+                                            @if (!string.IsNullOrEmpty(opt.FilePath))
+                                            {
+                                                <img style="width:100px" src="~/DYF/@CurrentUser.CompanyId/Poll/@Model.UserId/@opt.FilePath" />
+                                            }
+                                        </label>
+                                    </div>
+                                </div>
+
+                            }
+                            <div class="col-lg-12 col-sm-12">
+                                <div class="form-group">
+                                    <label>Remark</label>
+                                    <textarea name="QuestionList[@(qindex-1)].Remark" class="form-control"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        qindex++;
+                    }
+
+                    @*<div class="row">
+                            <div class="col-lg-12 col-sm-12">
+                                <div class="form-group">
+                                    <label>Remark</label>
+                                    <textarea asp-for="Remark" class="form-control"></textarea>
+                                </div>
+                            </div>
+                        </div>*@
+
+                </div>
+            </div>
+        </div>
+        @Html.Partial("_ModalFooter", new ModalFooter { })
+    </form>
+</div>

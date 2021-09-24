@@ -1,0 +1,61 @@
+﻿@model List<UserLoginDto>
+@{
+    ViewData["Title"] = "Index";
+}
+
+    <section class="content-header">
+        <h1>
+            User
+            <small>List</small>
+        </h1>
+    </section>
+    <section class="content">
+        
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <td>S.No</td>
+                                <td>First Name</td>
+                                <td>Middle  Name</td>
+                                <td>Last Name</td>
+                                <td>Email</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Any())
+                            {
+                                int i = 1;
+                                foreach (var item in Model)
+                                {
+                            <tr>
+                                <td>
+                                    @i
+                                </td>
+                                <td>@item.Fname</td>
+                                <td>@item.Mname</td>
+                                <td>@item.Lname</td>
+                                <td>@item.Email</td>
+                            </tr>
+                                    i++;
+
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5">User not found</td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+
+    </section>

@@ -1,0 +1,608 @@
+﻿@model PollDto
+@using Aaina.Common;
+@using Newtonsoft.Json;
+@{ 
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+}
+    <script>
+    function set(value) {
+        return value;
+    }
+        var allGame = '@Model.GameList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.GameList)));
+        var lookGameList = '@Model.PollParticipants' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.PollParticipants)));
+        var NotificationsListArr = '@Model.NotificationsList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.NotificationsList)));
+        var sessionReminderArr = '@Model.PollReminder' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.PollReminder)));
+        var pollQuestionArr = '@Model.PollQuestion' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.PollQuestion)));
+        var NotificationsUnitListArr = '@Model.NotificationsUnitList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.NotificationsUnitList)));
+        var questionTypeListArr = '@Model.PollTypeList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.PollTypeList)));
+        var createdUserId = '@Model.CreatedBy' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.CreatedBy)));
+    </script>
+
+<link href="~/css/Stepwizard.css" rel="stylesheet" />
+
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li><b>Add Poll</b></li>
+            </ul>
+            <p>@DateTime.Now.Day @DateTime.Now.ToString("MMMM") '@DateTime.Now.Year</p>
+        </div>
+    </div>
+</div>
+
+<div id="frm-add-edit-poll">
+    <form asp-action="add" asp-controller="poll" asp-area="" asp-route-tenant="@tenant" method="post" autocomplete="off">
+        <div id="validation-summary"></div>
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="GameId" />
+
+        <div class="middlebox">
+            <div class="tablediv tablediv1 tabledivbtn">
+                <div class="stepbox">
+                    <ul class="nav nav-tabs responsive-tabs">
+                        <li class="active"><a href="#tab1"><span>1</span> Information</a></li>
+                        <li><a href="#tab2"><span>2</span>Details</a></li>
+                        <li><a href="#tab3"><span>3</span>Scheduler</a></li>
+                        <li><a href="#tab4"><span>4</span>Participants</a></li>
+                        <li><a href="#tab5"><span>5</span>Reminders</a></li>
+                    </ul>
+
+                    <div class="tab-content">
+
+
+                        <div class="tab-pane active" id="tab1">
+                            <div class="container">
+                                <div class="row">
+
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+                                                <div class="form-group">
+                                                    <label><i class="fa fa-info-circle"></i> Poll Name</label>
+                                                    <input asp-for="Name" class="form-control" placeholder="Poll Name" data-msg-required="*required" data-rule-required="true" />
+                                                    <span asp-validation-for="Name" class="field-validation-error"></span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <textarea asp-for="Desciption" class="form-control" placeholder="Desription"></textarea>
+                                                </div>
+
+
+
+                                                <div class="row">
+
+                                                    <div class="col-lg-12 col-sm-12">
+                                                        <label><i class="fa fa-info-circle"></i>Sub Game</label>
+                                                        <select asp-for="SubGameId" class="form-control" asp-items="@(new SelectList(Model.SubGameList,"Id","Name"))" data-msg-required="*required" data-rule-required="true">
+                                                            <option value="">Select</option>
+                                                        </select>
+                                                        <span asp-validation-for="SubGameId" class="field-validation-error"></span>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-lg-4 col-sm-12">
+                                                        <label style="margin-top:25px;">
+                                                            <input type="checkbox" asp-for="IsActive" />
+                                                            Is Active
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+
+                                                <div class="table-responsive">
+                                                    @await Html.PartialAsync("_all", Model.AllRecord)
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="tab2">
+                            <div class="container">
+                                <div class="row">
+                                    <!-- ko if:questionlistarr().length > 0 -->
+                                    <div data-bind="foreach: questionlistarr">
+                                        <div class="col-lg-6 col-sm-12">
+                                            <div class="step1">
+                                                <div class="step1-in">
+                                                    <div class="form-group">
+                                                        <input type="hidden" data-bind="value:id ,attr:{name:'PollQuestion['+$index()+'].id'}" />
+                                                        <label><i class="fa fa-info-circle"></i>Question <span class="serialnumber" data-bind="text:$index()+1"></span></label>
+                                                        <textarea data-bind="value:name ,attr:{name:'PollQuestion['+$index()+'].name'}" class="form-control" placeholder="Question" data-msg-required="*required" data-rule-required="true"></textarea>
+                                                        <span class="field-validation-error field-validation-valid" data-bind="attr:{'data-valmsg-for':'PollQuestion['+$index()+'].name'}" data-valmsg-replace="true"></span>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label><i class="fa fa-info-circle"></i>Question Type </label>
+                                                        <select data-bind="value:questionTypeId,options: questionTypeList,optionsText: 'Name',optionsValue: 'Id',optionsCaption:'Select',attr:{name:'PollQuestion['+$index()+'].questionTypeId'},event:{change:PollTypeOnchange}" data-msg-required="*required" data-rule-required="true" class="form-control PollTypeId">
+                                                            <option></option>
+                                                        </select>
+                                                        <span class="field-validation-error field-validation-valid" data-bind="attr:{'data-valmsg-for':'PollQuestion['+$index()+'].questionTypeId'}" data-valmsg-replace="true"></span>
+                                                    </div>
+
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>
+                                                                    Option
+                                                                </th>
+                                                                <!-- ko if:optionType()==2 -->
+                                                                <th>
+                                                                    Image Atttachment
+                                                                </th>
+                                                                <!-- /ko -->
+                                                                <!-- ko if:optionType()!="1" -->
+                                                                <th>
+                                                                    action
+                                                                </th>
+                                                                <!-- /ko -->
+                                                            </tr>
+                                                        </thead>
+                                                        <!-- ko if:questionOption().length > 0 -->
+                                                        <tbody data-bind="foreach: questionOption">
+                                                            <!-- ko if:optionType()>0 -->
+                                                            <tr>
+                                                                <td>
+                                                                    <!-- ko if:optionType()==1 -->
+                                                                    <input type="hidden" data-bind="value:id ,attr:{name:'PollQuestion['+$index()+'].PollQuestionOption['+$index()+'].id'}" />
+                                                                    <input type="hidden" class="form-control" data-bind="value:name ,attr:{name:'PollQuestion['+$parentContext.$index()+'].PollQuestionOption['+$index()+'].name'}" data-msg-required="*required" data-rule-required="true" />
+                                                                    <span data-bind="text:name"></span>
+                                                                    <!-- /ko -->
+                                                                    <!-- ko if:optionType()!=1 -->
+                                                                    <input type="hidden" data-bind="value:id ,attr:{name:'PollQuestion['+$index()+'].PollQuestionOption['+$index()+'].id'}" />
+                                                                    <input type="text" class="form-control" data-bind="value:name ,attr:{name:'PollQuestion['+$parentContext.$index()+'].PollQuestionOption['+$index()+'].name'}" data-msg-required="*required" data-rule-required="true" />
+                                                                    <span class="field-validation-error field-validation-valid" data-bind="attr:{'data-valmsg-for':'PollQuestion['+$parentContext.$index()+'].PollQuestionOption['+$index()+'].name'}" data-valmsg-replace="true"></span>
+                                                                    <!-- /ko -->
+                                                                </td>
+                                                                <!-- ko if:optionType()==2 -->
+                                                                <td>
+                                                                    <input type="hidden" data-bind="value:filePath ,attr:{name:'PollQuestion['+$parentContext.$index()+'].PollQuestionOption['+$index()+'].filePath'}" />
+                                                                    <input type="file" class="uploadfile" data-bind="attr:{name:'PollQuestion['+$parentContext.$index()+'].PollQuestionOption['+$index()+'].optionFile',id:'PollQuestion_'+$parentContext.$index()+'_PollQuestionOption_'+$index()+'_optionFile'}" accept="image/png,image/jpeg" />
+                                                                    <img style="width:100px" data-bind="attr:{'src':fullpath,id:'PollQuestion_'+$parentContext.$index()+'_PollQuestionOption_'+$index()+'_optionFile_show'}" />
+                                                                </td>
+                                                                <!-- /ko -->
+                                                                <!-- ko if:optionType()!=1 -->
+                                                                <td> <a href="javascript:void(0);" data-bind="click: $parent.removeOption"><i class="fa fa-trash-o"></i> </a> </td>
+                                                                <!-- /ko -->
+                                                            </tr>
+                                                            <!-- /ko -->
+                                                        </tbody>
+                                                        <!-- /ko -->
+                                                    </table>
+                                                    <!-- ko if:optionType()!=1 -->
+                                                    <div class="pull-left">
+                                                        <button class="btn btn-success" type="button" data-bind='click:addOption(optionType())'>Add </button>
+                                                    </div>
+                                                    <!-- /ko -->
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- /ko -->
+
+                                </div>
+                                <div class="pull-left">
+                                    <button class="btn btn-success" type="button" data-bind='click:addQuestion'>Add Question</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="tab3">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+
+
+                                                @{
+                                                    if (Model.PollScheduler.Type == 0)
+                                                    {
+                                                        Model.PollScheduler.Type = (int)ScheduleType.OneTime;
+                                                    }
+                                                }
+                                                <div class="form-group">
+                                                    @{
+                                                        if (Model.PollScheduler.Type == 0)
+                                                        {
+                                                            Model.PollScheduler.Type = (int)ScheduleType.OneTime;
+                                                        }
+                                                    }
+                                                    <div class="row lookschednotenable">
+                                                        <div class="form-group">
+                                                            <div class="radio">
+                                                                <label>
+                                                                    <input type="radio" asp-for="PollScheduler.Type" value="@((int)ScheduleType.OneTime)">
+                                                                    @ScheduleType.OneTime.GetEnumDescription()
+                                                                </label>
+
+                                                                <label>
+                                                                    <input type="radio" asp-for="PollScheduler.Type" value="@((int)ScheduleType.Recurring)">
+                                                                    @ScheduleType.Recurring.GetEnumDescription()
+                                                                </label>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row lookschednotenable">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label asp-for="PollScheduler.StartDate">Start Date</label>
+                                                                <input type="text" asp-for="PollScheduler.StartDate" class="form-control datepicker" data-msg-required="*required" data-rule-required="true" />
+                                                                <span asp-validation-for="PollScheduler.StartDate" class="field-validation-error"></span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label asp-for="PollScheduler.TimeStart">Start Time</label>
+                                                                <input type="text" asp-for="PollScheduler.TimeStart" class="form-control timepicker" data-msg-required="*required" data-rule-required="true" />
+                                                                <span asp-validation-for="PollScheduler.TimeStart" class="field-validation-error"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row lookschednotenable">
+
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label asp-for="PollScheduler.EndDate">End Date</label>
+                                                                <input type="text" asp-for="PollScheduler.EndDate" class="form-control datepicker" />
+                                                                <span asp-validation-for="PollScheduler.EndDate" class="field-validation-error"></span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label asp-for="PollScheduler.TimeEnd">End Time</label>
+                                                                <input type="text" asp-for="PollScheduler.TimeEnd" class="form-control timepicker" />
+                                                                <span asp-validation-for="PollScheduler.TimeEnd" class="field-validation-error"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-lg-6 col-sm-12 lookschedulerrecurring" style="display:@(Model.PollScheduler.Type==(int)ScheduleType.Recurring?"block":"none");">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label asp-for="PollScheduler.Frequency">Frequency</label>
+                                                    <select asp-for="PollScheduler.Frequency" class="form-control" asp-items="@(new SelectList(Model.ScheduleFrequencyList,"Id","Name"))">
+                                                        <option value="">Select</option>
+                                                    </select>
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label asp-for="PollScheduler.DailyFrequency">Daily Frequency</label>
+                                                    <select asp-for="PollScheduler.DailyFrequency" class="form-control" asp-items="@(new SelectList(Model.DailyFrequencyList,"Id","Name"))">
+                                                        <option value="">Select</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row Weekly" style="display:@(Model.PollScheduler.Frequency==(int)ScheduleFrequency.Weekly?"block":"none");">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    @foreach (var item in Model.WeekDayList)
+                                                    {
+                                                        <label>
+                                                            <input type="checkbox" name="PollScheduler.DaysOfWeekList" @(Model.PollScheduler.DaysOfWeekList.Any(a => a == int.Parse(item.Id)) ? "checked" : "") class="weekdays" value="@item.Id" />
+                                                            @item.Name
+                                                        </label>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+
+                                            <div class="col-md-6" id="div_LookScheduler_RecurseEvery">
+                                                <div class="form-group">
+                                                    <label asp-for="PollScheduler.RecurseEvery">Recurse Every</label>
+                                                    <input type="text" asp-for="PollScheduler.RecurseEvery" class="form-control" />
+                                                    <span asp-validation-for="PollScheduler.RecurseEvery" class="field-validation-error"></span>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-md-6 Monthly" style="display:@(Model.PollScheduler.Frequency==(int)ScheduleFrequency.Monthly?"block":"none");">
+                                                <div class="form-group">
+                                                    <label asp-for="PollScheduler.MonthlyOccurrence">Monthly Occurrence</label>
+                                                    <select asp-for="PollScheduler.MonthlyOccurrence" class="form-control" asp-items="@(new SelectList(Model.MonthlyOccurrenceList,"Id","Name"))">
+                                                        <option value="">Select</option>
+                                                    </select>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 Monthly" id="div_ExactDateOfMonth" style="display:@( Model.PollScheduler.Frequency==(int)ScheduleFrequency.Monthly && Model.PollScheduler.MonthlyOccurrence==(int)ScheduleMonthlyOccurrence.Days?"block":"none");">
+                                                <div class="form-group">
+                                                    <label asp-for="PollScheduler.ExactDateOfMonth ">Date Of Month </label>
+                                                    <input type="text" asp-for="PollScheduler.ExactDateOfMonth " class="form-control" />
+                                                    <span asp-validation-for="PollScheduler.ExactDateOfMonth " class="field-validation-error"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row">
+
+                                            <div class="col-md-6 Monthly" id="div_ExactWeekdayOfMonth" style="display:@(Model.PollScheduler.MonthlyOccurrence==(int)ScheduleMonthlyOccurrence.Week?"block":"none");">
+                                                <div class="form-group">
+                                                    <label asp-for="PollScheduler.ExactWeekdayOfMonth ">Week day Of Month </label>
+                                                    <select asp-for="PollScheduler.ExactWeekdayOfMonth " class="form-control" asp-items="@(new SelectList(Model.WeekDayList,"Id","Name"))">
+                                                        <option value="">Select</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 Monthly" id="div_ExactWeekdayOfMonthEvery" style="display:@(Model.PollScheduler.MonthlyOccurrence==(int)ScheduleMonthlyOccurrence.Week?"block":"none");">
+                                                <div class="form-group">
+                                                    <label asp-for="PollScheduler.ExactWeekdayOfMonthEvery ">Week day Of Month Every</label>
+                                                    <input type="text" asp-for="PollScheduler.ExactWeekdayOfMonthEvery " class="form-control" />
+                                                    <span asp-validation-for="PollScheduler.ExactWeekdayOfMonthEvery " class="field-validation-error"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row" id="div_OccursEveryTimeUnit" style="display:@(Model.PollScheduler.DailyFrequency==(int)ScheduleDailyFrequency.Every?"block":"none");">
+
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label asp-for="PollScheduler.OccursEveryValue  ">Occurs Every Value  </label>
+                                                    <input type="text" asp-for="PollScheduler.OccursEveryValue" class="form-control" />
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label asp-for="PollScheduler.OccursEveryTimeUnit ">Occurs Every Time Unit</label>
+                                                    <select asp-for="PollScheduler.OccursEveryTimeUnit" class="form-control" asp-items="@(new SelectList(Model.OccursEveryTimeUnitList,"Id","Name"))">
+                                                        <option value="">Select</option>
+                                                    </select>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="tab4">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+
+                                                <div class="table-responsive">
+                                                    <table class="table" id="tbl_user">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">Id</th>
+                                                                <th scope="col">Type</th>
+                                                                <th scope="col">Players</th>
+                                                                <th scope="col">Role</th>
+                                                                <th scope="col">Attach</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @{
+                                                                int rindex = 0;
+                                                            }
+                                                            @foreach (var item in Model.PlayerList)
+                                                            {
+                                                                var atter = Model.PollParticipants.FirstOrDefault(f => f.UserId == item.UserId);
+                                                                var IsAddedAtter = atter != null && atter.Id > 0;
+                                                                <tr>
+                                                                    <td>@item.UserId</td>
+                                                                    <td>@(((PlayersType)item.UserTypeId).ToString())</td>
+                                                                    <td>@item.Name</td>
+                                                                    <td>@item.Role</td>
+                                                                    <td>
+
+                                                                        @if (IsAddedAtter)
+                                                                        {
+
+                                                                            <input type="checkbox" value="true" data-divid="div_add_mainpower" checked data-type="mainpower" data-id="@item.UserId" id="mainpower_@item.UserId" data-name="@item.Name" data-typeid="1" data-typename="@(((PlayersType)item.UserTypeId).ToString())" class="added1" />
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <input type="checkbox" value="false" data-divid="div_add_mainpower" data-type="mainpower" data-id="@item.UserId" id="mainpower_@item.UserId" data-name="@item.Name" class="added1" data-typeid="1" data-typename="@(((PlayersType)item.UserTypeId).ToString())" />
+                                                                        }
+
+                                                                    </td>
+
+                                                                </tr>
+
+                                                                rindex++;
+                                                            }
+
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="step1 sele-r-right">
+                                                    <table class="table" id="div_add_mainpower">
+                                                        <thead>
+                                                            <tr>
+
+                                                                <th>
+                                                                    Type
+                                                                </th>
+                                                                <th>
+                                                                    Name
+                                                                </th>
+                                                                <th>
+                                                                    attach
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @{
+                                                                int index1 = 0;
+
+                                                            }
+                                                            @foreach (var item in Model.PollParticipants)
+                                                            {
+                                                                var atter = Model.PlayerList.FirstOrDefault(f => f.UserId == item.UserId);
+                                                                <tr id="tr_mainpower_@item.UserId">
+                                                                    <td>Mapower</td>
+                                                                    <td>@(atter!=null? atter.Name:"")</td>
+
+                                                                    <td>
+                                                                        <input type="hidden" name="PollParticipants[@index1].id" value="@item.Id">
+                                                                        <input type="hidden" name="PollParticipants[@index1].typeid" value="@item.TypeId">
+                                                                        <input type="hidden" name="PollParticipants[@index1].userId" value="@item.UserId">
+                                                                        <a href="javascript:void(0);" data-txt="Surendra Kandira" data-id="mainpower_@item.UserId" class="choice_remove"><i class="fa fa-close"></i></a>
+                                                                    </td>
+                                                                </tr>
+
+                                                                index1++;
+                                                            }
+                                                        </tbody>
+                                                    </table>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="tab-pane" id="tab5">
+                            <div class="container">
+                                <div class="row">
+
+                                    <div class="col-lg-8 col-sm-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="step1 sele-r-right">
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>
+                                                                    Notification type
+                                                                </th>
+                                                                <th>
+                                                                    Every
+                                                                </th>
+                                                                <th>
+                                                                    Unit
+                                                                </th>
+                                                                <th>
+                                                                    action
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <!-- ko if:notificationslistarr().length > 0 -->
+                                                        <tbody data-bind="foreach: notificationslistarr">
+
+
+                                                            <tr>
+                                                                <td>
+                                                                    <select data-bind="value:typeId,options: NotificationsTypeList,optionsText: 'Name',optionsValue: 'Id',optionsCaption:'Select',attr:{name:'PollReminder['+$index()+'].typeId'}" data-msg-required="*required" data-rule-required="true" class="form-control">
+                                                                        <option></option>
+                                                                    </select>
+                                                                    <span class="field-validation-error field-validation-valid" data-bind="attr:{'data-valmsg-for':'PollReminder['+$index()+'].typeId'}" data-valmsg-replace="true"></span>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" class="form-control" data-bind="value:every ,attr:{name:'PollReminder['+$index()+'].every'}" data-msg-required="*required" data-rule-required="true" />
+                                                                    <span class="field-validation-error field-validation-valid" data-bind="attr:{'data-valmsg-for':'PollReminder['+$index()+'].every'}" data-valmsg-replace="true"></span>
+                                                                </td>
+                                                                <td>
+                                                                    <select data-bind="value:unit,options: NotificationsUnitTypeList,optionsText: 'Name',optionsValue: 'Id',optionsCaption:'Select',attr:{name:'PollReminder['+$index()+'].unit'}" data-msg-required="*required" data-rule-required="true" class="form-control">
+                                                                        <option></option>
+                                                                    </select>
+                                                                    <span class="field-validation-error field-validation-valid" data-bind="attr:{'data-valmsg-for':'PollReminder['+$index()+'].unit'}" data-valmsg-replace="true"></span>
+                                                                </td>
+                                                                <td> <a href="javascript:void(0);" data-bind="click: $parent.remove"><i class="fa fa-trash-o"></i> </a> </td>
+                                                            </tr>
+
+                                                        </tbody>
+                                                        <!-- /ko -->
+                                                    </table>
+                                                    <div class="pull-left">
+                                                        <button class="btn btn-success" data-bind='click: add'>Add</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 col-sm-12">
+
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="top-Rbox1 botdiv">
+            <div class="top-Rbtn">
+                <a href="javascript:void(0);" class="btn btn-secondary backBtn">Back</a>
+                @if (CurrentMenuPermission.IsEdit || CurrentMenuPermission.IsAdd)
+                {
+                    <button class="btn btn-primary btn-submit" id="btn-submit" type="submit">Submit</button>
+                }
+                <a href="javascript:void(0);" class="btn btn-primary nextBtn">Next</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+
+
+@Html.Partial("_Modal", new Modal { ID = "modal-action-delete-poll", AreaLabeledId = "modal-action-delete-poll-label", Size = ModalSize.Small })
+
+@section scripts{
+    
+    <script src="~/js/Customejs/Poll/AddEdit.js" asp-append-version="true"></script>
+}
+
+

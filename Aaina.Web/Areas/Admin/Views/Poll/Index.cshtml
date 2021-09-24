@@ -1,0 +1,172 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@model List<PollDto>
+@using Aaina.Common;
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>Poll</li>
+                <li>/</li>
+                <li>List</li>
+            </ul>
+
+        </div>
+    </div>
+    <div class="top-Rbtn">
+        <a href="/admin/poll/AddEdit" class="btn btn btn-primary add"><i class="fa fa-plus"></i> Add New</a>
+
+    </div>
+</div>
+
+<div class="middlebox">
+    <div class="tablediv">
+        <div class='table-cont' id='table-cont'>
+            <table class="table table-striped" id="tbl_poll">
+                <thead>
+                    <tr>
+                        <th scope="col">S.No</th>
+                        <th scope="col">Name</th>
+
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        int i = 1;
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @i
+                                </td>
+                                <td>@item.Name</td>
+
+                                <td>@(item.IsActive?"Active":"In Actice")</td>
+                                <td>
+                                    @if (item.IsEditable)
+                                    {
+                                       <a href="/admin/poll/AddEdit/@item.Id?parentId=@item.GameId" class="edit"><i class="fa fa-pencil-square-o mtx"></i></a>
+                                 }
+
+                                    @if (item.IsActive)
+                                    {
+                                        <a href="/admin/poll/Delete/@item.Id" class="delete" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-action-delete-poll"><i class="fa fa-trash-o mtx"></i></a>
+                                    }
+                                    <a href="/admin/poll/AddEdit?copyId=@item.Id&parentId=@item.GameId"><i class="fa fa-clone mtx"></i></a>
+
+
+                                    <a href="/admin/poll/Result/@item.Id" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-action-feedback-poll">Result</a>
+
+
+                                </td>
+                            </tr>
+                            i++;
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6">Poll not found</td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+</div>
+
+
+@Html.Partial("_Modal", new Modal { ID = "modal-action-delete-poll", AreaLabeledId = "modal-action-delete-poll-label", Size = ModalSize.Small })
+@Html.Partial("_Modal", new Modal { ID = "modal-action-feedback-poll", AreaLabeledId = "modal-action-feedback-poll-label", Size = ModalSize.Medium })
+
+@section scripts{
+    <script>
+        $(function () {
+            Global.DataTable('#tbl_poll');
+
+            Global.ModelHelper($("#modal-action-delete-poll"), function () {
+                form = new Global.FormHelper($("#modal-action-delete-poll").find("form"), {
+                    updateTargetId: "validation-summary",
+                    refreshGrid: false,
+                    modelId: 'modal-action-delete-poll'
+                }, null, null);
+
+            }, null);
+
+            Global.ModelHelper($("#modal-action-feedback-poll"), function () {
+                form = new Global.FormHelper($("#frm-action-feedback-poll").find("form"), {
+                    updateTargetId: "validation-summary",
+                    refreshGrid: false,
+                    modelId: 'modal-action-feedback-poll'
+                }, null, null);
+
+                $("#participants_ddr").on('change', function () {
+                    var pollId = $(this).data('pollid');
+                    var $html = $("#poll_result-div");
+                    $html.empty();
+                    $.get('/admin/poll/ViewResult/?id=' + pollId + '&userId=' + $(this).val(), function (response) {
+                        for (var i = 0; i < response.length; i++) {
+                            var question = response[i];
+                            $('<div/>', {
+                                'class': 'row',
+                                html: function () {
+                                    $('<div/>', {
+                                        'class': 'col-lg-12 col-sm-12',
+                                        html: function () {
+                                            $('<div/>', {
+                                                'class': 'form-group',
+                                                html: `<label>Q. ${i + 1} ${question.name} </label>`
+                                            }).appendTo(this);
+                                        }
+                                    }).appendTo(this);
+
+                                    for (var j = 0; j < question.pollQuestionOption.length; j++) {
+                                        var opt = question.pollQuestionOption[j];
+                                        $('<div/>', {
+                                            'class': 'col-lg-9 col-sm-9',
+                                            html: `(${j + 1})  ${opt.name}` + (opt.filePath != null ? `<img style="width:100px" src="/DYF/${companyId}/Poll/${createdUserId}/${opt.filePath}" />` : '')
+                                        }).appendTo(this);
+
+                                        $('<div/>', {
+                                            'class': 'col-lg-3 col-sm-3',
+                                            html: `<div class="form-group"><label>${opt.per} %</label></div></div>`
+                                        }).appendTo(this);
+                                    }
+
+                                    $('<hr/>', {
+                                    }).appendTo(this);
+
+                                    if (question.remark != "") {
+                                        $('<span/>', {
+                                            html: question.remark
+                                        }).appendTo(this);
+                                        $('<hr/>', {
+                                        }).appendTo(this);
+                                    }
+
+                                }
+                            }).appendTo($html)
+                        }
+                    })
+                });
+
+            }, null);
+
+        });
+        
+    </script>
+
+}

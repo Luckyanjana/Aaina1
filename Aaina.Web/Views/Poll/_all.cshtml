@@ -1,0 +1,78 @@
+﻿
+@model List<PollDto>
+@using Aaina.Common;
+@{
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+}
+
+<table class="table" id="tbl_session">
+    <thead>
+        <tr>
+            <th scope="col">S.No</th>
+            <th scope="col">Name</th>
+
+            <th scope="col">Status</th>
+            <th scope="col">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+            int i = 1;
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @i
+                    </td>
+                    <td>@item.Name</td>
+
+                    <td>@(item.IsActive?"Active":"In Actice")</td>
+                    <td>
+                        @if (item.CreatedBy == CurrentUser.UserId)
+                        {
+                            if (item.IsEditable && CurrentMenuPermission.IsEdit)
+
+                            {
+                                <a href="/@tenant/poll/Edit/@item.Id"><i class="fa fa-pencil-square-o mtx"></i></a>
+
+                                <a href="/@tenant/poll/Edit?copyId=@item.Id"><i class="fa fa-clone mtx"></i></a>
+                            }
+
+                            if (item.IsActive && CurrentMenuPermission.IsDelete)
+
+                            {
+                                <a href="/@tenant/poll/Delete/@item.Id" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-action-delete-poll"><i class="fa fa-trash-o mtx"></i></a>
+                            }
+
+                        }
+
+                        @if (item.IsActive && CurrentUser.RoleId == (int)UserType.User)
+                        {
+                            <a href="/@tenant/poll/Feedback/@item.Id" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-action-feedback-poll">Give</a>
+                        }
+
+                        @if (item.IsActive && CurrentUser.RoleId == (int)UserType.Admin)
+                        {
+                            <a href="/@tenant/poll/Edit/@item.Id"><i class="fa fa-pencil-square-o mtx"></i></a>
+
+                            <a href="/@tenant/poll/Edit?copyId=@item.Id"><i class="fa fa-clone mtx"></i></a>
+
+                            <a href="/@tenant/poll/Delete/@item.Id" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-action-delete-poll"><i class="fa fa-trash-o mtx"></i></a>
+                        }
+                    </td>
+                </tr>
+                i++;
+
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6">Poll not found</td>
+            </tr>
+        }
+
+
+    </tbody>
+</table>

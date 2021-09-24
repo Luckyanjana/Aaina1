@@ -1,0 +1,53 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@using Aaina.Common
+<div class="footbot1">
+    <div class="btn-group">
+        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <span><img src="@CurrentUser.Avatar"></span> <b>Hi, @CurrentUser.Name</b> <i class="fa fa-caret-down"></i> </button>
+        <div class="dropdown-menu">
+            @*<a class="dropdown-item" href="#">Action</a>
+                <a class="dropdown-item" href="#">Another action</a>*@
+
+            <a asp-controller="Account" asp-action="SignOut" class="dropdown-item">Sign out</a>
+            @*<a class="dropdown-item" href="#">Something else here</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">Separated link</a>*@
+        </div>
+    </div>
+</div>
+<div class="footbot2">
+    <ul>
+        <li><a href=""><span class="bo-round br-0"></span></a></li>
+        <li><a href=""><span class="bo-round br-b"></span></a></li>
+        <li><a href=""><span class="bo-round br-y"></span></a></li>
+        <li><a href=""><span class="bo-round"></span></a></li>
+        <li><a href=""><span class="bo-round"></span></a></li>
+    </ul>
+    <a href="javascript:void(0);" class="fo-logo"><img src="~/Themes/Theme1/images/fo-icon2.png"></a>
+    <ul>
+        <li><a href=""><span class="bo-round br-g"></span></a></li>
+        <li><a href=""><span class="bo-round br-p"></span></a></li>
+        <li><a href=""><span class="bo-round"></span></a></li>
+        <li><a href=""><span class="bo-round"></span></a></li>
+        <li><a href=""><span class="bo-round"></span></a></li>
+    </ul>
+</div>
+<div class="footbot3">
+
+    <label>
+        <a href="javascript:void(0);"><img src="~/Themes/Theme1/images/warning.svg"></a>
+        @if (CurrentUser.RoleId == (int)UserType.User)
+        {
+            <a href="@Url.Action("PendingMessage", "Session")"><span class="msgred session-pending-msg"></span><img src="~/Themes/Theme1/images/bell.svg"></a>
+        }
+
+        <a href="javascript:void(0);"><span class="msgred"></span><img src="~/Themes/Theme1/images/chatting.svg"></a>
+        <a style="cursor:pointer" class="get-notification"><span class="msgred pending-msg"></span><img src="~/Themes/Theme1/images/bell.svg"></a>
+        <a href="javascript:void(0);" class="slidemob"><img src="~/Themes/Theme1/images/fo-icon2.png"></a>
+
+
+    </label>
+
+    <a id="btnPendingMsg" style="display:none" href="/home/ShowNotificationMessage" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-notification-message"></a>
+
+</div>
+

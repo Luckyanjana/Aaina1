@@ -1,0 +1,68 @@
+﻿
+@model List<GameDto>
+@{
+    ViewData["Title"] = "Index";
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+}
+
+<section class="content">
+
+    <div class="box">
+        <div class="box-body table-responsive">
+            <div class="col-sm-12">
+                <div class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table class="table table-bordered table-hover dataTable no-footer">
+
+                                <thead>
+                                    <tr>
+                                        <th>S.No</th>
+                                        <th>Name</th>
+                                        <th>Contact Person</th>
+                                        <th>Client</th>
+                                        <th>Location</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.Any())
+                                    {
+                                        int i = 1;
+                                        foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    @i
+                                                </td>
+
+                                                <td>
+                                                    @item.Name
+                                                </td>
+                                                <td>@item.ContactPerson</td>
+                                                <td>@item.ClientName</td>
+                                                <td>@item.Location</td>
+                                                <td>
+                                                    @if (CurrentUser.RoleId == (int)Aaina.Common.UserType.User)
+                                                    {
+                                                    <a href="/@tenant/project/feedback" class="btn btn-sm btn-success mg-l-5"> Feedback </a>
+                                                    }
+                                                </td>
+                                            </tr>
+                                            i++;
+
+                                        }
+                                    }
+
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+

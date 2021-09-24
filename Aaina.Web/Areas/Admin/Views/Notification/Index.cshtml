@@ -1,0 +1,29 @@
+﻿@using Aaina.Web.Models.Hubs
+@model Article
+@{
+    ViewData["Title"] = "Index";
+}
+<h1>Index</h1>
+@using (Html.BeginForm("Index", "notification", FormMethod.Post, new { id = "Article" }))
+{
+    <div id="validation-summary"></div>
+    <div class="row">
+        <div class="col-6">
+            Article Heading
+        </div>
+        <div class="col-6">
+            <input type="text" asp-for="articleHeading" class="form-control" placeholder="Article Heading" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            Article Content
+        </div>
+        <div class="col-6">
+            <input type="text" asp-for="articleContent" class="form-control" placeholder=" Article Content" />
+        </div>
+    </div>
+    <div>
+        <button type="submit" id="Add" value="Add" />
+    </div>
+}

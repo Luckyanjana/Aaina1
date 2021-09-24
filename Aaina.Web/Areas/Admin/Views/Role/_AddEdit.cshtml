@@ -1,0 +1,54 @@
+﻿@model RoleDto
+<div id="frm-add-edit-role" class="box">
+    <form asp-action="addedit" asp-controller="role" asp-area="admin" method="post">
+        @Html.Partial("_ModalHeader", new ModalHeader { Heading = "Role Add/Edit" })
+
+        <div class="modal-body">
+            <div id="validation-summary"></div>
+            <input type="hidden" asp-for="Id" />
+
+
+            <div class="col-lg-12 col-sm-12">
+                <div class="step1">
+                    <div class="step1-in">
+                        <div class="form-group">
+                            <label asp-for="Name"><i class="fa fa-info-circle"></i> Role Name</label>
+                            <input asp-for="Name" class="form-control mb15" type="text" placeholder="ID/Look Name" data-msg-required="*required" data-rule-required="true">
+                            <span asp-validation-for="Name" class="field-validation-error"></span>
+                            <textarea asp-for="Desciption" class="form-control" placeholder="Description"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Player Type</label>
+                            <select asp-for="PlayerType" class="form-control" asp-items="@(new SelectList(Model.PlayerTypeList,"Id","Name"))"> </select>
+                            <span asp-validation-for="PlayerType" class="field-validation-error"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fa fa-info-circle"></i> Weightage</label>
+                            <input type="text" asp-for="Weightage" class="form-control" data-msg-required="*required" data-rule-required="true" />
+                            <span asp-validation-for="Weightage" class="field-validation-error"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fa fa-info-circle"></i> Color Code</label>
+                            <input type="text" asp-for="ColorCode" class="form-control" style="background-color:@(Model.ColorCode)" data-msg-required="*required" data-rule-required="true" />
+                            <span asp-validation-for="ColorCode" class="field-validation-error"></span>
+                        </div>
+                            <div class="form-group">
+                                <label style="margin-top:25px;">
+                                    <input type="checkbox" asp-for="IsActive" />
+                                    Is Active
+                                </label>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @Html.Partial("_ModalFooter", new ModalFooter { })
+    </form>
+</div>
+
+
+
+

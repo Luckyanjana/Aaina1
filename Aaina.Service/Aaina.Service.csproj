@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="NewFolder\**" />
+    <EmbeddedResource Remove="NewFolder\**" />
+    <None Remove="NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Aaina.Common\Aaina.Common.csproj" />
+    <ProjectReference Include="..\Aaina.Data\Aaina.Data.csproj" />
+    <ProjectReference Include="..\Aaina.Dto\Aaina.Dto.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,91 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@model List<MenuDto>
+@using Aaina.Common;
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>Menu Library</li>
+            </ul>
+            <p>@DateTime.Now.ToString("dd MMMM") '@DateTime.Now.Year</p>
+        </div>
+    </div>
+    <div class="top-Rbtn">
+        <a href="/Menu/AddEdit" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-add-edit-menu" class="btn btn btn-primary"><i class="fa fa-plus"></i> Add New</a>
+    </div>
+</div>
+<div class="middlebox">
+    <div class="tablediv">
+        <div class='table-cont' id='table-cont'>
+            <table class="table table-striped" id="tbl_menu">
+                <thead>
+                    <tr>
+                        <th scope="col">Sr. No</th>
+                        <th scope="col">Menu Name</th>
+                        <th scope="col">Menu Url</th>
+                        <th scope="col">Parent</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        int i = 1;
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @i
+                                </td>
+                                <td>
+                                    @item.Name
+                                </td>
+
+
+                                <td>@item.Controller/@item.Action</td>
+                                <td>@item.ParentName</td>
+                                <td>@(item.IsActive?"Active":"In Active")</td>
+                                <td>
+                                    <a href="/menu/AddEdit/@item.Id" class="edit" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-add-edit-menu"><i class="fa fa-pencil-square-o mtx"></i></a>
+                                    <a href="/menu/AddEdit?copyId=@item.Id" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-add-edit-menu"><i class="fa fa-clone mtx"></i></a>
+                                    @if (item.IsActive)
+                                    {
+                                        <a href="/menu/DeActivate/@item.Id"><i class="fa fa-lock mtx"></i> </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="/menu/Activate/@item.Id"><i class="fa fa-unlock mtx"></i> </a>
+                                    }
+                                </td>
+                            </tr>
+                            i++;
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7">Menu not found</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+@Html.Partial("_Modal", new Modal { ID = "modal-add-edit-menu", AreaLabeledId = "modal-add-edit-menu-label", Size = ModalSize.Medium })
+
+@section scripts{
+
+    <script src="~/js/Customejs/Menu/AddEdit.js" asp-append-version="true"></script>
+
+}

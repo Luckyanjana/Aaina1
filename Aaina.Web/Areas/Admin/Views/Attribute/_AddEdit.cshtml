@@ -1,0 +1,112 @@
+﻿@model AttributeDto
+@using Newtonsoft.Json;
+
+<script>
+    function set(value) {
+        return value;
+    }
+        var subAttributeListarr = '@Model.SubAttribute' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.SubAttribute)));
+    var unitListarr = '@Model.UnitList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.UnitList)));
+</script>
+
+<div id="frm-add-edit-Attribute" class="box">
+    <form asp-action="addedit" asp-controller="Attribute" asp-area="admin" method="post">
+        @Html.Partial("_ModalHeader", new ModalHeader { Heading = "Attribute Add/Edit" })
+
+        <div class="modal-body">
+            <div id="validation-summary"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="CompanyId" />
+
+            <div class="col-lg-12 col-sm-12">
+                <div class="step1">
+                    <div class="step1-in">
+
+                        <div class="form-group">
+                            <label asp-for="Name"><i class="fa fa-info-circle"></i> Attribute Name</label>
+                            <input asp-for="Name" class="form-control mb15" type="text" placeholder="Attribute Name" data-msg-required="*required" data-rule-required="true">
+                            <span asp-validation-for="Name" class="field-validation-error"></span>
+                            <textarea asp-for="Desciption" class="form-control" placeholder="Description"></textarea>
+                        </div>
+                        <div class="form-group">
+                                <label style="margin-top:25px;">
+                                    <input type="checkbox" asp-for="IsActive" />
+                                    Is Active
+                                </label>
+                        </div>
+                        <div class="form-group">
+                            @*<label><i class="fa fa-info-circle"></i> Parent Game [if any]</label>*@
+                            @*<select asp-for="GameId" class="form-control" asp-items="@(new SelectList(ViewBag.GameList,"Id","Name"))"> <option value="">Select</option> </select>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12 col-sm-12" id="sub_tbl">
+                <div class="table-striped">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Name
+                                </th>
+                                <th>
+                                    Weightage
+                                </th>
+                                <th>
+                                    Is Quantity
+                                </th>
+                                <th>
+                                    Unit Type
+                                </th>
+                                <th>
+                                    Description
+                                </th>
+                                <th>
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <!-- ko if:subAtterlist().length > 0 -->
+                        <tbody data-bind="foreach: subAtterlist">
+                            <tr>
+                                <td>
+                                    <input type="hidden" data-bind="value:id ,attr:{name:'SubAttribute['+$index()+'].id'}" />
+                                    <input type="text" class="form-control" data-bind="value:name ,attr:{name:'SubAttribute['+$index()+'].name'}" data-msg-required="*required" data-rule-required="true" />
+                                    <span class="field-validation-error field-validation-valid" data-bind="attr:{'data-valmsg-for':'SubAttribute['+$index()+'].name'}" data-valmsg-replace="true"></span>
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" data-bind="value:weightage ,attr:{name:'SubAttribute['+$index()+'].weightage'}" data-msg-required="*required" data-rule-required="true" />
+                                    <span class="field-validation-error field-validation-valid" data-bind="attr:{'data-valmsg-for':'SubAttribute['+$index()+'].weightage'}" data-valmsg-replace="true"></span>
+                                </td>
+                                <td>
+                                    <input type="checkbox" data-bind="value:isQuantity,checked: isQuantity,attr:{name:'SubAttribute['+$index()+'].isQuantity'}" class="isquantity" />
+                                </td>
+                                <td>
+                                    <select data-bind="value:unitId,options: unitArr,optionsText: 'Text',optionsValue: 'Value',optionsCaption:'Select Unit',attr:{name:'SubAttribute['+$index()+'].unitId'}" data-msg-required="*required" data-rule-required="true" class="form-control quantityunit">
+                                        <option></option>
+                                    </select>
+                                    <span class="field-validation-error field-validation-valid" data-bind="attr:{'data-valmsg-for':'SubAttribute['+$index()+'].unitId'}" data-valmsg-replace="true"></span>
+                                </td>
+                                <td>
+                                    <textarea class="form-control" data-bind="value:desciption ,attr:{name:'SubAttribute['+$index()+'].desciption'}"></textarea>
+                                </td>
+                                <td> <a href="javascript:void(0);" data-bind="click: $parent.remove"><i class="fa fa-trash-o"></i> </a> </td>
+                            </tr>
+
+                        </tbody>
+                        <!-- /ko -->
+                    </table>
+                </div>
+                <div class="pull-left">
+                    <button class="btn btn-success" data-bind='click: add'>Add</button>
+                </div>
+
+            </div>
+        </div>
+        @Html.Partial("_ModalFooter", new ModalFooter { })
+    </form>
+</div>
+
+
+
+

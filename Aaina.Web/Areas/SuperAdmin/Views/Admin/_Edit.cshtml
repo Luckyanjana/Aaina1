@@ -1,0 +1,66 @@
+﻿@model UserLoginDto
+<div id="frm-add-edit-company">
+    <form asp-action="save" asp-controller="admin" asp-area="superadmin" method="post">
+        @Html.Partial("_ModalHeader", new ModalHeader { Heading = "Company Add" })
+        <div class="modal-body box-body">
+            <div id="validation-summary"></div>
+            <input type="hidden" asp-for="Id" />
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="CompanyId">Company</label>
+                        <select asp-for="CompanyId" class="form-control" asp-items="@(new SelectList(ViewBag.allCompany,"Value","Text"))" data-msg-required="*required" data-rule-required="true">
+                            <option value="">Select Company</option>
+                        </select>
+                        <span asp-validation-for="CompanyId" class="field-validation-error"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Email">Email</label>
+                        <input type="email" asp-for="Email" class="form-control" data-msg-required="*required" data-rule-required="true" />
+                        <span asp-validation-for="Email" class="field-validation-error"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="UserName">User Name</label>
+                        <input type="text" asp-for="UserName" class="form-control" data-msg-required="*required" data-rule-required="true" />
+                        <span asp-validation-for="UserName" class="field-validation-error"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Fname">First Name</label>
+                        <input type="text" asp-for="Fname" class="form-control" data-msg-required="*required" data-rule-required="true" />
+                        <span asp-validation-for="Fname" class="field-validation-error"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Lname"></label>
+                        <input type="text" asp-for="Lname" class="form-control" data-msg-required="*required" data-rule-required="true" />
+                        <span asp-validation-for="Lname" class="field-validation-error"></span>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+        @Html.Partial("_ModalFooter", new ModalFooter { })
+    </form>
+</div>
+
+
+
+

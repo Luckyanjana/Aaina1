@@ -1,0 +1,54 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@using Newtonsoft.Json;
+@using Aaina.Common;
+@{
+    ViewData["Title"] = "Index";
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+    
+}
+
+    <script>
+    function set(value) {
+        return value;
+    }
+    var scheduleFrequencyArr = set(@Html.Raw(JsonConvert.SerializeObject(ViewBag.ScheduleFrequencyList)));
+    </script>
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>Schedule Emotions Library</li>
+            </ul>
+            <p>@DateTime.Now.ToString("dd MMMM") '@DateTime.Now.Year</p>
+        </div>
+    </div>
+    <div class="top-Rbtn">
+        @if (CurrentMenuPermission.IsAdd)
+        {
+            <a href="/@tenant/look/Add" class="btn btn btn-primary add"><i class="fa fa-plus"></i> Add New</a>
+        }
+        <a href="/@tenant/Common/ShareUsers/?popupurl=/@tenant/look/ShareLook/?id=@CurrentUser.CompanyId" class="btn btn btn-primary" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-share-users">Share</a>
+        @Html.Partial("_Modal", new Modal { ID = "modal-share-users", AreaLabeledId = "modal-share-users-label", Size = ModalSize.Large })
+
+    </div>
+</div>
+
+<div class="middlebox">
+    <div class="tablediv">
+        <div class='table-cont' id='table-cont'>
+            @this.Html.Partial("_DataTableGrid")
+        </div>
+    </div>
+    
+</div>
+
+
+
+
+@section scripts{
+    <script src="~/js/Customejs/Look/Index.js"></script>
+
+}

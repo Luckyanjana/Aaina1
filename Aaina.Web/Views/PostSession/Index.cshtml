@@ -1,0 +1,578 @@
+﻿@model PostSessionDto
+@using Aaina.Common;
+
+@{
+    ViewData["Title"] = "Index";
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+    List<SelectedItemDto> accountableList = (List<SelectedItemDto>)Model.AccountableList;
+}
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li><b>During Session</b></li>
+                <li>/</li>
+                <li><b>@Model.SessionName</b></li>
+            </ul>
+            <p>@DateTime.Now.Day @DateTime.Now.ToString("MMMM") '@DateTime.Now.Year</p>
+        </div>
+    </div>
+    <div class="top-Rbtn">
+        <button class="btn btn btn-primary buttons-pdf" data-id="div_table" type="button"><span>PDF</span></button>
+        <a href="/@tenant/PostSession/Export?sessionId=@Model.SessionId&start=@(Model.StartDate.ToString("MM/dd/yyyy HH:mm"))&end=@(Model.EndDate.Value.ToString("MM/dd/yyyy HH:mm"))" class="btn btn btn-primary delegate">Export</a>
+    </div>
+</div>
+
+<div id="frm-add-edit-agenda">
+    <form asp-action="Index" asp-controller="PostSession" asp-area="" asp-route-tenant="@tenant" method="post" autocomplete="off" enctype="multipart/form-data">
+        <div id="validation-summary"></div>
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="SessionId" />
+        <input type="hidden" asp-for="StartDate" />
+        <input type="hidden" asp-for="EndDate" />
+        <input type="hidden" asp-for="tenant" />
+
+        <div class="middlebox">
+            <div class="tablediv tablediv1 tabledivbtn">
+                <div class="container list-agenda">
+                    <div class="row">
+                        <div class="col-lg-12 col-sm-12">
+                            <div class="step1">
+                                <div class="step1-in">
+                                    <table class="table table-striped" id="tbl_status">
+                                        <thead>
+                                            <tr>
+
+                                                <th scope="col">S.No</th>
+                                                <th scope="col">Agenda Item</th>
+                                              
+                                                <th scope="col">Game</th>
+                                                <th scope="col">Sub Game</th>
+                                                <th scope="col">Accountability</th>
+                                                <th scope="col">Dependency</th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col">Priority</th>
+                                                <th scope="col">Action Item</th>
+                                                <th scope="col">Deadline</th>
+                                                <th scope="col">Remarks</th>
+
+                                                <th scope="col">Coordinator Emotion</th>
+                                                <th scope="col">Emotions</th>
+                                                <th scope="col">Desicon Maker Emotion</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (Model.PostSessionAgenda.Any())
+                                            {
+                                                int i = 0;
+                                                foreach (var item in Model.PostSessionAgenda)
+                                                {
+
+                                                    <tr>
+
+                                                        <td>
+                                                            @(i+1)
+
+                                                            <input type="hidden" name="PostSessionAgenda[@i].PlayId" value="@item.PlayId" />
+                                                            <input type="hidden" name="PostSessionAgenda[@i].AccountableId" value="@item.AccountableId" />
+                                                            <input type="hidden" name="PostSessionAgenda[@i].ActualEndDate" value="@item.ActualEndDate" />
+                                                            <input type="hidden" name="PostSessionAgenda[@i].ActualStartDate" value="@item.ActualStartDate" />
+                                                            <input type="hidden" name="PostSessionAgenda[@i].AddedOn" value="@item.AddedOn" />
+                                                            <input type="hidden" name="PostSessionAgenda[@i].DeadlineDate" value="@item.DeadlineDate" />
+                                                            <input type="hidden" name="PostSessionAgenda[@i].DependancyId" value="@item.DependancyId" />
+                                                            <input type="hidden" name="PostSessionAgenda[@i].FeedbackType" value="@item.FeedbackType" />
+                                                            <input type="hidden" name="PostSessionAgenda[@i].GameId" value="@item.GameId" />
+                                                            <input type="hidden" name="PostSessionAgenda[@i].Id" value="@item.Id" />
+                                                            <input type="hidden" name="PostSessionAgenda[@i].Name" value="@item.Name" />
+                                                            <input type="hidden" name="PostSessionAgenda[@i].PostSessionId" value="@item.PostSessionId" />
+                                                            <input type="hidden" name="PostSessionAgenda[@i].StartDate" value="@item.StartDate" />
+                                                            <input type="hidden" name="PostSessionAgenda[@i].SubGameId" value="@item.SubGameId" />
+                                                            <input type="hidden" name="PostSessionAgenda[@i].Type" value="@item.Type" />
+
+                                                        </td>
+                                                        <td>@item.Name</td>
+
+                                                        <td>@item.Game</td>
+                                                        <td>@item.SubGame</td>
+                                                        <td>@item.Accountable</td>
+                                                        <td>@item.Dependancy</td>
+
+                                                        <td>
+                                                            @if (Model.IsCoordinator)
+                                                            {
+                                                                <select class="form-control action_play_status" name="PostSessionAgenda[@i].Status" data-id="@item.PlayId" data-accountable="@item.Accountable"
+                                                                        data-accountableid="@item.AccountableId" data-text="@(((StatusType)item.Status).GetEnumDescription())">
+                                                                    @foreach (var st in Model.StatusList)
+                                                                    {
+                                                                        @if (st.Value == item.Status)
+                                                                        {
+                                                                            <option selected value="@st.Value">@st.Text</option>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <option value="@st.Value">@st.Text</option>
+                                                                        }
+
+
+                                                                    }
+                                                                </select>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span>@item.StatusStr</span>
+                                                                <input type="hidden" name="PostSessionAgenda[@i].Status" value="@item.Status" />
+
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (Model.IsCoordinator)
+                                                            {
+                                                                <select class="form-control" name="PostSessionAgenda[@i].Priority">
+                                                                    @foreach (var st in Model.PriorityList)
+                                                                    {
+                                                                        @if (st.Value == item.Priority)
+                                                                        {
+                                                                            <option selected value="@st.Value">@st.Text</option>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <option value="@st.Value">@st.Text</option>
+                                                                        }
+
+
+                                                                    }
+                                                                </select>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span>@item.Prioritystr</span>
+                                                                <input type="hidden" name="PostSessionAgenda[@i].Priority" value="@item.Priority" />
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (Model.IsCoordinator)
+                                                            {
+                                                                <input type="text" class="form-control" name="PostSessionAgenda[@i].Description" value="@item.Description" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <span>@item.Description</span>
+                                                                <input type="hidden" name="PostSessionAgenda[@i].Description" value="@item.Description" />
+                                                            }
+                                                        </td>
+                                                        <td>@item.DeadlineDate.ToString("dd/MM/yyyy")</td>
+                                                        <td>
+                                                            @if (Model.IsCoordinator)
+                                                            {
+                                                                <input type="text" class="form-control" name="PostSessionAgenda[@i].Remarks" value="@item.Remarks" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <span>@item.Remarks</span>
+                                                                <input type="hidden" name="PostSessionAgenda[@i].Remarks" value="@item.Remarks" />
+                                                            }
+                                                        </td>
+
+
+
+                                                        <td>
+                                                            @if (Model.IsCoordinator)
+                                                            {
+                                                                <div class="row wrap_input" style="margin-top: 10px;">
+                                                                    <div class="col-md-12">
+                                                                        <div class="range-wrap">
+                                                                            <div class="range-value" id="view_CoordinateEmotion_@i" style="left:calc(0% + 4.5px);">
+                                                                                @if (item.CoordinateEmotion.HasValue)
+                                                                                {
+                                                                                    <span><img src="/DYF/@CurrentUser.CompanyId/EmojiImages/@(item.CoordinateEmotion).png" class="imgemoji"></span>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <span><img src="/DYF/@CurrentUser.CompanyId/EmojiImages/1.png" class="imgemoji"></span>
+                                                                                }
+
+                                                                            </div>
+                                                                            <input type="range" class="range_change valid" data-id="view_CoordinateEmotion_@i" name="PostSessionAgenda[@i].CoordinateEmotion" id="PostSessionAgenda_@(i)_CoordinateEmotion" value="@(item.CoordinateEmotion.HasValue?item.CoordinateEmotion:1)" min="1" max="10" step="1">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                @if (item.CoordinateEmotion.HasValue)
+                                                                {
+                                                                    <span><img src="/DYF/@CurrentUser.CompanyId/EmojiImages/@(item.CoordinateEmotion).png" class="imgemoji"></span>
+                                                                }
+                                                                <input type="hidden" name="PostSessionAgenda[@i].CoordinateEmotion" value="@item.CoordinateEmotion" />
+                                                            }
+                                                        </td>
+
+                                                        <td>
+
+                                                            <div class="row wrap_input" style="margin-top: 10px;">
+                                                                <div class="col-md-12">
+                                                                    <div class="range-wrap">
+                                                                        <div class="range-value" id="view_emotion_@i" style="left:calc(0% + 4.5px);">
+                                                                            @if (item.Emotions.HasValue)
+                                                                            {
+                                                                                <span><img src="/DYF/@CurrentUser.CompanyId/EmojiImages/@(item.Emotions).png" class="imgemoji"></span>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span><img src="/DYF/@CurrentUser.CompanyId/EmojiImages/1.png" class="imgemoji"></span>
+                                                                            }
+
+                                                                        </div>
+                                                                        <input type="range" class="range_change valid" data-id="view_emotion_@i" name="PostSessionAgenda[@i].Emotions" id="PostSessionAgenda_@(i)_emotion" value="@(item.Emotions.HasValue?item.Emotions:1)" min="1" max="10" step="1">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </td>
+
+                                                        <td>
+                                                            @if (Model.IsDecisionMaker)
+                                                            {
+                                                                <div class="row wrap_input" style="margin-top: 10px;">
+                                                                    <div class="col-md-12">
+                                                                        <div class="range-wrap">
+                                                                            <div class="range-value" id="view_DecisionMakerEmotion_@i" style="left:calc(0% + 4.5px);">
+                                                                                @if (item.DecisionMakerEmotion.HasValue)
+                                                                                {
+                                                                                    <span><img src="/DYF/@CurrentUser.CompanyId/EmojiImages/@(item.DecisionMakerEmotion).png" class="imgemoji"></span>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <span><img src="/DYF/@CurrentUser.CompanyId/EmojiImages/1.png" class="imgemoji"></span>
+                                                                                }
+
+                                                                            </div>
+                                                                            <input type="range" class="range_change valid" data-id="view_DecisionMakerEmotion_@i" name="PostSessionAgenda[@i].DecisionMakerEmotion" id="PostSessionAgenda_@(i)_DecisionMakerEmotion" value="@(item.DecisionMakerEmotion.HasValue?item.DecisionMakerEmotion:1)" min="1" max="10" step="1">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                @if (item.DecisionMakerEmotion.HasValue)
+                                                                {
+                                                                    <span><img src="/DYF/@CurrentUser.CompanyId/EmojiImages/@(item.DecisionMakerEmotion).png" class="imgemoji"></span>
+                                                                }
+                                                                <input type="hidden" name="PostSessionAgenda[@i].DecisionMakerEmotion" value="@item.DecisionMakerEmotion" />
+                                                            }
+                                                        </td>
+
+                                                    </tr>
+                                                    i++;
+
+                                                }
+                                            }
+
+
+                                        </tbody>
+
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div id="div_table" style="display:none">
+                            <style>
+                                .tablediv .table {
+                                    border: 1px solid #efefef;
+                                    background: #fff;
+                                }
+
+                                .table {
+                                    width: 100%;
+                                    max-width: 100%;
+                                    margin-bottom: 20px;
+                                }
+
+                                table {
+                                    border-collapse: collapse;
+                                    border-spacing: 0;
+                                }
+
+                                tablediv .table tr th {
+                                    background: #e5e5e5;
+                                    border-right: 1px solid #efefef;
+                                    color: #000000;
+                                }
+
+                                .tablediv .table tr th {
+                                    font-size: 15px;
+                                    text-align: center;
+                                    font-weight: 500;
+                                }
+
+                                .table > thead > tr > th {
+                                    vertical-align: bottom;
+                                    border-bottom: 2px solid #ddd;
+                                }
+
+                                .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+                                    padding: 8px;
+                                    line-height: 1.42857143;
+                                    vertical-align: top;
+                                    border-top: 1px solid #ddd;
+                                }
+                            </style>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+
+                                        <th scope="col">S.No</th>
+                                        <th scope="col">Agenda Item</th>
+                                        <th scope="col">Game</th>
+                                        <th scope="col">Sub Game</th>
+                                        <th scope="col">Accountability</th>
+                                        <th scope="col">Dependency</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Priority</th>
+                                        <th scope="col">Action Item</th>
+                                        <th scope="col">Deadline</th>
+                                        <th scope="col">Remarks</th>
+                                        <th scope="col">Coordinate Emotion</th>
+                                        <th scope="col">Emotions</th>
+                                        <th scope="col">Decision Maker Emotion</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.PostSessionAgenda.Any())
+                                    {
+                                        int i = 0;
+                                        foreach (var item in Model.PostSessionAgenda)
+                                        {
+
+                                            <tr>
+
+                                                <td>
+                                                    @(i+1)
+                                                </td>
+                                                <td>@item.Name</td>
+                                                
+                                                <td>@item.Game</td>
+                                                <td>@item.SubGame</td>
+                                                <td>@item.Accountable</td>
+                                                <td>@item.Dependancy</td>
+
+                                                <td>
+                                                    <span>@item.StatusStr</span>
+                                                </td>
+                                                <td>
+                                                    <span>@item.Prioritystr</span>
+                                                </td>
+                                                <td>
+                                                    <span>@item.Description</span>
+                                                </td>
+                                                <td>@item.DeadlineDate.ToString("dd/MM/yyyy")</td>
+                                                <td>
+                                                    <span>@item.Remarks</span>
+                                                </td>
+
+                                                <td>
+                                                    @if (item.CoordinateEmotion.HasValue)
+                                                    {
+                                                        <img src="@(SiteKeys.Domain)/DYF/@CurrentUser.CompanyId/EmojiImages/@(item.CoordinateEmotion)-mini.png" class="imgemoji" />
+                                                    }
+                                                </td>
+
+                                                <td>
+                                                    @if (item.Emotions.HasValue)
+                                                    {
+                                                        <img src="@(SiteKeys.Domain)/DYF/@CurrentUser.CompanyId/EmojiImages/@(item.Emotions)-mini.png" class="imgemoji" />
+                                                    }
+                                                </td>
+
+                                                <td>
+                                                    @if (item.DecisionMakerEmotion.HasValue)
+                                                    {
+                                                        <img src="@(SiteKeys.Domain)/DYF/@CurrentUser.CompanyId/EmojiImages/@(item.DecisionMakerEmotion)-mini.png" class="imgemoji" />
+                                                    }
+                                                </td>
+
+                                            </tr>
+                                            i++;
+
+                                        }
+                                    }
+
+
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="top-Rbox1 botdiv">
+            <div class="top-Rbtn">               
+                    <button class="btn btn-primary btn-submit" id="btn-submit" type="submit">Submit</button>
+                
+                <a href="/@tenant/PostSession/Export?sessionId=@Model.SessionId&start=@(Model.StartDate.ToString("MM/dd/yyyy HH:mm"))&end=@(Model.EndDate.Value.ToString("MM/dd/yyyy HH:mm"))" class="btn btn btn-primary delegate">Export</a>
+
+                <button class="btn btn btn-primary buttons-pdf" data-id="div_table" type="button"><span>PDF</span></button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div aria-hidden="true" aria-labelledby="modal-add-edit-status-label" role="dialog" tabindex="-1" id="modal-add-edit-status" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="box">
+
+                <div class="modal-header">
+                    <h4 class="modal-title pull-left" id="sub_title"></h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+
+                <div class="modal-body box-body">
+                    <div id="validation-summary"></div>
+                    <input type="hidden" id="playid" value="">
+                    <input type="hidden" id="playstatus" value="">
+                    <input type="hidden" id="accountableid" value="">
+
+                    <div class="row">
+                        <div class="col-lg-12 col-sm-12">
+
+                            <div class="form-group">
+                                <label><i class="fa fa-info-circle"></i> Comments</label>
+                                <textarea id="comments_status" class="form-control mb15"> </textarea>
+                            </div>
+
+                            <div class="form-group" id="div_delegate">
+                                <label id="delegate_label"><i class="fa fa-info-circle"></i>Delegate from  to</label>
+                                <select id="delegate_status" class="form-control">
+                                    <option value="">Select</option>
+                                    @foreach (var item in accountableList)
+                                    {
+                                        <option value="@item.Id">@item.Name</option>
+
+                                    }
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer justify-content-between">
+                    <button class="btn btn-success" id="btnsubmit" type="button" data-url="/@tenant/play/UpdateStatus"> Submit </button>
+                    <button data-dismiss="modal" id="btn-cancel" class="btn btn-default" type="button">Cancel</button>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $(document).on('click', '.range_change', function () {
+                var emotionId = $(this).attr('id');
+                var view_emotion = $(this).data('id');
+                var range = document.getElementById(emotionId),
+                    rangeV = document.getElementById(view_emotion);
+                const
+                    newValue = Number((range.value - range.min) * 100 / (range.max - range.min)),
+                    newPosition = 10 - (range.value * 5.5);
+                rangeV.innerHTML = `<span><img src="${Global.GetEmojiName(range.value)}" class="imgemoji" /></span>`;
+                rangeV.style.left = `calc(${newValue}% + (${newPosition}px))`;
+
+            });
+
+            $(".action_play_status").on('change', function () {                
+                var statusId = $(this).val();
+                var status = $(this).find("option:selected").text();
+                var id = $(this).data('id');
+                var text = $(this).data('text');
+                var accountable = $(this).data('accountable');
+                var accountableid = $(this).data('accountableid');
+
+                $("#sub_title").html(`Change status ${text} to ${status}`);
+                $("#playid").val(id);
+                $("#playstatus").val(statusId);
+                $("#accountableid").val(accountableid);
+                $("#delegate_label").html(`Delegate from ${accountable} to`);
+                $("#comments_status").val("");
+                $("#delegate_status").val("");
+
+
+                if (parseInt(statusId) == 2) {
+                    $("#div_delegate").show();
+                } else {
+                    $("#div_delegate").hide();
+                }
+
+                $("#modal-add-edit-status").modal('show');
+
+            });
+
+            $(document).on('click', '#btnsubmit', function () {
+                var url = $(this).data('url');
+                var playid = $("#playid").val();
+                var playstatus = $("#playstatus").val();
+                var accountableid = $("#accountableid").val();
+                var comments = $("#comments_status").val();
+                var delegate = $("#delegate_status").val();
+
+                if (comments == "") {
+                    alert('comment is required');
+                }
+
+                if (parseInt(playstatus) == 2 && delegate == "") {
+                    alert('Select delegate user');
+                }
+
+                if ((parseInt(playstatus) == 2 && delegate != "") || (parseInt(playstatus) != 2 && comments != "")) {
+                    var data = {
+                        PlayId: playid,
+                        StatusId: playstatus,
+                        AccountableId: accountableid,
+                        DelegateId: delegate,
+                        Description: comments
+                    };
+                    UpdateData(url, data)
+                }
+
+            });
+
+            $(".buttons-pdf").on('click', function () {
+                var id = $(this).data('id');
+                var $html = $("#" + id).html();
+                $html = $html.replace('display: none;', '');
+                
+                Global.Pdf($html);
+            });
+        })
+
+        function UpdateData(url, dataRequest) {
+            Global.ShowLoading();
+            $.ajax(url, {
+                type: "POST",
+                data: dataRequest,
+                success: function (result) {
+                    window.location.reload();
+                },
+                error: function (jqXHR, status, error) {
+
+                    if (onError !== null && onError !== undefined) {
+                        onError(jqXHR, status, error);
+                    } else {
+                  }
+                    Global.HideLoading();
+                }, complete: function () {
+                    Global.HideLoading();
+                }
+            });
+        }
+    </script>
+}

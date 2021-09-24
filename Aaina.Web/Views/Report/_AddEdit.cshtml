@@ -1,0 +1,582 @@
+﻿@model ReportDto
+@using Aaina.Common;
+@using Newtonsoft.Json;
+@{
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+}
+
+    <script>
+    function set(value) {
+        return value;
+    }
+        var allGame = '@Model.GameList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.GameList)));
+        var lookGameList = '@Model.Entity' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.Entity)));
+        var NotificationsListArr = '@Model.NotificationsList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.NotificationsList)));
+        var sessionReminderArr = '@Model.Reminder' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.Reminder)));
+        var NotificationsUnitListArr = '@Model.NotificationsUnitList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.NotificationsUnitList)));
+    var ParticipantTypeListArr = '@Model.AccountAbilityList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.AccountAbilityList)));
+    </script>
+
+<link href="~/css/Stepwizard.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li><b>Add Report</b></li>
+            </ul>
+            <p>@DateTime.Now.Day @DateTime.Now.ToString("MMMM") '@DateTime.Now.Year</p>
+        </div>
+    </div>
+</div>
+<div id="frm-add-edit-report">
+    <form asp-action="add" asp-controller="report" asp-area="" asp-route-tenant="@tenant" method="post" autocomplete="off">
+        <div id="validation-summary"></div>
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="GameId" />
+        <div class="middlebox">
+            <div class="tablediv tablediv1 tabledivbtn">
+                <div class="stepbox">
+                    <ul class="nav nav-tabs responsive-tabs">
+                        <li class="active"><a href="#tab1"><span>1</span> Information</a></li>
+                        <li><a href="#tab2"><span>2</span> Entities</a></li>
+                        <li><a href="#tab3"><span>3</span>Scheduler</a></li>
+                        <li><a href="#tab4"><span>4</span>Report Journey</a></li>
+                        <li><a href="#tab5"><span>5</span>Reminders</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tab1">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+                                                <div class="form-group">
+                                                    <label><i class="fa fa-info-circle"></i> Report Name</label>
+                                                    <input asp-for="Name" class="form-control" placeholder="Report Name" data-msg-required="*required" data-rule-required="true" />
+                                                    <span asp-validation-for="Name" class="field-validation-error"></span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <textarea asp-for="Desciption" class="form-control" placeholder="Desription"></textarea>
+                                                </div>
+                                                <div class="col-lg-6 col-sm-12">
+                                                    <div class="form-group">
+                                                        <label><i class="fa fa-info-circle"></i> Type</label>
+                                                        <select asp-for="TypeId" class="form-control" asp-items="@(new SelectList(Model.TypeList,"Id","Name"))"></select>
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-6 col-sm-12">
+                                                    <div class="form-group">
+                                                        <label><i class="fa fa-info-circle"></i> Form Builder</label>
+                                                        <select asp-for="FormBuilderId" class="form-control" asp-items="@(new SelectList(Model.FormBuilderList,"Id","Name"))"></select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-sm-12">
+                                                    <div class="step1">
+                                                        <div class="step1-in">
+                                                            <div class="form-group">
+                                                                <label><i class="fa fa-info-circle"></i> Entyty Type</label>
+                                                                <select asp-for="EntityType" class="form-control" asp-items="@(new SelectList(Model.EntityTypeList,"Value","Text"))">
+                                                                    <option value="">Select</option>
+                                                                </select>
+                                                                <span asp-validation-for="EntityType" class="field-validation-error"></span>
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <select asp-for="EntityIds" class="form-control select2" style="width:100%" asp-items="@(new SelectList(Model.EntityIdList,"Value","Text"))"></select>
+                                                                <span asp-validation-for="EntityIds" class="field-validation-error"></span>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-6 col-sm-12">
+                                                    <div class="form-group">
+                                                        <label style="margin-top:25px;">
+                                                            <input type="checkbox" asp-for="IsActive" />
+                                                            Is Active
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+
+                                                <div class="table-responsive">
+                                                    @await Html.PartialAsync("_all", Model.AllRecord)
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="tab2">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+                                                <div class="form-group">
+
+                                                    <div class="table-responsive">
+                                                        <table class="table" id="tbl_game">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th scope="col">Id</th>
+                                                                    <th scope="col" class="span_type">Game</th>
+                                                                    <th scope="col">Select</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1 sele-r-right" id="div_add_game">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="tab3">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+
+
+                                                @{
+                                                    if (Model.Scheduler.Type == 0)
+                                                    {
+                                                        Model.Scheduler.Type = (int)ScheduleType.OneTime;
+                                                    }
+                                                }
+                                                <div class="form-group">
+                                                    @{
+                                                        if (Model.Scheduler.Type == 0)
+                                                        {
+                                                            Model.Scheduler.Type = (int)ScheduleType.OneTime;
+                                                        }
+                                                    }
+                                                    <div class="row lookschednotenable">
+                                                        <div class="form-group">
+                                                            <div class="radio">
+                                                                <label>
+                                                                    <input type="radio" asp-for="Scheduler.Type" value="@((int)ScheduleType.OneTime)">
+                                                                    @ScheduleType.OneTime.GetEnumDescription()
+                                                                </label>
+
+                                                                <label>
+                                                                    <input type="radio" asp-for="Scheduler.Type" value="@((int)ScheduleType.Recurring)">
+                                                                    @ScheduleType.Recurring.GetEnumDescription()
+                                                                </label>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row lookschednotenable">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label asp-for="Scheduler.StartDate">Start Date</label>
+                                                                <input type="text" asp-for="Scheduler.StartDate" class="form-control datepicker" data-msg-required="*required" data-rule-required="true" />
+                                                                <span asp-validation-for="Scheduler.StartDate" class="field-validation-error"></span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label asp-for="Scheduler.TimeStart">Start Time</label>
+                                                                <input type="text" asp-for="Scheduler.TimeStart" class="form-control timepicker" data-msg-required="*required" data-rule-required="true" />
+                                                                <span asp-validation-for="Scheduler.TimeStart" class="field-validation-error"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row lookschednotenable">
+
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label asp-for="Scheduler.EndDate">End Date</label>
+                                                                <input type="text" asp-for="Scheduler.EndDate" class="form-control datepicker" />
+                                                                <span asp-validation-for="Scheduler.EndDate" class="field-validation-error"></span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label asp-for="Scheduler.TimeEnd">End Time</label>
+                                                                <input type="text" asp-for="Scheduler.TimeEnd" class="form-control timepicker" />
+                                                                <span asp-validation-for="Scheduler.TimeEnd" class="field-validation-error"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-lg-6 col-sm-12 lookschedulerrecurring" style="display:@(Model.Scheduler.Type==(int)ScheduleType.Recurring?"block":"none");">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label asp-for="Scheduler.Frequency">Frequency</label>
+                                                    <select asp-for="Scheduler.Frequency" class="form-control" asp-items="@(new SelectList(Model.ScheduleFrequencyList,"Id","Name"))">
+                                                        <option value="">Select</option>
+                                                    </select>
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label asp-for="Scheduler.DailyFrequency">Daily Frequency</label>
+                                                    <select asp-for="Scheduler.DailyFrequency" class="form-control" asp-items="@(new SelectList(Model.DailyFrequencyList,"Id","Name"))">
+                                                        <option value="">Select</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row Weekly" style="display:@(Model.Scheduler.Frequency==(int)ScheduleFrequency.Weekly?"block":"none");">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    @foreach (var item in Model.WeekDayList)
+                                                    {
+                                                        <label>
+                                                            <input type="checkbox" name="SessionScheduler.DaysOfWeekList" @(Model.Scheduler.DaysOfWeekList.Any(a => a == int.Parse(item.Id)) ? "checked" : "") class="weekdays" value="@item.Id" />
+                                                            @item.Name
+                                                        </label>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+
+                                            <div class="col-md-6" id="div_LookScheduler_RecurseEvery">
+                                                <div class="form-group">
+                                                    <label asp-for="Scheduler.RecurseEvery">Recurse Every</label>
+                                                    <input type="text" asp-for="Scheduler.RecurseEvery" class="form-control" />
+                                                    <span asp-validation-for="Scheduler.RecurseEvery" class="field-validation-error"></span>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-md-6 Monthly" style="display:@(Model.Scheduler.Frequency==(int)ScheduleFrequency.Monthly?"block":"none");">
+                                                <div class="form-group">
+                                                    <label asp-for="Scheduler.MonthlyOccurrence">Monthly Occurrence</label>
+                                                    <select asp-for="Scheduler.MonthlyOccurrence" class="form-control" asp-items="@(new SelectList(Model.MonthlyOccurrenceList,"Id","Name"))">
+                                                        <option value="">Select</option>
+                                                    </select>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 Monthly" id="div_ExactDateOfMonth" style="display:@( Model.Scheduler.Frequency==(int)ScheduleFrequency.Monthly && Model.Scheduler.MonthlyOccurrence==(int)ScheduleMonthlyOccurrence.Days?"block":"none");">
+                                                <div class="form-group">
+                                                    <label asp-for="Scheduler.ExactDateOfMonth ">Date Of Month </label>
+                                                    <input type="text" asp-for="Scheduler.ExactDateOfMonth " class="form-control" />
+                                                    <span asp-validation-for="Scheduler.ExactDateOfMonth " class="field-validation-error"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row">
+
+                                            <div class="col-md-6 Monthly" id="div_ExactWeekdayOfMonth" style="display:@(Model.Scheduler.MonthlyOccurrence==(int)ScheduleMonthlyOccurrence.Week?"block":"none");">
+                                                <div class="form-group">
+                                                    <label asp-for="Scheduler.ExactWeekdayOfMonth ">Week day Of Month </label>
+                                                    <select asp-for="Scheduler.ExactWeekdayOfMonth " class="form-control" asp-items="@(new SelectList(Model.WeekDayList,"Id","Name"))">
+                                                        <option value="">Select</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 Monthly" id="div_ExactWeekdayOfMonthEvery" style="display:@(Model.Scheduler.MonthlyOccurrence==(int)ScheduleMonthlyOccurrence.Week?"block":"none");">
+                                                <div class="form-group">
+                                                    <label asp-for="Scheduler.ExactWeekdayOfMonthEvery ">Week day Of Month Every</label>
+                                                    <input type="text" asp-for="Scheduler.ExactWeekdayOfMonthEvery " class="form-control" />
+                                                    <span asp-validation-for="Scheduler.ExactWeekdayOfMonthEvery " class="field-validation-error"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row" id="div_OccursEveryTimeUnit" style="display:@(Model.Scheduler.DailyFrequency==(int)ScheduleDailyFrequency.Every?"block":"none");">
+
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label asp-for="Scheduler.OccursEveryValue  ">Occurs Every Value  </label>
+                                                    <input type="text" asp-for="Scheduler.OccursEveryValue" class="form-control" />
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label asp-for="Scheduler.OccursEveryTimeUnit ">Occurs Every Time Unit</label>
+                                                    <select asp-for="Scheduler.OccursEveryTimeUnit" class="form-control" asp-items="@(new SelectList(Model.OccursEveryTimeUnitList,"Id","Name"))">
+                                                        <option value="">Select</option>
+                                                    </select>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="tab4">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+
+                                                <div class="table-responsive">
+                                                    <table class="table" id="tbl_user">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">Id</th>
+                                                                <th scope="col">Type</th>
+                                                                <th scope="col">Players</th>
+                                                                <th scope="col">Role</th>
+                                                                <th scope="col">Attach</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @{
+                                                                int rindex = 0;
+                                                            }
+                                                            @foreach (var item in Model.PlayerList)
+                                                            {
+                                                                var atter = Model.ReportJourney.FirstOrDefault(f => f.UserId == item.UserId);
+                                                                var IsAddedAtter = atter != null && atter.Id > 0;
+                                                                <tr>
+                                                                    <td>@item.UserId</td>
+                                                                    <td>@(((PlayersType)item.UserTypeId).ToString())</td>
+                                                                    <td>@item.Name</td>
+                                                                    <td>@item.Role</td>
+                                                                    <td>
+
+                                                                        @if (IsAddedAtter)
+                                                                        {
+
+                                                                            <input type="checkbox" value="true" data-divid="div_add_mainpower" checked data-type="mainpower" data-id="@item.UserId" id="mainpower_@item.UserId" data-name="@item.Name" data-typeid="1" data-typename="@(((PlayersType)item.UserTypeId).ToString())" class="added1" />
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <input type="checkbox" value="false" data-divid="div_add_mainpower" data-type="mainpower" data-id="@item.UserId" id="mainpower_@item.UserId" data-name="@item.Name" class="added1" data-typeid="1" data-typename="@(((PlayersType)item.UserTypeId).ToString())" />
+                                                                        }
+
+                                                                    </td>
+
+                                                                </tr>
+
+                                                                rindex++;
+                                                            }
+
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="step1 sele-r-right">
+                                                    <table class="table" id="div_add_mainpower">
+                                                        <thead>
+                                                            <tr>
+
+                                                                <th>
+                                                                    Type
+                                                                </th>
+                                                                <th>
+                                                                    Name
+                                                                </th>
+                                                                <th>
+                                                                    Accountablity
+                                                                </th>
+                                                                <th>
+                                                                    attach
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @{
+                                                                int index1 = 0;
+
+                                                            }
+                                                            @foreach (var item in Model.ReportJourney)
+                                                            {
+                                                                var atter = Model.PlayerList.FirstOrDefault(f => f.UserId == item.UserId);
+                                                                <tr id="tr_mainpower_@item.UserId">
+                                                                    <td>Mapower</td>
+                                                                    <td>@(atter!=null? atter.Name:"")</td>
+                                                                    <td>
+                                                                        <select name="ReportJourney[@index1].AccountAbilityId" class="form-control">
+
+                                                                            @foreach (var se in Model.AccountAbilityList)
+                                                                            {
+                                                                                if (int.Parse(se.Id) == item.AccountAbilityId)
+                                                                                {
+                                                                                    <option value="@se.Id" selected>@se.Name</option>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <option value="@se.Id">@se.Name</option>
+                                                                                }
+
+                                                                            }
+                                                                        </select>
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="hidden" name="ReportJourney[@index1].id" value="@item.Id">
+                                                                        <input type="hidden" name="ReportJourney[@index1].typeid" value="@item.TypeId">
+                                                                        <input type="hidden" name="ReportJourney[@index1].userId" value="@item.UserId">
+                                                                        <a href="javascript:void(0);" data-txt="Surendra Kandira" data-id="mainpower_@item.UserId" class="choice_remove"><i class="fa fa-close"></i></a>
+                                                                    </td>
+                                                                </tr>
+
+                                                                index1++;
+                                                            }
+                                                        </tbody>
+                                                    </table>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="tab-pane" id="tab5">
+                            <div class="container">
+                                <div class="row">
+
+                                    <div class="col-lg-8 col-sm-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="step1 sele-r-right">
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>
+                                                                    Notification type
+                                                                </th>
+                                                                <th>
+                                                                    Every
+                                                                </th>
+                                                                <th>
+                                                                    Unit
+                                                                </th>
+                                                                <th>
+                                                                    action
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <!-- ko if:notificationslistarr().length > 0 -->
+                                                        <tbody data-bind="foreach: notificationslistarr">
+
+
+                                                            <tr>
+                                                                <td>
+                                                                    <select data-bind="value:typeId,options: NotificationsTypeList,optionsText: 'Name',optionsValue: 'Id',optionsCaption:'Select',attr:{name:'Reminder['+$index()+'].typeId'}" data-msg-required="*required" data-rule-required="true" class="form-control">
+                                                                        <option></option>
+                                                                    </select>
+                                                                    <span class="field-validation-error field-validation-valid" data-bind="attr:{'data-valmsg-for':'Reminder['+$index()+'].typeId'}" data-valmsg-replace="true"></span>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" class="form-control" data-bind="value:every ,attr:{name:'Reminder['+$index()+'].every'}" data-msg-required="*required" data-rule-required="true" />
+                                                                    <span class="field-validation-error field-validation-valid" data-bind="attr:{'data-valmsg-for':'Reminder['+$index()+'].every'}" data-valmsg-replace="true"></span>
+                                                                </td>
+                                                                <td>
+                                                                    <select data-bind="value:unit,options: NotificationsUnitTypeList,optionsText: 'Name',optionsValue: 'Id',optionsCaption:'Select',attr:{name:'Reminder['+$index()+'].unit'}" data-msg-required="*required" data-rule-required="true" class="form-control">
+                                                                        <option></option>
+                                                                    </select>
+                                                                    <span class="field-validation-error field-validation-valid" data-bind="attr:{'data-valmsg-for':'Reminder['+$index()+'].unit'}" data-valmsg-replace="true"></span>
+                                                                </td>
+                                                                <td> <a href="javascript:void(0);" data-bind="click: $parent.remove"><i class="fa fa-trash-o"></i> </a> </td>
+                                                            </tr>
+
+                                                        </tbody>
+                                                        <!-- /ko -->
+                                                    </table>
+                                                    <div class="pull-left">
+                                                        <button class="btn btn-success" data-bind='click: add'>Add</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 col-sm-12">
+
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="top-Rbox1 botdiv">
+            <div class="top-Rbtn">
+                <a href="javascript:void(0);" class="btn btn-secondary backBtn">Back</a>
+                @if (CurrentMenuPermission.IsAdd || CurrentMenuPermission.IsEdit)
+                {
+                <button class="btn btn-primary btn-submit" id="btn-submit" type="submit">Submit</button>
+                }
+                <a href="javascript:void(0);" class="btn btn-primary nextBtn">Next</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+
+
+@Html.Partial("_Modal", new Modal { ID = "modal-action-delete-report", AreaLabeledId = "modal-action-delete-report-label", Size = ModalSize.Small })
+
+@section scripts{
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="~/js/Customejs/Report/AddEdit.js" asp-append-version="true"></script>
+}
+
+

@@ -1,0 +1,455 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@model UserProfileDto
+@using Aaina.Common;
+@using Newtonsoft.Json;
+
+<script>
+    function set(value) {
+        return value;
+    }
+    var gamedata = '@Model.AllForChart' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.AllForChart.Select(x=> new { id=x.Id,name=x.Name, parent=x.ParentId}).ToList())));
+
+    var allGame = '@Model.AllGame' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.AllGame)));
+
+    var roleList = '@Model.RoleList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.RoleList)));
+
+     var gameRoleList = '@Model.GameRoleList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.GameRoleList)));
+
+</script>
+
+<link href="~/plugins/Org-Chart/jquery.orgchart.css" rel="stylesheet" />
+<link href="~/css/Stepwizard.css" rel="stylesheet" />
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>Add/Edit Player</li>
+                <li>/</li>
+                <li><b>Basic Info</b></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div id="frm-add-edit-user">
+    <form asp-action="addedit" asp-controller="user" asp-area="admin" method="post" autocomplete="off" enctype="multipart/form-data">
+        <div id="validation-summary"></div>
+        <input type="hidden" asp-for="Id" />
+
+        <div class="middlebox">
+            <div class="tablediv tablediv1 tabledivbtn">
+                <div class="stepbox">
+                    <ul class="nav nav-tabs responsive-tabs">
+                        <li class="active"><a href="#basicinfo"><span>1</span> Basic Info</a></li>
+                        <li><a href="#documantion"><span>2</span> Documentation</a></li>
+                        <li><a href="#gamrole"><span>3</span> Assign Games & Roles</a></li>
+                        <li><a href="#basicmorinfo"><span>4</span> More Info</a></li>
+
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="basicinfo">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-8 col-sm-12">
+                                        <div class="row">
+                                            <div class="col-lg-4 col-sm-12">
+                                                <div class="form-group">
+                                                    <label>First Name</label>
+                                                    <input type="text" asp-for="Fname" class="form-control" placeholder="First Name" />
+                                                    <span asp-validation-for="Fname" class="field-validation-error"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4 col-sm-12">
+                                                <div class="form-group">
+                                                    <label>Middle Name</label>
+                                                    <input type="text" asp-for="Mname" class="form-control" placeholder="Middle Name" />
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4 col-sm-12">
+                                                <div class="form-group">
+                                                    <label>Last Name</label>
+                                                    <input type="text" asp-for="Lname" class="form-control" placeholder="Last Name" />
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4 col-sm-12">
+                                                <div class="form-group">
+                                                    <label>Gender</label>
+                                                    <select asp-for="Gender" class="form-control">
+                                                        <option value="">Select</option>
+                                                        <option value="1">Male</option>
+                                                        <option value="2">Female</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4 col-sm-12">
+                                                <div class="form-group">
+                                                    <label>Date of Birth</label>
+                                                    <input type="text" asp-for="Dob" class="form-control datepicker" />
+                                                    <span asp-validation-for="Dob" class="field-validation-error"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4 col-sm-12">
+                                                <div class="form-group">
+                                                    <label>Joining Date</label>
+                                                    <input type="text" asp-for="Joining" class="form-control datepicker" />
+                                                    <span asp-validation-for="Joining" class="field-validation-error"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-8 col-sm-12">
+                                                <div class="form-group">
+                                                    <label>Username</label>
+                                                    <input type="text" asp-for="UserName" class="form-control" placeholder="UserName" />
+                                                    <span asp-validation-for="UserName" class="field-validation-error"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4 col-sm-12">
+                                                <div class="form-group">
+                                                    <label>Player Type</label>
+                                                    <select asp-for="PlayerType" class="form-control" asp-items="@(new SelectList(Model.PlayerTypeList,"Id","Name"))"> </select>
+                                                    <span asp-validation-for="PlayerType" class="field-validation-error"></span>
+                                                </div>
+                                            </div>
+                                            @if (Model.Id > 0)
+                                            {
+                                                <div class="col-lg-6 col-sm-12">
+                                                    <div class="form-group">
+                                                        <label>Password</label>
+                                                        <input type="password" asp-for="Password" class="form-control" placeholder="Password" value="**********" />
+                                                        <span asp-validation-for="Password" class="field-validation-error"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-sm-12">
+                                                    <div class="form-group">
+                                                        <label>Confirm Password</label>
+                                                        <input type="password" asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password" value="**********" />
+                                                        <span asp-validation-for="ConfirmPassword" class="field-validation-error"></span>
+                                                    </div>
+                                                </div>
+
+                                            }
+                                            else
+                                            {
+                                                <div class="col-lg-6 col-sm-12">
+                                                    <div class="form-group">
+                                                        <label>Password</label>
+                                                        <input type="password" asp-for="Password" class="form-control" placeholder="Password" />
+                                                        <span asp-validation-for="Password" class="field-validation-error"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6 col-sm-12">
+                                                    <div class="form-group">
+                                                        <label>Confirm Password</label>
+                                                        <input type="password" asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password" />
+                                                        <span asp-validation-for="ConfirmPassword" class="field-validation-error"></span>
+                                                    </div>
+                                                </div>
+
+                                            }
+                                            <div class="col-lg-6 col-sm-12">
+                                                <div class="form-group">
+                                                    <label>Email ID</label>
+                                                    <input type="text" asp-for="Email" class="form-control" placeholder="Email Id" />
+                                                    <span asp-validation-for="Email" class="field-validation-error"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-sm-12">
+                                                <div class="form-group">
+                                                    <label>Contact</label>
+                                                    <input type="text" asp-for="MobileNo" class="form-control" placeholder="Contact" />
+                                                    <span asp-validation-for="MobileNo" class="field-validation-error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-sm-12">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-sm-12">
+                                                <div class="step1 sele-r-right basi-right">
+                                                    <label><a href="javascript:void(0);" class="button_uploader"><i class="fa fa-cloud-upload"></i></a><a href="javascript:void(0);" class="button_uploader"><i class="fa fa-files-o"></i></a></label>
+                                                    <p>Avtar/Profile Image</p>
+                                                    <input type="hidden" asp-for="AvatarUrl" />
+                                                    <input type="file" name="AvatarUrlfile" id="AvatarUrlfile" accept="image/png,image/jpeg" class="hide" />
+                                                    @if (!string.IsNullOrEmpty(Model.AvatarUrl))
+                                                    {
+                                                        <img src="~/DYF/@CurrentUser.CompanyId/EmployeeImages/@Model.AvatarUrl" id="view_AvatarUrlfile" style="max-height:90%" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="" id="view_AvatarUrlfile" style="max-height:90%" />
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-12 col-sm-12">
+                                                <div class="form-group">
+                                                    <label>Status</label>
+                                                    <input type="checkbox" asp-for="IsActive" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="documantion">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-7 col-sm-12">
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <label><i class="fa fa-info-circle"></i> ID Proof</label>
+                                                <div class="row">
+                                                    <div class="col-lg-7 col-sm-12">
+                                                        <div class="form-group m0">
+                                                            <select asp-for="IdProofType" class="form-control">
+                                                                <option value="">Select</option>
+                                                                <option value="1">Aadhar Card</option>
+                                                                <option value="2">Pan Card</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-5 col-sm-12">
+                                                        <div class="form-group">
+                                                            <input type="hidden" asp-for="IdProffFile" />
+                                                            <input type="file" name="IdProffFileFile" id="IdProffFileFile" accept="application/pdf" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-7 col-sm-12">
+                                                        <div class="form-group">
+                                                            <label><i class="fa fa-info-circle"></i> Education Certificates </label>
+                                                            <input type="hidden" asp-for="EduCert" />
+                                                            <input type="file" name="EduCertFile" id="EduCertFile" accept="application/pdf" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-7 col-sm-12">
+                                                        <div class="form-group">
+                                                            <label><i class="fa fa-info-circle"></i> Experience Certificates </label>
+                                                            <input type="hidden" asp-for="ExpCert" />
+                                                            <input type="file" name="ExpCertFile" id="ExpCertFile" accept="application/pdf" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-7 col-sm-12">
+                                                        <div class="form-group">
+                                                            <label><i class="fa fa-info-circle"></i> Police Verification</label>
+                                                            <input type="hidden" asp-for="PoliceVerification" />
+                                                            <input type="file" name="PoliceVerificationFile" id="PoliceVerificationFile" accept="application/pdf" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-7 col-sm-12">
+                                                        <div class="form-group">
+                                                            <label><i class="fa fa-info-circle"></i> Others</label>
+                                                            <input type="hidden" asp-for="Other" />
+                                                            <input type="file" name="OtherFile" id="OtherFile" accept="application/pdf" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-5 col-sm-12">
+                                        <div class="table-responsive mt25">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Type Name</th>
+                                                        <th scope="col">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (!string.IsNullOrEmpty(Model.IdProffFile))
+                                                    {
+                                                        <tr>
+
+                                                            <td>
+                                                                Id Proof
+                                                            </td>
+                                                            <td>
+                                                                <a href="~/@CurrentUser.CompanyId/Userdoc/@Model.IdProffFile" target="_blank"><i class="fa fa-eye mtx"></i></a>
+
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(Model.EduCert))
+                                                    {
+                                                        <tr>
+
+                                                            <td>
+                                                                Education Certificates
+                                                            </td>
+                                                            <td>
+                                                                <a href="~/@CurrentUser.CompanyId/Userdoc/@Model.EduCert" target="_blank"><i class="fa fa-eye mtx"></i></a>
+
+                                                            </td>
+                                                        </tr>
+                                                    }
+
+
+
+                                                    @if (!string.IsNullOrEmpty(Model.ExpCert))
+                                                    {
+                                                        <tr>
+
+                                                            <td>
+                                                                Experience Certificates
+                                                            </td>
+                                                            <td>
+                                                                <a href="~/@CurrentUser.CompanyId/Userdoc/@Model.ExpCert" target="_blank"><i class="fa fa-eye mtx"></i></a>
+
+                                                            </td>
+                                                        </tr>
+                                                    }
+
+
+                                                    @if (!string.IsNullOrEmpty(Model.PoliceVerification))
+                                                    {
+                                                        <tr>
+
+                                                            <td>
+                                                                Police Verification
+                                                            </td>
+                                                            <td>
+                                                                <a href="~/@CurrentUser.CompanyId/Userdoc/@Model.PoliceVerification" target="_blank"><i class="fa fa-eye mtx"></i></a>
+
+                                                            </td>
+                                                        </tr>
+                                                    }
+
+
+                                                    @if (!string.IsNullOrEmpty(Model.Other))
+                                                    {
+                                                        <tr>
+
+                                                            <td>
+                                                                Other
+                                                            </td>
+                                                            <td>
+                                                                <a href="~/@CurrentUser.CompanyId/Userdoc/@Model.Other" target="_blank"><i class="fa fa-eye mtx"></i></a>
+
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="basicmorinfo">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-8 col-sm-12">
+                                        <div class="row">
+                                            <div class="col-lg-6 col-sm-12">
+                                                <div class="form-group">
+                                                    <label>Father's Name</label>
+                                                    <input asp-for="FatherName" class="form-control" type="text" placeholder="Father's Name">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-sm-12">
+                                                <div class="form-group">
+                                                    <label>Contact</label>
+                                                    <input asp-for="FatherMobileNo" class="form-control" type="text" placeholder="Contact">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-sm-12">
+                                                <div class="form-group">
+                                                    <label>Mother's Name</label>
+                                                    <input asp-for="MotherName" class="form-control" type="text" placeholder="Mother's Name">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-sm-12">
+                                                <div class="form-group">
+                                                    <label>Contact</label>
+                                                    <input asp-for="MotherMobileNo" class="form-control" type="text" placeholder="Contact">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-sm-12">
+                                                <div class="form-group">
+                                                    <label>Guardian's Name</label>
+                                                    <input asp-for="GuardianName" class="form-control" type="text" placeholder="Guardian's Name">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-sm-12">
+                                                <div class="form-group">
+                                                    <label>Contact</label>
+                                                    <input asp-for="GuardianMobileNo" class="form-control" type="text" placeholder="Contact">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-6 col-sm-12">
+                                                <div class="form-group">
+                                                    <label>Address</label>
+                                                    <input asp-for="Address" class="form-control" type="text" placeholder="Address">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="gamrole">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+                                                <div class="form-group">
+                                                    <label><i class="fa fa-info-circle"></i> Select Look</label>
+                                                    <input name="" class="form-control" type="text" placeholder="ID/Look Name">
+                                                    <a href="javascript:void(0);" class="iset"><i class="fa  fa-search"></i></a>
+                                                </div>
+                                                <div class="table-responsive">
+                                                    <table class="table" id="tbl_user">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">Id</th>
+                                                                <th scope="col">Game</th>
+                                                                <th scope="col">Role</th>
+                                                                <th scope="col">Select</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody></tbody>
+                                                    </table>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1 sele-r-right" style="overflow:auto;">
+                                            <div id="gameorgChart"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="top-Rbox1 botdiv">
+                <div class="top-Rbtn">
+                    <a href="javascript:void(0);" class="btn btn-secondary backBtn">Back</a>
+                    <button class="btn btn-primary btn-submit" id="btn-submit" type="submit">Submit</button>
+                    <a href="javascript:void(0);" class="btn btn-primary nextBtn">Next</a>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+
+
+
+@section scripts{
+    <script src="~/plugins/Org-Chart/jquery.orgchart.js" asp-append-version="true"></script>
+    <script src="~/js/Customejs/User/AddEdit.js" asp-append-version="true"></script>
+}
+
+

@@ -1,0 +1,227 @@
+﻿
+@model GameGridFeedbackDto
+@using Aaina.Common;
+@{
+    ViewData["Title"] = "Index";
+    int id = ViewBag.id;
+}
+
+@{
+    int companyId = CurrentUser.CompanyId;
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+}
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>@Model.GameName</li>
+                <li>/</li>
+                @*<li>Resources</li>
+                    <li>/</li>
+                    <li><b>HZL Affairs</b></li>*@
+            </ul>
+            <p>@(DateTime.Now.ToString("dd MMMM yyyy"))</p>
+        </div>
+    </div>
+    <div class="top-Rbtn">
+        <a href="javascript:void(0);" data-url="/@tenant/project/Feedback" class="btn btn btn-primary btn_feedback">Feedback</a>
+
+        @*<a href="/@tenant/Common/ShareUsers/?popupurl=/@tenant/project/Share/?lookId=@Model.LookId$attributeId=@Model.AttributeId$filterId=@Model.FilterId" class="btn btn btn-primary" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-share-users">Share</a>*@
+        @Html.Partial("_Modal", new Modal { ID = "modal-share-users", AreaLabeledId = "modal-share-users-label", Size = ModalSize.Large })
+    </div>
+</div>
+<div class="top-Rbox1">
+    <div class="selctbox">
+        <select asp-for="LookId" asp-items="@(new SelectList(Model.LookList,"Id","Name"))"></select>
+        <input type="hidden" asp-for="GameId" />
+    </div>
+
+
+</div>
+<div class="middlebox">
+    <div class="tablediv tabledivbtn">
+        <div class='table-cont' id='table-cont'>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" class="all_game_check" /></th>
+                        <th scope="col">Games</th>
+                        @if (!Model.IsSelf)
+                        {
+                            <th scope="col">Overall</th>
+                        }
+                        @foreach (var item in Model.LookGroupList)
+                        {
+                            <th scope="col">@item.Name</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.AllGames.Any())
+                    {
+                        int i = 1;
+                        @Html.Raw(Url.BindSubRowUser(Model.AllGames, Model, "", "", 0, companyId));
+                    }
+                    else
+                    {
+                        <tr>
+
+                            <td colspan="@(Model.LookGroupList.Count+3)">Record not found</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="div_table" style="display:none">
+        <style>
+            .tablediv .table {
+                border: 1px solid #efefef;
+                background:#fff;
+            }
+
+            .table {
+                width: 100%;
+                max-width: 100%;
+                margin-bottom: 20px;
+            }
+
+            table {
+                border-collapse: collapse;
+                border-spacing: 0;
+            }
+
+            tablediv .table tr th {
+                background: #e5e5e5;
+                border-right: 1px solid #efefef;
+                color: #000000;
+            }
+
+            .tablediv .table tr th {
+                font-size: 16px;
+                text-align: center;
+                font-weight: 500;
+            }
+
+            .table > thead > tr > th {
+                vertical-align: bottom;
+                border-bottom: 2px solid #ddd;
+            }
+
+            .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+                padding: 8px;
+                line-height: 1.42857143;
+                vertical-align: top;
+                border-top: 1px solid #ddd;
+            }
+        </style>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+
+                    <th scope="col">Games</th>
+                    <th scope="col">Overall</th>
+                    @foreach (var item in Model.LookGroupList)
+                    {
+                        <th scope="col">@item.Name</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.AllGames.Any())
+                {
+                    int i = 1;
+                    @Html.Raw(Url.BindSubRowWithPlus(Model.AllGames, Model, "", "", 0, companyId));
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="@(Model.LookGroupList.Count+3)">Record not found</td>
+                    </tr>
+                }
+
+
+            </tbody>
+        </table>
+    </div>
+    <div class="top-Rbox1 botdiv">
+        <div class="switchbtn">
+            <label class="switch">
+                <input type="checkbox" id="togBtn" checked>
+                <div class="slider round">
+                    <!--ADDED HTML -->
+                    <span class="on">LINKED</span> <span class="off">OFF</span>
+                    <!--END-->
+                </div>
+            </label>
+        </div>
+        @*<div class="switchbtn">
+            <a href="/@tenant/play?v=today" class="btn btn btn-primary btn_feedback">Game Plays</a>
+        </div>*@
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var table;
+
+        function CheckUnChekChild($data) {
+
+            var val = $data.val();
+            $(".parent_" + val).prop('checked', $data.is(":checked"));
+            $(".parent_" + val).each(function () {
+                CheckUnChekChild($(this));
+            });
+        }
+
+        $(function () {
+
+            $('.all_game_check').on('change').change(function () {
+                $(".game_check").prop('checked', $(this).is(":checked"));
+
+            });
+
+            $('.game_check').on('change').change(function () {
+                CheckUnChekChild($(this));
+
+            });
+
+            $('a[data-toggle="collapse"]').on('click', function () {
+                var objectID = '.' + $(this).attr('id');
+
+                if ($(objectID).hasClass('in')) {
+                    $(objectID).removeClass('in');
+                    $(this).html('<span class="fa fa-plus-square mtx" ></span>');
+                    $(objectID).hide();
+                }
+                else {
+                    $(objectID).addClass('in');
+                    $(this).html('<span class="fa fa-minus-circle mtx" ></span>');
+                    $(objectID).show();
+                }
+            });
+
+
+            $(".btn_feedback").on('click', function () {
+
+                var gameId = $("#GameId").val();
+                var lookId = $("#LookId").val();
+                var checkedItemsAsString = $('.game_check:checked').map(function () { return $(this).val().toString(); }).get().join(",");
+                window.location.href = `/${'@tenant'}/project/Feedback?lookId=${lookId}&pid=${checkedItemsAsString}`;
+            });
+
+            $("#LookId").on('change', function () {
+                var lookId = $(this).val();
+                var gameId = $("#GameId").val();
+                window.location.href = `/${'@tenant'}/project/gamefeebback?lookId=${lookId}`;
+            });
+
+        });
+    </script>
+
+}

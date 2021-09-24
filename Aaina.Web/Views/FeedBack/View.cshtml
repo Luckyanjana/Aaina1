@@ -1,0 +1,350 @@
+﻿@model GameGridFeedbackDto
+@using Aaina.Common;
+@{ ViewData["Title"] = "Index";
+    int id = Model.GameId;
+    int companyId = CurrentUser.CompanyId;
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+}
+
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>@Model.GameName</li>
+                <li>/</li>
+                @*<li>Resources</li>
+            <li>/</li>
+            <li><b>HZL Affairs</b></li>*@
+            </ul>
+            <p class="pull-left">From: <input class="form-control datepicker" id="FilterFromDate" value="@(Model.FilterFromDate.HasValue?Model.FilterFromDate:DateTime.Now)" /> </p>
+            <p class="pull-right">To: <input class="form-control datepicker" id="FilterToDate" value="@(Model.FilterToDate.HasValue?Model.FilterToDate:DateTime.Now)" /> </p>
+        </div>
+    </div>
+
+    <div class="top-Rbtn">
+        <div class="dropdown">
+            <button class="btn btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Add <i class="fa fa-caret-down"></i> </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="/@tenant/game/Add">Game</a>
+                <a class="dropdown-item" href="/@tenant/user/Add">Player</a>
+                <a class="dropdown-item" href="/@tenant/team/Add">Team</a>
+                <a class="dropdown-item" href="/role/index">Role</a>
+                <a class="dropdown-item" href="/attribute/index">Attributes</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="top-Rbox1">
+    <div class="selctbox">
+        <select asp-for="LookId" asp-items="@(new SelectList(Model.LookList,"Id","Name"))">
+            <option value="">Select</option>
+        </select>
+        <input type="hidden" asp-for="GameId" />
+        <input type="hidden" asp-for="PresetId" />
+        <a href="/@tenant/look/Add" class="btn btn-primary">SCHEDULE</a>
+    </div>
+
+    <div class="selctbox">
+        <select asp-for="FilterId" asp-items="@(new SelectList(Model.FilterList,"Id","Name"))">
+            <option value="">Select</option>
+        </select>
+        <a href="/@tenant/filter/index" class="btn btn-primary">FILTER</a>
+    </div>
+    <div class="selctbox fright">
+
+        <select asp-for="AttributeId" asp-items="@(new SelectList(Model.AttributeList,"Id","Name"))">
+            <option value="">Select</option>
+        </select>
+    </div>
+</div>
+<div class="middlebox">
+    <div class="tablediv tabledivbtn">
+        <div class='table-cont' id='table-cont'>
+            <div class="dt-buttons">
+
+                <button class="dt-button buttons-excel buttons-html5" type="button" data-url="/@tenant/FeedBack/FeedbackExport?lookId=@Model.LookId&presetId=@Model.PresetId&filterId=@Model.FilterId&atterbuteId=@Model.AttributeId&filterFromDate=@(Model.FilterFromDate.HasValue?Model.FilterFromDate.Value.ToString("MM/dd/yyyy"):DateTime.Now.ToString("MM/dd/yyyy"))&filterToDate=@(Model.FilterToDate.HasValue?Model.FilterToDate.Value.ToString("MM/dd/yyyy"):DateTime.Now.ToString("MM/dd/yyyy"))"><span>Excel</span></button>
+                <button class="dt-button buttons-pdf buttons-html5" data-id="div_table" type="button"><span>PDF</span></button>
+                <button class="dt-button buttons-print" type="button" data-id="div_table"><span>Print</span></button>
+                <a href="/@tenant/Common/ShareUsers/?popupurl=/@tenant/FeedBack/Share/?id=@Model.GameId$lookId=@Model.LookId$presetId=@Model.PresetId$attributeId=@Model.AttributeId$filterId=@Model.FilterId" class="btn btn btn-primary" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-share-users">Share</a>
+                @Html.Partial("_Modal", new Modal { ID = "modal-share-users", AreaLabeledId = "modal-share-users-label", Size = ModalSize.Large })
+
+            </div>
+
+            <table class="table table-striped" id="tbl_game">
+                <thead>
+                    <tr>
+
+                        <th scope="col">Sr. No</th>
+                        <th scope="col">Id</th>
+                        <th scope="col">Name</th>
+                        @if (!Model.IsSelf)
+                        {
+                            <th scope="col">Overall</th>
+                        }
+                        @foreach (var item in Model.LookGroupList)
+                        {
+                            <th scope="col">@item.Name</th>
+                        }
+                    </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.AllGames.Any())
+                        {
+                            int i = 1;
+                            @Html.Raw(Url.BindSubRow(Model.AllGames, Model, "", "", 0, companyId));
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="@(Model.LookGroupList.Count+3)">Record not found</td>
+                            </tr>
+                        }
+
+
+                </tbody>
+            </table>
+
+
+            <div id="div_table" style="display:none">
+                <style>
+                    .tablediv .table {
+                        border: 1px solid #efefef;
+                        background: #fff;
+                    }
+
+                    .table {
+                        width: 100%;
+                        max-width: 100%;
+                        margin-bottom: 20px;
+                    }
+
+                    table {
+                        border-collapse: collapse;
+                        border-spacing: 0;
+                    }
+
+                    tablediv .table tr th {
+                        background: #e5e5e5;
+                        border-right: 1px solid #efefef;
+                        color: #000000;
+                    }
+
+                    .tablediv .table tr th {
+                        font-size: 15px;
+                        text-align: center;
+                        font-weight: 500;
+                    }
+
+                    .table > thead > tr > th {
+                        vertical-align: bottom;
+                        border-bottom: 2px solid #ddd;
+                    }
+
+                    .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+                        padding: 8px;
+                        line-height: 1.42857143;
+                        vertical-align: top;
+                        border-top: 1px solid #ddd;
+                    }
+                </style>
+                <h3 style="text-align:center;">@Model.FilterName</h3>
+                <h3 style="text-align:center;">From:@((Model.FilterFromDate.HasValue?Model.FilterFromDate : DateTime.Now).Value.ToString("dd/MM/yyyy"))    To: @((Model.FilterToDate.HasValue?Model.FilterToDate : DateTime.Now).Value.ToString("dd/MM/yyyy")) </h3>
+                <h2 style="text-align:center;">Attributes: @string.Join(",",Model.AttributeNames)</h2>
+                <table class="table table-striped"  id="tbl_game1">
+                    <thead>
+                        <tr>
+                            <th scope="col">Sr. No</th>
+                            <th scope="col">Id</th>
+                            <th scope="col">Name</th>
+                            @if (!Model.IsSelf)
+                            {
+                                <th scope="col">Overall</th>
+                            }
+                            @foreach (var item in Model.LookGroupList)
+                            {
+                                <th scope="col">@item.Name</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.AllGames.Any())
+                        {
+                            int i = 1;
+                            @Html.Raw(Url.BindSubRowWithPlus(Model.AllGames, Model, "", "", 0, companyId));
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="@(Model.LookGroupList.Count+3)">Record not found</td>
+                            </tr>
+                        }
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="top-Rbox1 botdiv">
+        <div class="switchbtn">
+            <label class="switch">
+                <input type="checkbox" id="togBtn" checked>
+                <div class="slider round">
+                    <!--ADDED HTML -->
+                    <span class="on">LINKED</span> <span class="off">OFF</span>
+                    <!--END-->
+                </div>
+            </label>
+        </div>
+        @*<div class="switchbtn">
+            <a href="/@tenant/play?v=today&gid=@Model.GameId" class="btn btn btn-primary btn_feedback">Game Plays</a>
+        </div>*@
+        <div class="top-Rbtn"> <a href="/@tenant/game/WeightagePreset?parentId=@id" class="btn btn btn-primary m0">Weightage</a> </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+
+        var table;
+        $(function () {
+
+            $('.datepicker').datepicker({
+                keyboardNavigation: false,
+                forceParse: false,
+                toggleActive: false,
+                autoclose: true,
+                format: 'dd/mm/yyyy'
+            }).on('changeDate', function (selected) {
+                var filterDate = new Date(selected.date.valueOf());
+                var attributeId = $(this).val();
+                var filterId = $("#FilterId").val();
+                var lookId = $("#LookId").val();
+                var gameId = $("#GameId").val();
+                var presetId = $("#PresetId").val();
+                //var filterDate = $("#FilterDate").val();
+                var filterFromDate = moment($("#FilterFromDate").val(),'DD/MM/YYYY').format('MM/DD/YYYY');
+                var filterToDate = moment($("#FilterToDate").val(), 'DD/MM/YYYY').format('MM/DD/YYYY');
+                
+                window.location.href = `/@tenant/FeedBack/View?lookId=${lookId}&presetId=${presetId}&atterbuteId=${attributeId}&filterId=${filterId}&filterFromDate=${filterFromDate}&filterToDate=${filterToDate}`;
+            }).inputmask("dd/mm/yyyy", { "placeholder": "dd/mm/yyyy" });
+
+            var rowNo=1
+            $("#tbl_game tbody tr").each(function () {
+                var ser = $(this).find('.serialnumber');
+                if (ser != undefined) {
+                    ser.html(rowNo);
+                    rowNo++;
+                }
+
+            })
+
+            var rowNo1 = 1
+            $("#tbl_game1 tbody tr").each(function () {
+                var ser = $(this).find('.serialnumber');
+                if (ser != undefined) {
+                    ser.html(rowNo1);
+                    rowNo1++;
+                }
+
+            })
+
+            $(".buttons-pdf").on('click', function () {
+                var id = $(this).data('id');
+                var $html = $("#" + id).html();
+                $html = $html.replace('display: none;', '');
+                Global.Pdf($html );
+            });
+
+            $(".buttons-excel").on('click', function () {
+                var url = $(this).data('url');
+                window.location.href = url;
+            });
+
+
+
+            $(".buttons-print").on('click', function () {
+                var id = $(this).data('id');
+                var $html = $("#" + id).html();
+                Global.Print($html, "Feedback-game");
+            });
+
+
+
+            $('a[data-toggle="collapse"]').on('click', function () {
+                var objectID = '.' + $(this).attr('id');
+
+                if ($(objectID).hasClass('in')) {
+                    $(objectID).removeClass('in');
+                    $(this).html('<span class="fa fa-plus-square mtx" ></span>');
+                    $(objectID).hide();
+                }
+                else {
+                    $(objectID).addClass('in');
+                    $(this).html('<span class="fa fa-minus-circle mtx" ></span>');
+                    $(objectID).show();
+                }
+            });
+
+
+            $("#LookId").on('change', function () {
+                var lookId = $(this).val();
+                var gameId = $("#GameId").val();
+                var filterId = $("#FilterId").val();
+                var presetId = $("#PresetId").val();
+                var filterFromDate = $("#FilterFromDate").val();
+                var filterToDate = $("#FilterToDate").val();
+                if (filterFromDate != "") {
+                    filterFromDate = moment(filterFromDate, 'DD/MM/YYYY').format('MM/DD/YYYY');
+                }
+                if (filterToDate != "") {
+                    filterToDate = moment(filterToDate, 'DD/MM/YYYY').format('MM/DD/YYYY');
+                }               
+                
+                window.location.href = `/@tenant/FeedBack/View?lookId=${lookId}&presetId=${presetId}&filterFromDate=${filterFromDate}&filterToDate=${filterToDate}`;
+            });
+
+            $("#AttributeId").on('change', function () {
+                var attributeId = $(this).val();
+                var filterId = $("#FilterId").val();
+                var lookId = $("#LookId").val();
+                var gameId = $("#GameId").val();
+                var presetId = $("#PresetId").val();
+                var filterFromDate = $("#FilterFromDate").val();
+                var filterToDate = $("#FilterToDate").val();
+                if (filterFromDate != "") {
+                    filterFromDate = moment(filterFromDate, 'DD/MM/YYYY').format('MM/DD/YYYY');
+                }
+                if (filterToDate != "") {
+                    filterToDate = moment(filterToDate, 'DD/MM/YYYY').format('MM/DD/YYYY');
+                }
+                window.location.href = `/@tenant/FeedBack/View?lookId=${lookId}&presetId=${presetId}&atterbuteId=${attributeId}&filterId=${filterId}&filterFromDate=${filterFromDate}&filterToDate=${filterToDate}`;
+            })
+
+            $("#FilterId").on('change', function () {
+                var filterId = $(this).val();
+                var attributeId = $("#AttributeId").val();
+                var lookId = $("#LookId").val();
+                var gameId = $("#GameId").val();
+                var presetId = $("#PresetId").val();
+                var filterFromDate = $("#FilterFromDate").val();
+                var filterToDate = $("#FilterToDate").val();
+                if (filterFromDate != "") {
+                    filterFromDate = moment(filterFromDate, 'DD/MM/YYYY').format('MM/DD/YYYY');
+                }
+                if (filterToDate != "") {
+                    filterToDate = moment(filterToDate, 'DD/MM/YYYY').format('MM/DD/YYYY');
+                }
+                window.location.href = `/@tenant/FeedBack/View?lookId=${lookId}&presetId=${presetId}&atterbuteId=${attributeId}&filterId=${filterId}&filterFromDate=${filterFromDate}&filterToDate=${filterToDate}`;
+            })
+
+        });
+
+
+
+    </script>
+}

@@ -1,0 +1,61 @@
+﻿@model List<SelectedItemDto>
+@using Newtonsoft.Json;
+
+<script>
+    function set(value) {
+        return value;
+    }
+
+</script>
+
+<div id="frm-add-edit-role" class="box">
+    @Html.Partial("_ModalHeader", new ModalHeader { Heading = "Share" })
+
+    <div class="modal-body" style="height: 600px; overflow-y: scroll;">
+        <div id="validation-summary"></div>
+
+        <!-- ko if:ststuslistarr().length > 0 -->
+
+        <button class="btn btn-success" type="button" id="buttons-modal-shareexcel"><span>Share Excel</span></button>
+        <button class="btn btn-success" type="button" id="buttons-modal-sharepdf" data-id="div_table"><span>Share PDF</span></button>
+        <input id="actionurl" type="hidden" value="@ViewBag.PopupUrl" />
+        <div class="table-responsive">
+            <table class="table table-striped" id="tbl_share_user">
+                <thead>
+                    <tr>
+                        <th scope="col">Sr. No.</th>
+                        <th scope="col">Players</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr id="tr_@item.Id">
+                            <td>
+                                @(Model.IndexOf(item)+1)
+                            </td>
+                            <td>
+                                <input type="hidden" name="@item.Id" value="@item.Id" />
+                                @item.Name
+                            </td>
+                            <td>
+                                <input type="checkbox" name="@item.Id" data-username="@item.Name" data-email="@item.Additional" data-user="@item.Id" class="added" value="true" />
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+        <!-- /ko -->
+        @*<button class="btn btn-success buttons-modal-shareexcel" type="button" data-id="div_table"><span>Share Excel</span></button>*@
+
+    </div>
+    @*@Html.Partial("_ModalFooter", new ModalFooter { })*@
+</div>
+<script>
+    $(function () {
+        Global.DataTableWithSearchOnly('#tbl_share_user');
+    });
+</script>

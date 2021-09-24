@@ -1,0 +1,132 @@
+﻿@model List<DropboxDiles>
+@using Aaina.Common;
+@{
+    ViewData["Title"] = "Home Page";
+    string path = ViewBag.path;
+    List<string> pathList = !string.IsNullOrEmpty(path) ? path.Split("/").ToList() : new List<string>();
+    string pathcontinue = string.Empty;
+}
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>Drop Box</li>
+            </ul>
+            <p>
+                @if (!string.IsNullOrEmpty(path))
+                {
+                    <a href="/home/index?ty=l">Root</a>
+                }
+
+                @foreach (var item in pathList)
+                {
+                    if (!string.IsNullOrEmpty(item))
+                    {
+                        pathcontinue = $"{pathcontinue}/{item}";
+
+                        <a href="/home/index?ty=l&path=@pathcontinue">/@item</a>
+                    }
+                }
+            </p>
+        </div>
+    </div>
+
+</div>
+
+<div class="middlebox">
+    <div class="tablediv">
+        <div class="row" style="margin-top:10px;margin-bottom:10px;">
+            <div class="col-md-6">
+                <form asp-action="UploadFile" asp-controller="Home" asp-area="" method="post" enctype="multipart/form-data" autocomplete="off">
+
+                    <div class="col-md-4"><label for="file">Upload file:</label></div>
+
+                    <div class="col-md-4">
+                        <input type="hidden" name="path" value="@path" />
+                        <input type="file" name="file" id="file" required />
+                    </div>
+                    <div class="col-md-4">
+                        <input type="submit" class="btn btn-success" value="Upload" />
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-md-6">
+                <form asp-action="folderCreate" asp-controller="Home" asp-area="" method="post" enctype="multipart/form-data" autocomplete="off">
+
+                    <div class="col-md-4"><label for="file">Folder Name:</label></div>
+
+                    <div class="col-md-4">
+                        <input type="hidden" name="path" value="@path" />
+                        <input type="text" name="folderName" id="folderName" required />
+                    </div>
+                    <div class="col-md-4">
+                        <input type="submit" class="btn btn-success" value="Create Folder" />
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+        <div class='table-cont' id='table-cont'>
+            @if (Model.Any())
+            {
+                <table class="table table-striped">
+                    <tr id="header">
+
+                        <th scope="col">
+                            <label>Name</label>
+                        </th>
+
+                        <th scope="col">
+                            Action
+                        </th>
+                    </tr>
+
+                    @if (Model.Count() > 0)
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr id="layouttable">
+
+                                <td>
+                                    @item.Name
+                                </td>
+
+
+                                <td>
+                                    @item.ParentSharedFolderId
+                                    @if (item.IsFolder)
+                                    {
+                                        <a class="btn" href="/Home/Index?ty=l&path=@item.PathLower"><i class="fa fa-folder" aria-hidden="true"></i></a>
+                                    }
+                                    @if (item.IsFile)
+                                    {
+                                        <a class="btn" href="/Common/DownloadBropbox?path=@item.PathLower&fileName=@item.Name"><i class="fa fa-file" aria-hidden="true"></i></a>
+                                    }
+
+                                    <a data-url="/Common/ShareBropboxFile?path=@item.PathLower" href="javascript:void(0);" class="share-file-dropbox"><i class="fa fa-share-alt" aria-hidden="true"></i></a>
+                                    <a class="btn" href="/Home/DeleteFile?path=@item.PathLower&retunPath=@path"><i class="fa fa-trash" aria-hidden="true"></i></a>
+
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6">No files found</td>
+                        </tr>
+                    }
+
+                </table>
+
+
+            }
+        </div>
+    </div>
+
+</div>

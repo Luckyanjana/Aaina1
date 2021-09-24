@@ -1,0 +1,62 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@using Aaina.Common;
+@using Newtonsoft.Json;
+@{
+    ViewData["Title"] = "Index";
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+    List<SelectListDto> typeList = (List<SelectListDto>) ViewBag.TypeList;
+}
+
+<script>
+    function set(value) {
+        debugger;
+        return value;
+    }
+    var typeListArr = set(@Html.Raw(JsonConvert.SerializeObject(typeList)));
+    var modeListArr = set(@Html.Raw(JsonConvert.SerializeObject(ViewBag.ModeList)));
+
+</script>
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>Session</li>
+                <li>/</li>
+                <li>List</li>
+            </ul>
+
+        </div>
+    </div>
+    <div class="top-Rbtn">
+        @if (CurrentMenuPermission.IsAdd)
+        {
+            <a href="/@tenant/session/Add" class="btn btn btn-primary"><i class="fa fa-plus"></i> Add New</a>
+        }
+        <a href="/@tenant/Common/ShareUsers/?popupurl=/@tenant/session/ShareSession/?id=@CurrentUser.CompanyId" class="btn btn btn-primary" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-share-users">Share</a>
+        @Html.Partial("_Modal", new Modal { ID = "modal-share-users", AreaLabeledId = "modal-share-users-label", Size = ModalSize.Large })
+
+    </div>
+</div>
+
+<div class="middlebox">
+    <div class="tablediv">
+        <div class='table-cont' id='table-cont'>            
+            @this.Html.Partial("_DataTableGrid")
+        </div>
+    </div>
+
+</div>
+
+
+@Html.Partial("_Modal", new Modal { ID = "modal-action-delete-session", AreaLabeledId = "modal-action-delete-session-label", Size = ModalSize.Small })
+
+@section scripts{
+    <script src="~/js/Customejs/Session/Index.js">
+
+    </script>
+
+}

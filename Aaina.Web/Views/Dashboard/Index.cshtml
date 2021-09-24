@@ -1,0 +1,30 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@model List<GameDto>
+@using Aaina.Common;
+@{
+    ViewData["Title"] = "Index";
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+}
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>Dashboard-@ViewBag.Name</li>
+            </ul>
+            <p>@DateTime.Now.ToString("dd MMMM") '@DateTime.Now.Year</p>
+        </div>
+    </div>
+    
+</div>
+
+<div class="middlebox">
+    <div class="tablediv">
+        <div class='table-cont' id='table-cont'>
+            
+        </div>
+    </div>
+    
+</div>

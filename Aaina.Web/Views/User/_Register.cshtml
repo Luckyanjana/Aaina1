@@ -1,0 +1,64 @@
+﻿@model RegisterDto
+@{ 
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+}
+<div id="frm-add-edit-user" class="box">
+    <form asp-action="Register" asp-controller="user" asp-area="" asp-route-tenant="@tenant" method="post" autocomplete="off">
+        @Html.Partial("_ModalHeader", new ModalHeader { Heading = "Add User" })
+
+        <div class="modal-body box-body">
+            <div id="validation-summary"></div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Fname">First Name</label>
+                        <input type="text" asp-for="Fname" class="form-control" data-msg-required="*required" data-rule-required="true" />
+                        <span asp-validation-for="Fname" class="field-validation-error"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Mname">Middle Name</label>
+                        <input type="text" asp-for="Mname" class="form-control" />
+                        <span asp-validation-for="Mname" class="field-validation-error"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Lname">Last Name</label>
+                        <input type="text" asp-for="Lname" class="form-control" data-msg-required="*required" data-rule-required="true" />
+                        <span asp-validation-for="Lname" class="field-validation-error"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="UserName">User Name</label>
+                        <input type="text" asp-for="UserName" class="form-control" data-msg-required="*required" data-rule-required="true" />
+                        <span asp-validation-for="UserName" class="field-validation-error"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Email">Email</label>
+                        <input type="text" asp-for="Email" class="form-control" data-msg-required="*required" data-rule-required="true" />
+                        <span asp-validation-for="Email" class="field-validation-error"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Player Type</label>
+                        <select asp-for="PlayerType" class="form-control" asp-items="@(new SelectList(ViewBag.PlayerTypeList,"Id","Name"))"> </select>
+                        <span asp-validation-for="PlayerType" class="field-validation-error"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @Html.Partial("_ModalFooter", new ModalFooter { })
+    </form>
+</div>
+
+
+
+

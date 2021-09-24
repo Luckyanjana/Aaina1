@@ -1,0 +1,63 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+@model List<ReportDto>
+@using Aaina.Common;
+@using Newtonsoft.Json;
+@{
+    ViewData["Title"] = "Index";
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+    
+}
+
+<script>
+                function set(value) {
+                    return value;
+                }
+    var typeListArr = set(@Html.Raw(JsonConvert.SerializeObject(ViewBag.TypeList)));
+</script>
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>Report</li>
+                <li>/</li>
+                <li>List</li>
+            </ul>
+
+        </div>
+    </div>
+    <div class="top-Rbtn">
+        @if (CurrentMenuPermission.IsAdd)
+        {
+            <a href="/@tenant/report/Add" class="btn btn btn-primary"><i class="fa fa-plus"></i> Add New</a>
+        }
+        <a href="/@tenant/Common/ShareUsers/?popupurl=/@tenant/report/ShareReport/?id=@CurrentUser.CompanyId" class="btn btn btn-primary" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-share-users">Share</a>
+        @Html.Partial("_Modal", new Modal { ID = "modal-share-users", AreaLabeledId = "modal-share-users-label", Size = ModalSize.Large })
+
+    </div>
+</div>
+
+<div class="middlebox">
+    <div class="tablediv">
+        <div class='table-cont' id='table-cont'>
+            @this.Html.Partial("_DataTableGrid")
+        </div>
+    </div>
+
+
+</div>
+
+
+@Html.Partial("_Modal", new Modal { ID = "modal-action-delete-report", AreaLabeledId = "modal-action-delete-report-label", Size = ModalSize.Small })
+
+@section scripts{
+    <script src="~/js//Customejs/Report/Index.js?v=1" asp-append-version="true"></script>
+
+}
+

@@ -1,0 +1,205 @@
+﻿
+@model LeftMenuDto
+@using Newtonsoft.Json;
+@{
+    var tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+}
+    <script>
+    function set(value) {
+        return value;
+    }
+        var emojiArrList = '@Model.EmojiList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.EmojiList)));
+    var companyId = '@CurrentUser.CompanyId' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(CurrentUser.CompanyId)));
+        var tenant = set(@Html.Raw(JsonConvert.SerializeObject(tenant)));
+        var currentMenuPermissionObj = set(@Html.Raw(JsonConvert.SerializeObject(CurrentMenuPermission)));
+        var currentUserObj = set(@Html.Raw(JsonConvert.SerializeObject(CurrentUser)));
+
+
+    </script>
+
+@if (CurrentUser.RoleId == (int)Aaina.Common.UserType.Admin)
+{
+
+    <ul class="nav nav-list">
+        @if (Model != null && Model.LeftMenu.Any())
+        {
+            @Html.Raw(Url.BindLeftMenu(Model.LeftMenu, "Dashboard", "index"))
+        }
+        else
+        {
+            <li class="@Url.MakeActiveClass("game", "index")"><a href="/game/index">Game</a></li>
+        }
+        <li>
+            <b class="caret" data-toggle="collapse" data-target="#submenumaster"></b>
+            <a><span class="nav-header-primary">Masters</span></a>
+            <ul class="nav nav-list collapse" id="submenumaster">
+                <li class="@Url.MakeActiveClass("account", "ChangePassword")"><a href="/account/ChangePassword">ChangePassword</a></li>
+                <li class="@Url.MakeActiveClass("account", "Profile")"><a href="/account/Profile">Profile</a></li>
+                <li class="@Url.MakeActiveClass("weightage", "index")"><a href="/weightage/index"> Emoji</a></li>
+                <li class="@Url.MakeActiveClass("role", "index")"><a href="/role/index"> Role</a></li>
+                <li class="@Url.MakeActiveClass("Master", "GameList")"><a href="/Master/GameList"> Game Master</a></li>
+
+                <li class="@Url.MakeActiveClass("attribute", "index")"><a href="/attribute/index"> Attribute</a></li>
+                <li class="@Url.MakeActiveClass("formbuilder", "index")"><a href="/formbuilder/index"> Form Builder</a></li>
+                <li class="@Url.MakeActiveClass("menu", "index")"><a href="/menu/index">menu</a></li>
+                <li class="@Url.MakeActiveClass("RoleMenuPermission", "index")"><a href="/RoleMenuPermission/index">Role Menu Permission</a></li>
+                <li class="@Url.MakeActiveClass("RoleMenuPermission", "index")"><a href="/UserMenuPermission/index">User Menu Permission</a></li>
+                <li class="@Url.MakeActiveClass("home", "SendToUser")"><a href="/home/sendtouser"> Send Notification</a></li>
+                <li class="@Url.MakeActiveClass("home", "index?ty=l")"><a href="/home/index?ty=l"> Dropbox</a></li>
+                <li class="@Url.MakeActiveClass("chat", "index")"><a href="/Chat">Chat</a></li>
+
+
+            </ul>
+        </li>
+        @if (tenant > 0)
+        {
+            <li>
+                <b class="caret" data-toggle="collapse" data-target="#submenusetting"></b>
+                <a><span class="nav-header-primary">Setting</span></a>
+                <ul class="nav nav-list collapse" id="submenusetting">
+                    <li class="@Url.MakeActiveClass("user", "index")"><a href="/@tenant/user/index"> User</a></li>
+                    <li class="@Url.MakeActiveClass("team", "index")"><a href="/@tenant/game/index">Game</a></li>
+                    <li class="@Url.MakeActiveClass("team", "index")"><a href="/@tenant/team/index">Team</a></li>
+                    <li class="@Url.MakeActiveClass("look", "index")"><a href="/@tenant/look/index">look</a></li>
+                    <li class="@Url.MakeActiveClass("filter", "index")"><a href="/@tenant/filter/index"> Filter</a></li>
+                    <li class="@Url.MakeActiveClass("session", "index")"><a href="/@tenant/session/index">Session</a></li>
+                    <li class="@Url.MakeActiveClass("formbuilder", "index")"><a href="/@tenant/formbuilder/index"> Form Builder</a></li>
+                    <li class="@Url.MakeActiveClass("status", "index")"><a href="/@tenant/status/index">Status</a></li>
+                    <li class="@Url.MakeActiveClass("report", "index")"><a href="/@tenant/report/index">Report</a></li>
+                    <li class="@Url.MakeActiveClass("poll", "index")"><a href="/@tenant/poll/index">Poll</a></li>
+                    <li class="@Url.MakeActiveClass("SessionSchedule", "index")"><a href="/@tenant/SessionSchedule/index">Session Calendar</a></li>
+                    <li class="@Url.MakeActiveClass("play", "index")"><a href="/@tenant/play/index?v=today">Action Play</a></li>
+                </ul>
+            </li>
+        }
+
+    </ul>
+}
+else
+{
+
+    <ul class="nav nav-list">
+        @if (Model != null && Model.LeftMenu.Any())
+        {
+            @Html.Raw(Url.BindLeftMenu(Model.LeftMenu, "project", "GameFeebBack"))
+
+        }
+
+        <li>
+            <b class="caret" data-toggle="collapse" data-target="#submenusetting"></b>
+            <a><span class="nav-header-primary">Account</span></a>
+            <ul class="nav nav-list collapse" id="submenusetting">
+                <li class="@Url.MakeActiveClass("account", "ChangePassword")"><a href="/account/ChangePassword">ChangePassword</a></li>
+                <li class="@Url.MakeActiveClass("account", "Profile")"><a href="/account/Profile">Profile</a></li>
+                @if (CurrentUser.PlayerType != (int)Aaina.Common.PlayersType.Student)
+                {
+                    <li class="@Url.MakeActiveClass("chat", "index")"><a href="/Chat">Chat</a></li>
+                }
+            </ul>
+        </li>
+        @if (tenant > 0)
+        {
+            if (Model != null && Model.LeftMenuStatic.Any(c => c.ChildMenu.Any(a => a.IsList) || (!c.IsMain && !string.IsNullOrEmpty(c.Controller) && !string.IsNullOrEmpty(c.Action))))
+            {
+                foreach (var item in Model.LeftMenuStatic.Where(a => a.IsActive && ((a.IsMain && a.ChildMenu.Any(b => b.IsActive && (b.IsList || b.IsView || b.IsAdd || b.IsEdit || b.IsDelete)) || (!a.IsMain && !string.IsNullOrEmpty(a.Controller) && !string.IsNullOrEmpty(a.Action) && (a.IsList || a.IsView || a.IsAdd || a.IsEdit || a.IsDelete))))).ToList())
+                {
+                    if (item.ChildMenu.Any(a => a.IsList && a.IsActive))
+                    {
+                        <li>
+                            <b class="caret" data-toggle="collapse" data-target="#submenusetting@(item.Id)"></b>
+                            <a href="/@tenant/@item.Controller/@item.Action" class="accordion-heading"><span class="nav-header-primary">@item.Name </span></a>
+                            <ul class="nav nav-list collapse" id="submenusetting@(item.Id)">
+                                @foreach (var item1 in item.ChildMenu.Where(a => a.IsList && a.IsActive).ToList())
+                                {
+                                    @if (item1.ChildMenu.Any(a => a.IsList && a.IsActive))
+                                    {
+                                        <li>
+                                            <i class="fa fa-plus" data-toggle="collapse" data-target="#oneinner@(item1.Id)"></i> <a href="/@tenant/@item1.Controller/@item1.Action" class="accordion-heading">@item1.Name </a>
+                                            <ul class="nav nav-list collapse" id="oneinner@(item1.Id)">
+                                                @foreach (var item2 in item1.ChildMenu.Where(a => a.IsList && a.IsActive).ToList())
+                                                {
+                                                    <li class="@Url.MakeActiveClass(item2.Controller, item2.Action)">
+                                                        <a href="/@tenant/@item2.Controller/@item2.Action">
+                                                            <span>@item2.Name</span>
+                                                        </a>
+                                                    </li>
+                                                }
+
+                                            </ul>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="@Url.MakeActiveClass(item1.Controller, item1.Action)">
+                                            <a href="/@tenant/@item1.Controller/@item1.Action">
+                                                <span>@item1.Name</span>
+                                            </a>
+                                        </li>
+                                    }}
+                            </ul>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="@Url.MakeActiveClass(item.Controller, item.Action)">
+                            <a href="/@tenant/@item.Controller/@item.Action">@item.Name</a>
+                        </li>
+                    }
+
+                }
+            }
+        }
+
+        @if (Model != null && Model.LeftUserMenuStatic.Any(c => c.ChildMenu.Any(a => a.IsList) || (!c.IsMain && !string.IsNullOrEmpty(c.Controller) && !string.IsNullOrEmpty(c.Action))))
+        {
+            foreach (var item in Model.LeftUserMenuStatic.Where(a => a.IsActive && ((!a.IsMain  && !string.IsNullOrEmpty(a.Controller) && !string.IsNullOrEmpty(a.Action)) && (a.IsList || a.IsView || a.IsAdd || a.IsEdit || a.IsDelete)) && ((a.IsMain && a.ChildMenu.Any(b=>b.IsActive && (b.IsList || b.IsView || b.IsAdd || b.IsEdit || b.IsDelete))) || ((!a.IsMain && !string.IsNullOrEmpty(a.Controller) && !string.IsNullOrEmpty(a.Action))))).ToList())
+            {
+                if (item.ChildMenu.Any(a => a.IsList && a.IsActive))
+                {
+                    <li>
+                        <b class="caret" data-toggle="collapse" data-target="#submenusetting@(item.Id)"></b>
+                        <a href="/@tenant/@item.Controller/@item.Action" class="accordion-heading"><span class="nav-header-primary">@item.Name </span></a>
+                        <ul class="nav nav-list collapse" id="submenusetting@(item.Id)">
+                            @foreach (var item1 in item.ChildMenu.Where(a => a.IsList && a.IsActive).ToList())
+                            {
+                                @if (item1.ChildMenu.Any(a => a.IsList && a.IsActive))
+                                {
+                                    <li>
+                                        <i class="fa fa-plus" data-toggle="collapse" data-target="#oneinner@(item1.Id)"></i> <a href="/@tenant/@item1.Controller/@item1.Action" class="accordion-heading">@item1.Name </a>
+                                        <ul class="nav nav-list collapse" id="oneinner@(item1.Id)">
+                                            @foreach (var item2 in item1.ChildMenu.Where(a => a.IsList && a.IsActive).ToList())
+                                            {
+                                                <li class="@Url.MakeActiveClass(item2.Controller, item2.Action)">
+                                                    <a href="/@tenant/@item2.Controller/@item2.Action">
+                                                        <span>@item2.Name</span>
+                                                    </a>
+                                                </li>
+                                            }
+
+                                        </ul>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="@Url.MakeActiveClass(item1.Controller, item1.Action)">
+                                        <a href="/@tenant/@item1.Controller/@item1.Action">
+                                            <span>@item1.Name</span>
+                                        </a>
+                                    </li>
+                                }}
+                        </ul>
+                    </li>
+                }
+                else
+                {
+                    <li class="@Url.MakeActiveClass(item.Controller, item.Action)">
+                        <a href="/@tenant/@item.Controller/@item.Action">@item.Name</a>
+                    </li>
+                }
+
+            }
+        }
+    </ul>
+
+}
+

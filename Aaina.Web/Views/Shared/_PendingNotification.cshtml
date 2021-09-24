@@ -1,0 +1,131 @@
+﻿@model List<PendingNotificationDto>
+<style>
+    #table_detail tr:hover {
+        background-color: #F2F2F2;
+    }
+
+    #table_detail .hidden_row {
+        display: none;
+    }
+</style>
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <h4 class="modal-title">Pending Message / List</h4>
+</div>
+<div class="modal-body">
+    <div class="middlebox">
+        <div class="tablediv">
+            <div class='table-cont' id='table-cont'>
+
+                <table class="table table-striped" id="table_detail">
+                    <thead>
+                        <tr>
+                            <th scope="col">S.No</th>
+                            <th scope="col">Send By</th>
+                            <th scope="col">Send Date</th>
+                            <th scope="col">Reason</th>
+
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @if (Model.Any())
+                        {
+                            int i = 1;
+                            foreach (var item in Model)
+                            {
+                                <tr style="cursor:pointer" onclick="showHideRow('hidden_row@(item.Id)',this);">
+                                    <td>
+                                        @i
+                                    </td>
+                                    <td>
+                                        @item.SenderName
+                                    </td>
+                                    <td>
+                                        @item.SendDate
+                                    </td>
+                                    <td>
+                                        @item.Reason
+                                    </td>
+                                    <td style="font-size:16px;font-weight:bold">
+                                        <span style="cursor:pointer;"> + </span>
+                                    </td>
+                                </tr>
+                                <tr id="hidden_row@(item.Id)" class="hidden_row">
+                                    <td colspan=4>
+                                        @item.Message
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+                        }
+
+                    </tbody>
+
+                </table>
+
+
+
+                @*<table class="table table-striped" id="tbl_team">
+
+                        <thead>
+                            <tr>
+                                <th scope="col">S.No</th>
+                                <th scope="col">Send By</th>
+                                <th scope="col">Send Date</th>
+                                <th scope="col">Reason</th>
+                                <th scope="col">Message</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @if (Model.Any())
+                            {
+                                int i = 1;
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            @i
+                                        </td>
+                                        <td>
+                                            @item.SenderName
+                                        </td>
+                                        <td>
+                                            @item.SendDate
+                                        </td>
+                                        <td>
+                                            @item.Reason
+                                        </td>
+                                        <td>
+                                            @item.Message
+                                        </td>
+                                    </tr>
+                                    i++;
+
+                                }
+                            }
+
+                        </tbody>
+                    </table>*@
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    function showHideRow(row,$this) {
+        $("#" + row).toggle();
+        var spantxt = $($this).find('span');
+        if ($(spantxt).text() == " + ") {
+            $(spantxt).text(" - ");
+        }
+        else if ($(spantxt).text() == " - ") {
+            $(spantxt).text(" + ");
+        }
+
+    }
+  
+</script> 

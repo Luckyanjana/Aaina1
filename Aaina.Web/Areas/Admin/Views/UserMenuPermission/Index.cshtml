@@ -1,0 +1,106 @@
+﻿@using Aaina.Dto.Menu
+@using Aaina.Dto.UserMenuPermission
+@{
+    ViewData["Title"] = "Index";
+    var Userlist = (List<UserLoginDto>)ViewBag.UsersList;
+    var menulist = (List<MenuDto>)ViewBag.MenuList;
+    var Usermenulist = (List<UserMenuPermissionDto>)ViewBag.UsersMenuPermissionList;
+}
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>User Menu Permission</li>
+            </ul>
+            <p>@DateTime.Now.ToString("dd MMMM") '@DateTime.Now.Year</p>
+        </div>
+    </div>
+</div>
+<div class="middlebox">
+    <div class="tablediv">
+        <div class='table-cont' id='table-cont'>
+            <table class="table table-striped" id="tbl_User">
+                <thead>
+                    <tr>
+                        <th scope="col">Pages</th>
+                        @foreach (var item in menulist)
+                        {
+                            <th style="width:200px;">
+                                @item.MenuName
+                                <br />
+                                V &nbsp; A &nbsp; E &nbsp; D &nbsp; G
+                            </th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var Useritem in Userlist)
+                    {
+                        <tr>
+                            <td>
+                                @Useritem.Fname @Useritem.Lname (@Useritem.UserName)
+                            </td>
+                            @foreach (var item in menulist)
+                            {
+                                var Usermenuitem = Usermenulist?.Where(x => x.UserId == Useritem.Id && x.MenuId == item.Id).FirstOrDefault();
+                                <td style="width:200px;">
+                                    <input type="hidden" class="Userid" value="@Useritem.Id" />
+                                    <input type="hidden" class="menuid" value="@item.Id" />
+                                    <input class="view" id="@(string.Join("_", new string[] { "checkboxview", item.Id.ToString(), Useritem.Id.ToString() }))" type="checkbox" checked="@Usermenuitem?.CanbeView" />
+                                    &nbsp;
+                                    <input class="view" id="@(string.Join("_", new string[] { "checkboxadd", item.Id.ToString(), Useritem.Id.ToString() }))" type="checkbox" checked="@Usermenuitem?.CanbeAdd" />
+                                    &nbsp;
+                                    <input class="view" id="@(string.Join("_", new string[] { "checkboxedit", item.Id.ToString(), Useritem.Id.ToString() }))" type="checkbox" checked="@Usermenuitem?.CanbeEdit" />
+                                    &nbsp;
+                                    <input class="view" id="@(string.Join("_", new string[] { "checkboxdelete", item.Id.ToString(), Useritem.Id.ToString() }))" type="checkbox" checked="@Usermenuitem?.CanbeDelete" />
+                                    &nbsp;
+                                    <input class="view" id="@(string.Join("_", new string[] { "checkboxgive", item.Id.ToString(), Useritem.Id.ToString() }))" type="checkbox" checked="@Usermenuitem?.CanbeGive" />
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <button class="btn btn btn-primary save" id="save">Save</button>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            var posturl = '/common/GetPagePermission/'
+            $.ajax({
+                type: "GET",
+                url: posturl,
+                data: {
+                    "controllerName": "UserMenuPermission",
+                    "actionName": "Index"
+                },
+                success: function (r) {
+                    var permission = JSON.parse(r.data);
+                    if (permission.CanbeView != false) {
+                        $(".save").css("display", "none")
+                        $(".view").attr("disabled", "disabled")
+                    } else {
+                        $(".save").css("display", "inline-block")
+                        $(".view").removeAttr("disabled")
+                    }
+                    if (permission.CanBeEdit == false) {
+                        $(".save").css("display", "none")
+                    } else {
+                        $(".save").css("display", "inline-block")
+                    }
+                    if (permission.CanbeAdd == false) {
+                        $(".save").css("display", "none")
+                    } else {
+                        $(".save").css("display", "inline-block")
+                    }
+                }
+            });
+        });
+    </script>
+    <script src="~/js/Customejs/UserMenuPermission/AddEdit.js" asp-append-version="true"></script>
+}

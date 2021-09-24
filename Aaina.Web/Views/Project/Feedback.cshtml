@@ -1,0 +1,119 @@
+﻿@model LookFeebbackDto
+@using Aaina.Common;
+@using Newtonsoft.Json;
+@{
+    ViewData["Title"] = "Feedback";
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+}
+
+
+
+
+    <script>
+    function set(value) {
+        return value;
+    }
+    var allGame = '@Model.GameList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.GameList)));
+    var attributeList = '@Model.AttributeList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.AttributeList)));
+    var subAttributeList = '@Model.SubAttributeList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.SubAttributeList)));
+    var emojiList = '@Model.EmojiList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.EmojiList)));
+    var gameFeedbackDetailList = '@Model.GameFeedbackDetails' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.GameFeedbackDetails)));
+    var isQuentityFeedback = '@Model.SubAttributeList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.SubAttributeList.Any(s=>s.IsQuantity))));
+
+    </script>
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>@Model.Game</li>
+                <li>/</li>
+                <li>Feedback</li>
+            </ul>
+            <p>@(DateTime.Now.ToString("dd MMMM yyyy"))</p>
+        </div>
+    </div>
+</div>
+
+
+<div class="top-Rbox1">
+    <div class="selctbox">
+        <select asp-for="Id" id="lookId" class="form-control" asp-items="@(new SelectList(Model.LookList,"Id","Name"))"> <option>Scheduled Look</option> </select>
+        <input type="hidden" asp-for="GameId" />
+        
+    </div>
+</div>
+
+<div id="frm-add-edit-feedback">
+    <form asp-action="feedback" asp-controller="Project" asp-area="" asp-route-tenant="@tenant" method="post" autocomplete="off">
+        <div id="validation-summary"></div>
+        <input type="hidden" name="LookId" value="@Model.Id" />
+        <input type="hidden" asp-for="GameId" />
+        <input type="hidden" name="id" value="@Model.feedbackId" />
+        <input type="hidden" name="IsDraft" id="IsDraft" />
+        <input type="hidden" name="TypeId" value="@Model.TypeId" />
+        <div id="feedback_atter_data"> </div>
+
+        <div class="middlebox">
+            <div class="tablediv tabledivbtn">
+                <div class='table-cont' id='table-cont'>
+                    <table id="tbl_game" class="table table-striped">
+                        <thead> </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="top-Rbox1 botdiv">
+                <div class="top-Rbtn">
+                    <button class="btn btn-primary btn-submit" id="brndraft" type="button"> Save Draft</button>
+                    <button class="btn btn-primary btn-submit" id="btn-submit" type="submit"> Submit</button>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+
+<div aria-hidden="true" aria-labelledby="modal-add-edit-sub_attr_feedback-label" role="dialog" tabindex="-1" id="modal-add-edit-sub_attr_feedback" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="frm-add-edit-role" class="box">
+                <form method="post" action="/@tenant/role/addedit/4" novalidate="novalidate">
+
+                    <div class="modal-header">
+                        <h4 class="modal-title pull-left" id="sub_title"></h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    </div>
+
+                    <div class="modal-body box-body">
+                        <div id="validation-summary"></div>
+                        <input type="hidden" id="attrid" name="attrid" value="">
+                        <input type="hidden" id="gameid" name="gameid" value="">
+                        <input type="hidden" id="lookattrid" name="lookattrid" value="">
+
+                        <div id="sub_attr_feedback_div"></div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button class="btn btn-success" id="btnsubmit" type="button">
+                            Submit
+                        </button>
+                        <button data-dismiss="modal" id="btn-cancel" class="btn btn-default" type="button">Cancel</button>
+                    </div>
+
+                </form>
+            </div>
+
+
+
+
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/js/Customejs/Project/Feedback.js" asp-append-version="true"></script>
+}

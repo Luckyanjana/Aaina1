@@ -1,0 +1,84 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+    List<SelectedItemDto> gameList = (List<SelectedItemDto>)ViewBag.GameList;
+}
+
+<link href="~/plugins/fullcalendar/main.css" rel="stylesheet" />
+<style>
+    .fc-license-message {
+    display:none!important;
+    }
+</style>
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>Game</li>
+                <li>/</li>
+                <li>Schedule</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="middlebox">
+    <div class="tablediv">
+        <div class="row">
+            <div class="col-md-3">
+                <input type="text" id="txt_date" class="form-control" />
+                <input type="hidden" id="api_url" value="/@tenant/sessionschedule/getevent" />
+                <input type="hidden" id="api_agenda_url" value="/@tenant/sessionschedule/details" />
+                <input type="hidden" id="game_id" value="@tenant" />
+            </div>
+            @*<div class="col-md-3">
+                    <select id="game_id" class="form-control">
+                        <option value="">Select</option>
+                        @foreach (var item in gameList)
+                        {
+                            @if (int.Parse(item.Id) == tenant)
+                            {
+                                <option value="@item.Id" selected>@item.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+
+                        }
+                    </select>
+                </div>*@
+        </div>
+        <div id="calendar"></div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3 col-sm-3 pull-right">
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="IsReport" />
+                    Is Report
+                </label>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-3 pull-right">
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="IsSession" checked />
+                    Is Session
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section scripts{
+    <script src="~/plugins//fullcalendar/main.js"></script>
+    <script src="~/js/Customejs/SessionSchedule/Event.js" asp-append-version="true"></script>
+
+}

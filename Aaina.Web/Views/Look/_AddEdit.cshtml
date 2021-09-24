@@ -1,0 +1,687 @@
+﻿@model LookDto
+@using Aaina.Common;
+@using Newtonsoft.Json;
+
+@{
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+
+}
+<script>
+    function set(value) {
+        return value;
+    }
+    var allGame = '@Model.GameList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.GameList)));
+    var lookGameList = '@Model.LookGame' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.LookGame)));
+        var lookTeamList = '@Model.LookTeam' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.LookTeam)));
+        var lookUserList = '@Model.LookUser' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.LookUser)));
+    var allTeam = '@Model.TeamList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.TeamList)));
+    var allUser = '@Model.GroupPlayerList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.GroupPlayerList)));
+    var allGroup = '@Model.LookGroup' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.LookGroup)));
+
+</script>
+
+<link href="~/css/Stepwizard.css" rel="stylesheet" />
+
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>Zinc Football</li>
+                <li>/</li>
+                <li>Look</li>
+                <li>/</li>
+                <li><b>Information</b></li>
+            </ul>
+            <p>20 January '21</p>
+        </div>
+    </div>
+</div>
+
+<div id="frm-add-edit-look">
+    <form asp-action="add" asp-controller="look" asp-area="" asp-route-tenant="@tenant" method="post" autocomplete="off">
+        <div id="validation-summary"></div>
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="GameId" />
+        <div class="middlebox">
+            <div class="tablediv tablediv1 tabledivbtn">
+                <div class="stepbox">
+                    <ul class="nav nav-tabs responsive-tabs">
+                        <li class="active"><a href="#tab1"><span>1</span> Information</a></li>
+                        <li><a href="#tab3"><span>2</span> Emotions for</a></li>
+                        <li><a href="#tab4"><span>3</span> Emotions From</a></li>
+                        <li><a href="#tab2"><span>4</span> Attributes</a></li>
+                       @*<li><a href="#tab5"><span>5</span> Group</a></li>*@
+                        <li><a href="#tab6"><span>5</span> Schedule</a></li>
+                    </ul>
+
+                    <div class="tab-content">
+
+                        <div class="tab-pane active" id="tab1">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+                                               
+                                                <div class="table-responsive">
+                                                    @await Html.PartialAsync("_all", Model.AllRecord)
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+                                                <div class="form-group">
+                                                    <label><i class="fa fa-info-circle"></i> Select Type</label>
+                                                    <select asp-for="TypeId" class="form-control" asp-items="@(new SelectList(Model.TypeList,"Id","Name"))"></select>
+                                                    <span asp-validation-for="TypeId" class="field-validation-error"></span>
+                                                </div>
+                                                <div class="form-group">
+
+
+                                                    <div class="form-group">
+                                                        <input type="text" asp-for="Name" class="form-control" placeholder="ID/Look Name" />
+                                                        <span asp-validation-for="Name" class="field-validation-error"></span>
+                                                    </div>
+
+                                                </div>
+                                                <div class="form-group">
+                                                    <label><i class="fa fa-info-circle"></i> Select Date</label>
+                                                    <div class="row">
+                                                        <div class="col-lg-5 col-sm-12">
+                                                            <input type="text" asp-for="FromDate" class="form-control" />
+                                                            <span asp-validation-for="FromDate" class="field-validation-error"></span>
+                                                        </div>
+                                                        <div class="col-lg-1 col-sm-12 text-center"> <span class="toc">To</span> </div>
+                                                        <div class="col-lg-6 col-sm-12">
+                                                            <input type="text" asp-for="ToDate" class="form-control" />
+                                                            <span asp-validation-for="ToDate" class="field-validation-error"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                
+                                                <div class="form-group">
+                                                    <div class="col-lg-4 col-sm-12">
+                                                        <label style="margin-top:25px;">
+                                                            <input type="checkbox" asp-for="IsActive" />
+                                                            Is Active
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="tab3">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+                                                <div class="form-group">
+                                                   
+                                                    <div class="table-responsive">
+                                                        <table class="table" id="tbl_game">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th scope="col">Id</th>
+                                                                    <th scope="col" class="span_type">@(Model.TypeId==0?"Game":((LookType)Model.TypeId).ToString())</th>
+                                                                    <th scope="col">Select</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1 sele-r-right" id="div_add_game">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="tab4">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+                                                
+                                                <div class="table-responsive">
+                                                    <table class="table" id="tbl_user">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">Id</th>
+                                                                <th scope="col">Type</th>
+                                                                <th scope="col">Players</th>
+                                                                <th scope="col">Role</th>
+                                                                <th scope="col">Is Added</th>
+                                                                @*<th scope="col">View</th>
+                                                                <th scope="col">Calculation</th>*@
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @{
+                                                                int rindex = 0;
+                                                            }
+                                                            @foreach (var item in Model.PlayerList)
+                                                            {
+                                                                var atter = Model.LookPlayers.FirstOrDefault(f => f.UserId == item.UserId);
+                                                                var IsAddedAtter = atter != null && atter.Id > 0;
+                                                                <tr>
+                                                                    <td>@item.UserId</td>
+                                                                    <td>@(((PlayersType)item.UserTypeId).ToString())</td>
+                                                                    <td>@item.Name</td>
+                                                                    <td>@item.Role</td>
+                                                                    <td>
+                                                                        <input type="hidden" name="LookPlayers[@rindex].UserId" value="@item.UserId" />
+                                                                        @if (IsAddedAtter)
+                                                                        {
+                                                                            <input type="hidden" name="LookPlayers[@rindex].Id" value="@atter.Id" />
+                                                                            <input type="checkbox" name="LookPlayers[@rindex].IsAdded" value="true" data-divid="div_add_player" checked data-type="player" data-id="@item.UserId" id="player_@item.UserId" data-name="@item.Name" class="added" />
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <input type="checkbox" name="LookPlayers[@rindex].IsAdded" value="false" data-divid="div_add_player" data-type="player" data-id="@item.UserId" id="player_@item.UserId" data-name="@item.Name" class="added" />
+                                                                        }
+
+                                                                    </td>
+                                                                    @*<td>
+                                                                        @if (IsAddedAtter && atter.IsView)
+                                                                        {
+                                                                            <input type="checkbox" name="lookPlayers[@rindex].IsView" checked value="true" class="isview" />
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <input type="checkbox" name="lookPlayers[@rindex].IsView" value="false" class="isview" />
+                                                                        }
+                                                                    </td>
+                                                                    <td>
+                                                                        @if (IsAddedAtter && atter.IsCalculation)
+                                                                        {
+                                                                            <input type="checkbox" name="lookPlayers[@rindex].IsCalculation" checked value="true" class="iscalculation" />
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <input type="checkbox" name="lookPlayers[@rindex].IsCalculation" value="false" class="iscalculation" />
+                                                                        }
+                                                                    </td>*@
+                                                                </tr>
+
+                                                                rindex++;
+                                                            }
+
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label asp-for="CalculationType">Calculation Type</label>
+                                                    <select asp-for="CalculationType" class="form-control" asp-items="@(new SelectList(Model.CalculatiotTypeList,"Id","Name"))" data-msg-required="*required" data-rule-required="true"></select>
+                                                    <span asp-validation-for="CalculationType" class="field-validation-error"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="step1 sele-r-right" id="div_add_player">
+                                                    @foreach (var item in Model.LookPlayers)
+                                                    {
+                                                        var atter = Model.PlayerList.FirstOrDefault(f => f.UserId == item.UserId);
+                                                        if (atter != null)
+                                                        {
+                                                            <label id="span_player_@atter.UserId">@atter.Name<a href="javascript:void(0);" data-id="player_@atter.UserId" class="choice__remove"><i class="fa fa-close"></i></a></label>
+                                                        }
+
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="tab2">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+                                                <div class="form-group">
+                                                    <label><i class="fa fa-info-circle"></i> Select Attributes</label>
+                                                    
+                                                    <div class="table-responsive">
+
+                                                        <table class="table" id="tbl_attribute">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th scope="col">Id</th>
+                                                                    <th scope="col">Parameters</th>
+                                                                    <th scope="col">Select</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @{
+                                                                    int aindex = 0;
+                                                                    int saindex = 0;
+                                                                }
+                                                                @foreach (var item in Model.AttributeList)
+                                                                {
+                                                                    var atter = Model.LookAttribute.FirstOrDefault(f => f.AttributeId == item.Id);
+                                                                    var IsAddedAtter = atter != null && atter.Id > 0;
+                                                                    <tr>
+                                                                        <td class="text-center">@item.Id</td>
+                                                                        <td class="text-left">@item.Name</td>
+                                                                        <td>
+                                                                            <input type="hidden" name="lookAttribute[@aindex].AttributeId" value="@item.Id" />
+                                                                            @if (IsAddedAtter)
+                                                                            {
+                                                                                <input type="hidden" name="lookAttribute[@aindex].Id" value="@item.Id" />
+                                                                                <input type="checkbox" name="lookAttribute[@aindex].IsAdded" value="true" data-divid="div_add_atterbute" checked data-type="atter" data-id="@item.Id" id="atter_@item.Id" data-name="@item.Name" class="added" />
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <input type="checkbox" name="lookAttribute[@aindex].IsAdded" value="false" data-divid="div_add_atterbute" data-type="atter" data-id="@item.Id" id="atter_@item.Id" data-name="@item.Name" class="added" />
+                                                                            }
+
+
+                                                                        </td>
+                                                                    </tr>
+                                                                    foreach (var satt in item.SubAttribute)
+                                                                    {
+                                                                        var subAtter = Model.LookSubAttribute.FirstOrDefault(f => f.SubAttributeId == satt.Id);
+                                                                        var IsAddedsubAtter = subAtter != null && subAtter.Id > 0;
+                                                                        <tr>
+                                                                            <td class="text-center">@satt.Id</td>
+                                                                            <td class="text-center" style="text-align:right;">@satt.Name</td>
+                                                                            <td>
+                                                                                <input type="hidden" name="lookSubAttribute[@saindex].SubAttributeId" value="@satt.Id" />
+                                                                                @if (IsAddedsubAtter)
+                                                                                {
+                                                                                    <input type="hidden" name="lookSubAttribute[@saindex].Id" value="@subAtter.Id" />
+                                                                                    <input type="checkbox" name="lookSubAttribute[@saindex].IsAdded" value="true" checked data-divid="div_add_atterbute" data-type="subatter" data-id="@satt.Id" id="subatter_@satt.Id" data-name="@satt.Name" class="added atter_@item.Id" />
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <input type="checkbox" name="lookSubAttribute[@saindex].IsAdded" value="false" data-divid="div_add_atterbute" data-type="subatter" data-id="@satt.Id" id="subatter_@satt.Id" data-name="@satt.Name" class="added atter_@item.Id" />
+                                                                                }
+
+                                                                            </td>
+                                                                        </tr>
+                                                                        saindex++;
+                                                                    }
+
+                                                                    aindex++;
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                        <a href="javascript:void(0);" class="btn btn-warning fright wauto">Add</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1 sele-r-right" id="div_add_atterbute">
+                                            @foreach (var item in Model.LookAttribute)
+                                            {
+                                                var atter = Model.AttributeList.FirstOrDefault(f => f.Id == item.AttributeId);
+                                                <label id="span_atter_@atter.Id"><label>@atter.Name</label> <a href="javascript:void(0);" data-id="atter_@atter.Id" class="choice_remove"><i class="fa fa-close"></i></a></label>
+                                            }
+
+                                            @foreach (var item in Model.LookSubAttribute)
+                                            {
+                                                var subAtter = Model.AttributeList.FirstOrDefault(f => f.SubAttribute.Any(a => a.Id == item.SubAttributeId)).SubAttribute.FirstOrDefault(a => a.Id == item.SubAttributeId);
+                                                <label id="span_subatter_@subAtter.Id">@subAtter.Name <a href="javascript:void(0);" data-id="subatter_@subAtter.Id" class="choice_remove"><i class="fa fa-close"></i></a></label>
+                                            }
+
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="tab5">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="panel-body" id="ko-look-group">
+                                        <!-- ko if:groups().length > 0 -->
+                                        <div data-bind="foreach: groups">
+                                            <div class="panel panel-success">
+                                                <div class="panel-heading">
+                                                    <h4>
+                                                        Group# <span data-bind="text:$index()+1"></span>
+                                                        <a class="pull-right" href="javascript:void(0);" data-bind='click: $parent.remove'> <i class="fa fa-close"></i></a>
+                                                    </h4>
+
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-md-6 table-responsive">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label>Group Name</label>
+                                                                <input type="hidden" data-bind="value:id ,attr:{name:'LookGroup['+$index()+'].id'}" />
+                                                                <input type="text" class="form-control" data-bind="value:name,attr:{name:'LookGroup['+$index()+'].name'}" data-msg-required="*required" data-rule-required="true" />
+                                                                <span class="field-validation-error field-validation-valid" data-bind="attr:{'data-valmsg-for':'LookGroup['+$index()+'].name'}" data-valmsg-replace="true"></span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-12">
+                                                            <table id="childs" class="table">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th scope="col">S.r. </th>
+                                                                        <th scope="col">Player Name</th>
+                                                                        <th scope="col">Action</th>
+                                                                    </tr>
+                                                                </thead>
+
+                                                                <tbody data-bind="foreach: players">
+                                                                    <tr>
+                                                                        <td class="index">
+
+                                                                            <span class="serialnumber" data-bind="text:$index()+1"></span>
+                                                                            <input type="hidden" data-bind="value:id ,attr:{name:'LookGroup['+$parentContext.$index()+'].LookGroupPlayer['+$index()+'].id'}" />
+                                                                            <input type="hidden" data-bind="value:userId ,attr:{name:'LookGroup['+$parentContext.$index()+'].LookGroupPlayer['+$index()+'].userId'}" />
+                                                                        </td>
+                                                                        <td>
+                                                                            <span data-bind="text:name"></span>
+                                                                        </td>
+                                                                        <td> <input type="checkbox" data-bind="value:isChecked,checked: isChecked,attr:{name:'LookGroup['+$parentContext.$index()+'].LookGroupPlayer['+$index()+'].IsAdded','data-id':userId,'id':'group_'+$parentContext.$index()+'_'+userId(),'data-name':name,'data-divid':'div_add_group_'+$parentContext.$index(),'data-type':'group_'+$parentContext.$index()}" class="added1" /> </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div class="col-md-6">
+
+                                                        <div class="step1 sele-r-right" style="border:1px solid" data-bind="attr:{'id':'div_add_group_'+$index()}">
+                                                            <div data-bind="foreach: players">
+                                                                <!-- ko if:isChecked  -->
+                                                                <label data-bind="attr:{'id':'span_group_'+$parentContext.$index()+'_'+userId()}">
+                                                                    <lable data-bind="html:name"></lable>
+                                                                    <a href="javascript:void(0);" data-bind="attr:{'data-txt':name,'data-id':'group_'+$parentContext.$index()+'_'+userId()}" class="choice__remove"><i class="fa fa-close"></i></a>
+                                                                </label>
+                                                                <!-- /ko -->
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- /ko -->
+                                        <div class="pull-right">
+                                            @*<button class="btn btn-success" data-bind='click: add'>Add</button>*@
+                                        </div>
+                                        <div class="box-footer text-center">
+                                            <a href="javascript:void(0);" class="btn btn-default backBtn">Back</a>
+                                            <button class="btn btn-primary btn-submit" id="btn-submit" type="submit">Submit</button>
+                                            <a href="javascript:void(0);" class="btn btn-default nextBtn">Next</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="tab6">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+                                                <div class="form-group">
+                                                    <label>
+                                                        <i class="fa fa-info-circle"></i>
+                                                        <input type="checkbox" class="IsSchedule" asp-for="IsSchedule" />
+                                                        Schedule Look
+                                                    </label>
+                                                </div>
+
+                                                <div class="form-group lookschednotenable" style="display:@(Model.IsSchedule?"block":"none");">
+                                                    <label asp-for="LookScheduler.Name">Name</label>
+                                                    <input type="text" asp-for="LookScheduler.Name" class="form-control" />
+                                                </div>
+                                                @{
+                                                    if (Model.LookScheduler.Type == 0)
+                                                    {
+                                                        Model.LookScheduler.Type = (int)ScheduleType.OneTime;
+                                                    }
+                                                }
+                                                <div class="form-group">
+                                                    @{
+                                                        if (Model.LookScheduler.Type == 0)
+                                                        {
+                                                            Model.LookScheduler.Type = (int)ScheduleType.OneTime;
+                                                        }
+                                                    }
+                                                    <div class="row lookschednotenable" style="display:@(Model.IsSchedule?"block":"none");">
+                                                        <div class="form-group">
+                                                            <div class="radio">
+                                                                <label>
+                                                                    <input type="radio" asp-for="LookScheduler.Type" value="@((int)ScheduleType.OneTime)">
+                                                                    @ScheduleType.OneTime.GetEnumDescription()
+                                                                </label>
+
+                                                                <label>
+                                                                    <input type="radio" asp-for="LookScheduler.Type" value="@((int)ScheduleType.Recurring)">
+                                                                    @ScheduleType.Recurring.GetEnumDescription()
+                                                                </label>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row lookschednotenable" style="display:@(Model.IsSchedule?"block":"none");">
+
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label asp-for="LookScheduler.StartDate">Start Date</label>
+                                                                <input type="text" asp-for="LookScheduler.StartDate" class="form-control datepicker" data-msg-required="*required" data-rule-required="true" />
+                                                                <span asp-validation-for="LookScheduler.StartDate" class="field-validation-error"></span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label asp-for="LookScheduler.TimeStart">Start Time</label>
+                                                                <input type="text" asp-for="LookScheduler.TimeStart" class="form-control timepicker" data-msg-required="*required" data-rule-required="true" />
+                                                                <span asp-validation-for="LookScheduler.TimeStart" class="field-validation-error"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row lookschednotenable" style="display:@(Model.IsSchedule?"block":"none");">
+
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label asp-for="LookScheduler.EndDate">End Date</label>
+                                                                <input type="text" asp-for="LookScheduler.EndDate" class="form-control datepicker" />
+                                                                <span asp-validation-for="LookScheduler.EndDate" class="field-validation-error"></span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label asp-for="LookScheduler.TimeEnd">End Time</label>
+                                                                <input type="text" asp-for="LookScheduler.TimeEnd" class="form-control timepicker" />
+                                                                <span asp-validation-for="LookScheduler.TimeEnd" class="field-validation-error"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-lg-6 col-sm-12 lookschedulerrecurring" style="display:@(Model.IsSchedule && Model.LookScheduler.Type==(int)ScheduleType.Recurring?"block":"none");">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label asp-for="LookScheduler.Frequency">Frequency</label>
+                                                    <select asp-for="LookScheduler.Frequency" class="form-control" asp-items="@(new SelectList(Model.ScheduleFrequencyList,"Id","Name"))">
+                                                        <option value="">Select</option>
+                                                    </select>
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label asp-for="LookScheduler.DailyFrequency">Daily Frequency</label>
+                                                    <select asp-for="LookScheduler.DailyFrequency" class="form-control" asp-items="@(new SelectList(Model.DailyFrequencyList,"Id","Name"))">
+                                                        <option value="">Select</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row Weekly" style="display:@(Model.LookScheduler.Frequency==(int)ScheduleFrequency.Weekly?"block":"none");">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    @foreach (var item in Model.WeekDayList)
+                                                    {
+                                                        <label>
+                                                            <input type="checkbox" name="LookScheduler.DaysOfWeekList" @(Model.LookScheduler.DaysOfWeekList.Any(a => a == int.Parse(item.Id)) ? "checked" : "") class="weekdays" value="@item.Id" />
+                                                            @item.Name
+                                                        </label>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+
+                                            <div class="col-md-6" id="div_LookScheduler_RecurseEvery">
+                                                <div class="form-group">
+                                                    <label asp-for="LookScheduler.RecurseEvery">Recurse Every</label>
+                                                    <input type="text" asp-for="LookScheduler.RecurseEvery" class="form-control" />
+                                                    <span asp-validation-for="LookScheduler.RecurseEvery" class="field-validation-error"></span>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-md-6 Monthly" style="display:@(Model.LookScheduler.Frequency==(int)ScheduleFrequency.Monthly?"block":"none");">
+                                                <div class="form-group">
+                                                    <label asp-for="LookScheduler.MonthlyOccurrence">Monthly Occurrence</label>
+                                                    <select asp-for="LookScheduler.MonthlyOccurrence" class="form-control" asp-items="@(new SelectList(Model.MonthlyOccurrenceList,"Id","Name"))">
+                                                        <option value="">Select</option>
+                                                    </select>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 Monthly" id="div_ExactDateOfMonth" style="display:@( Model.LookScheduler.Frequency==(int)ScheduleFrequency.Monthly && Model.LookScheduler.MonthlyOccurrence==(int)ScheduleMonthlyOccurrence.Days?"block":"none");">
+                                                <div class="form-group">
+                                                    <label asp-for="LookScheduler.ExactDateOfMonth ">Date Of Month </label>
+                                                    <input type="text" asp-for="LookScheduler.ExactDateOfMonth " class="form-control" />
+                                                    <span asp-validation-for="LookScheduler.ExactDateOfMonth " class="field-validation-error"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row">
+
+                                            <div class="col-md-6 Monthly" id="div_ExactWeekdayOfMonth" style="display:@(Model.LookScheduler.MonthlyOccurrence==(int)ScheduleMonthlyOccurrence.Week?"block":"none");">
+                                                <div class="form-group">
+                                                    <label asp-for="LookScheduler.ExactWeekdayOfMonth ">Week day Of Month </label>
+                                                    <select asp-for="LookScheduler.ExactWeekdayOfMonth " class="form-control" asp-items="@(new SelectList(Model.WeekDayList,"Id","Name"))">
+                                                        <option value="">Select</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 Monthly" id="div_ExactWeekdayOfMonthEvery" style="display:@(Model.LookScheduler.MonthlyOccurrence==(int)ScheduleMonthlyOccurrence.Week?"block":"none");">
+                                                <div class="form-group">
+                                                    <label asp-for="LookScheduler.ExactWeekdayOfMonthEvery ">Week day Of Month Every</label>
+                                                    <input type="text" asp-for="LookScheduler.ExactWeekdayOfMonthEvery " class="form-control" />
+                                                    <span asp-validation-for="LookScheduler.ExactWeekdayOfMonthEvery " class="field-validation-error"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row" id="div_OccursEveryTimeUnit" style="display:@(Model.LookScheduler.DailyFrequency==(int)ScheduleDailyFrequency.Every?"block":"none");">
+
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label asp-for="LookScheduler.OccursEveryValue  ">Occurs Every Value  </label>
+                                                    <input type="text" asp-for="LookScheduler.OccursEveryValue" class="form-control" />
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label asp-for="LookScheduler.OccursEveryTimeUnit ">Occurs Every Time Unit</label>
+                                                    <select asp-for="LookScheduler.OccursEveryTimeUnit" class="form-control" asp-items="@(new SelectList(Model.OccursEveryTimeUnitList,"Id","Name"))">
+                                                        <option value="">Select</option>
+                                                    </select>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+            <div class="top-Rbox1 botdiv">
+                <div class="top-Rbtn">
+                    <a href="javascript:void(0);" class="btn btn-secondary backBtn">Back</a>
+                    @if (CurrentMenuPermission.IsAdd || CurrentMenuPermission.IsEdit)
+                    {
+                    <button class="btn btn-primary btn-submit" id="btn-submit" type="submit">Submit</button>
+                    }
+                    <a href="javascript:void(0);" class="btn btn-primary nextBtn">Next</a>
+                </div>
+            </div>
+    </form>
+</div>
+
+
+
+
+
+
+
+@section scripts{
+    <script src="~/js/knockout-3.5.1.js" asp-append-version="true"></script>
+    <script src="~/js/knockout.mapping.min.js" asp-append-version="true"></script>
+    <script src="~/js/Customejs/Look/AddEdit.js" asp-append-version="true"></script>
+}
+
+

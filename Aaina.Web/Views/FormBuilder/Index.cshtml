@@ -1,0 +1,86 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@model List<FormBuilderDto>
+@using Aaina.Common;
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>Form Template</li>
+            </ul>
+        </div>
+    </div>
+    <div class="top-Rbtn">
+        <a href="/formbuilder/AddEdit" class="btn btn btn-primary"><i class="fa fa-plus"></i> Add New</a>
+
+    </div>
+</div>
+<div class="middlebox">
+    <div class="tablediv">
+        <div class='table-cont' id='table-cont'>
+
+            <table class="table table-striped" id="tbl_formbuilder">
+                <thead>
+                    <tr>
+                        <th scope="col">Sr. No</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        int i = 1;
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @i
+                                </td>
+                                <td>
+                                    @item.Name
+                                </td>
+                                <td>
+                                    @item.Header
+                                </td>
+                                <td>@(item.IsActive?"Active":"In Active")</td>
+                                <td>
+                                    <a href="/formbuilder/AddEdit/@item.Id"><i class="fa fa-pencil-square-o mtx"></i></a>
+
+                                    <a href="/formbuilder/Delete/@item.Id" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-delete-formbuilder"><i class="fa fa-trash-o mtx"></i> </a>
+
+
+                                    <a data-id="@item.Id" href="@Url.Action("AddEdit","FormBuilder",new {CopyId=item.Id})"><i class="fa fa-clone mtx"></i></a>
+                                    <a href="/formbuilder/View/@item.Id"><i class="fa fa-eye mtx"></i></a>
+
+                                </td>
+                            </tr>
+                            i++;
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5">Record not found</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+@Html.Partial("_Modal", new Modal { ID = "modal-delete-formbuilder", AreaLabeledId = "modal-action-delete-formbuilder-label", Size = ModalSize.Small })
+
+@section scripts{
+    <script src="~/js/Customejs/FormBuilder/Index.js" asp-append-version="true"></script>
+}

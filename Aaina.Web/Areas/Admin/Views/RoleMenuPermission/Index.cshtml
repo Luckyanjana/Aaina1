@@ -1,0 +1,177 @@
+﻿@model List<MenuPermissionDto>
+@{
+    ViewData["Title"] = "Index";
+    var rolelist = (List<RoleDto>)ViewBag.RolesList;
+    int? roleId = (int?)ViewBag.roleId;
+}
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>Role Menu Permission</li>
+            </ul>
+            <p>@DateTime.Now.ToString("dd MMMM") '@DateTime.Now.Year</p>
+        </div>
+    </div>
+</div>
+<div class="middlebox">
+    <div class="tablediv">
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="roleId" class="form-control">
+                        <option value="">Select Role</option>
+                        @foreach (var item in rolelist)
+                        {
+                            if (item.Id == roleId)
+                            {
+                                <option value="@item.Id" selected>@item.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+
+                        }
+                    </select>
+                </div>
+            </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label style="margin-top:25px;">
+                            <input type="checkbox" id="selectAll" />
+                            Select All
+                        </label>
+                    </div>
+                </div>
+            </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class='table-cont' id='table-cont'>
+                    <form asp-action="save" asp-controller="RoleMenuPermission" asp-area="admin" method="post">
+                        <table class="table table-striped" id="tbl_role">
+                            <thead>
+                                <tr>
+                                    <th scope="col" style="width:25%;">Menu Name</th>
+                                    <th scope="col" style="width:15%;">
+                                        <input data-id="IsList" class="parentCheck" type="checkbox" />
+                                        Is List
+                                    </th>
+                                    <th scope="col" style="width:15%;">
+                                        <input data-id="IsView" class="parentCheck" type="checkbox" />
+                                        Is View
+                                    </th>
+                                    <th scope="col" style="width:15%;">
+                                        <input data-id="IsAdd" class="parentCheck" type="checkbox" />
+                                        Is Add
+                                    </th>
+                                    <th scope="col" style="width:15%;">
+                                        <input data-id="IsEdit" class="parentCheck" type="checkbox" />
+                                        Is Edit
+                                    </th>
+                                    <th scope="col" style="width:15%;">
+                                        <input data-id="IsDelete" class="parentCheck" type="checkbox" />
+                                        Is Delete
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int i = 0;
+                                }
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            @item.Name
+                                            <input type="hidden" name="model[@i].MenuId" class="menuid" value="@item.MenuId" />
+                                            <input type="hidden" name="model[@i].RoleId" class="roleid" value="@item.RoleId" />
+                                            <input type="hidden" name="model[@i].IsMain" class="IsMain" value="@(item.IsMain?"true":"false")" />
+                                            
+                                        </td>
+                                        @if (!item.IsMain)
+                                        {
+                                            <td>
+                                                <input name="model[@i].IsList" class="IsList" type="checkbox" @(item.IsList ? "checked" : "") />
+                                            </td>
+                                            <td>
+                                                <input name="model[@i].IsView" class="IsView" type="checkbox" @(item.IsView ? "checked" : "") />
+                                            </td>
+                                            <td>
+                                                <input name="model[@i].IsAdd" class="IsAdd" type="checkbox" @(item.IsAdd ? "checked" : "") />
+                                            </td>
+                                            <td>
+                                                <input name="model[@i].IsEdit" class="IsEdit" type="checkbox" @(item.IsEdit ? "checked" : "") />
+                                            </td>
+                                            <td>
+                                                <input name="model[@i].IsDelete" class="IsDelete" type="checkbox" @(item.IsDelete ? "checked" : "") />
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        }
+
+                                    </tr>
+                                    i++;
+
+                                    @foreach (var item1 in item.ChildMenu)
+                                    {
+                                        <tr>
+                                            <td>
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@item1.Name
+                                                <input type="hidden" name="model[@i].MenuId" class="menuid" value="@item1.MenuId" />
+                                                <input type="hidden" name="model[@i].RoleId" class="roleid" value="@item1.RoleId" />
+                                            </td>
+                                            @if (!item1.IsMain)
+                                            {
+                                                <td>
+                                                    <input name="model[@i].IsList" class="IsList" type="checkbox" @(item1.IsList ? "checked" : "") />
+                                                </td>
+                                                <td>
+                                                    <input name="model[@i].IsView" class="IsView" type="checkbox" @(item1.IsView ? "checked" : "") />
+                                                </td>
+                                                <td>
+                                                    <input name="model[@i].IsAdd" class="IsAdd" type="checkbox" @(item1.IsAdd ? "checked" : "") />
+                                                </td>
+                                                <td>
+                                                    <input name="model[@i].IsEdit" class="IsEdit" type="checkbox" @(item1.IsEdit ? "checked" : "") />
+                                                </td>
+                                                <td>
+                                                    <input name="model[@i].IsDelete" class="IsDelete" type="checkbox" @(item1.IsDelete ? "checked" : "") />
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            }
+
+                                        </tr>
+                                        i++;
+                                    }
+
+                                }
+                            </tbody>
+                        </table>
+                        <input type="button" class="btn btn btn-primary" id="save" value="Save">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/js/Customejs/RoleMenuPermission/AddEdit.js" asp-append-version="true"></script>
+}

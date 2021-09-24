@@ -1,0 +1,206 @@
+﻿@model FormBuilderDto;
+@{
+    ViewData["Title"] = "View";
+}
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>@Model.Name</li>
+                <li>/</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="middlebox">
+    
+
+        <div class="tablediv tablediv1 tabledivbtn">
+            <div class="stepbox">
+                <div class="container">
+                    <div id="frm-add-edit-builder-template" class="row">
+                        <div id="validation-summary"></div>
+
+                        <div class="row">
+                            <div class="step1">
+                                <div class="step1-in">
+                                    <div class="form-group">
+                                        @{
+                                            int index = 0;
+                                        }
+                                        @foreach (var item in Model.FormBuilderAttribute)
+                                        {
+
+                                        <div class="col-md-4">
+                                            <input type="hidden" name="Attribute[@index].FormBuilderAttributeId" value="@item.Id" />
+                                            <label>@item.AttributeName</label>
+                                            @if (item.DataType == (int)Aaina.Common.OptionType.Dropdown)
+                                            {
+                                                if (item.IsRequired)
+                                                {
+                                                    <select class="form-control" name="Attribute[@index].LookUpId" data-msg-required="*required" data-rule-required="true">
+                                                        <option value=""> Select</option>
+                                                        @foreach (var look in item.FormBuilderAttributeLookUp)
+                                                        {
+                                                            <option value="@look.Id">@look.OptionName </option>
+                                                        }
+                                                    </select>
+                                                    <span class="field-validation-error field-validation-valid" data-valmsg-for="Attribute[@index].LookUpId" data-valmsg-replace="true"></span>
+                                                }
+                                                else
+                                                {
+                                                    <select class="form-control" name="Attribute[@index].LookUpId">
+                                                        <option value=""> Select</option>
+                                                        @foreach (var look in item.FormBuilderAttributeLookUp)
+                                                        {
+                                                            <option value="@look.Id">@look.OptionName </option>
+                                                        }
+                                                    </select>
+                                                }
+                                            }
+                                            else if (item.DataType == (int)Aaina.Common.OptionType.RadioButton)
+                                            {
+                                                if (item.IsRequired)
+                                                {
+                                                    foreach (var look in item.FormBuilderAttributeLookUp)
+                                                    {
+                                                        <label> <input type="radio" name="Attribute[@index].LookUpId" value="@look.Id" data-msg-required="*required" data-rule-required="true" />@look.OptionName </label>
+                                                    }
+                                                    <span class="field-validation-error field-validation-valid" data-valmsg-for="Attribute[@index].LookUpId" data-valmsg-replace="true"></span>
+                                                }
+                                                else
+                                                {
+                                                    foreach (var look in item.FormBuilderAttributeLookUp)
+                                                    {
+                                                        <label> <input type="radio" name="Attribute[@index].LookUpId" value="@look.Id" />@look.OptionName </label>
+                                                    }
+                                                }
+
+                                            }
+                                            else if (item.DataType == (int)Aaina.Common.OptionType.Checkbox)
+
+                                            {
+
+                                                <input type="checkbox" name="Attribute[@index].AttributeValue" class="che_box" />
+
+                                            }
+                                            else if (item.DataType == (int)Aaina.Common.OptionType.Emotion)
+                                            {
+
+                                                    <div class="row wrap_input" style="margin-top: 10px;">
+                                                        <div class="col-md-12">
+                                                            <div class="range-wrap">
+                                                                <div class="range-value" id="view_emotion">
+                                                                    <span><img src="/DYF/@CurrentUser.CompanyId/EmojiImages/1.png" class="imgemoji"></span>
+                                                                </div>
+                                                                <input type="range" class="range_change valid" id="Emotion" name="Attribute[@index].AttributeValue" value="1" min="1" max="10" step="1">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                
+                                            }
+                                            else
+                                            {
+                                                if (item.IsRequired)
+                                                {
+                                                    <input type="@(item.DataType == (int)Aaina.Common.OptionType.Integer ? "number" : "text")" name="Attribute[@index].AttributeValue" class="form-control @(item.DataType == (int)Aaina.Common.OptionType.Date ? "datepicker" : item.DataType == (int)Aaina.Common.OptionType.Time?"timepicker":"")" placeholder="@item.AttributeName" data-msg-required="*required" data-rule-required="true" />
+                                                    <span class="field-validation-error field-validation-valid" data-valmsg-for="Attribute[@index].AttributeValue" data-valmsg-replace="true"></span>
+                                                }
+                                                else
+                                                {
+                                                    <input type="@(item.DataType == (int)Aaina.Common.OptionType.Integer ? "number" : "text")" name="Attribute[@index].AttributeValue" class="form-control @(item.DataType == (int)Aaina.Common.OptionType.Date ? "datepicker" : item.DataType == (int)Aaina.Common.OptionType.Time?"timepicker":"")" placeholder="@item.AttributeName" />
+                                                }
+                                            }
+
+
+                                        </div>
+                                            index++;
+                                        }
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="top-Rbox1 botdiv">
+            <div class="top-Rbtn">
+                <a href="/formbuilder/Index" class="btn btn-secondary backBtn">Back</a>
+                
+            </div>
+        </div>
+    
+</div>
+
+
+@section scripts{
+
+    <script>
+        $(document).ready(function () {
+
+            $('.chkbox').change(function () {
+                $(this).val($(this).is(":checked"));
+            });
+
+            $('.datepicker').datepicker({
+                keyboardNavigation: false,
+                forceParse: false,
+                toggleActive: false,
+                autoclose: true,
+                format: 'dd/mm/yyyy'
+            }).inputmask("dd/mm/yyyy", { "placeholder": "dd/mm/yyyy" });
+
+            $(".timepicker").inputmask("99:99", { clearIncomplete: false });
+            $(".timepicker").blur(function () {
+                var currentMask = '';
+                var arr = $(this).val().split('');
+                if (arr[1] == '_' && arr[0] != '_') {
+                    arr[1] = arr[0];
+                    arr[0] = '0';
+                }
+
+                if (arr[4] == '_' && arr[3] != '_') {
+                    arr[4] = arr[3];
+                    arr[3] = '0';
+                }
+
+                $(arr).each(function (index, value) {
+                    if (value == '_')
+                        arr[index] = '0';
+                    currentMask += arr[index];
+                });
+                var time = currentMask.split(':');
+                if (time[0] == "" || time[0] == 'undefined' || time[0] == '__' || parseInt(time[0]) > 23)
+                    time[0] = '';
+                if (time[1] == "" || time[1] == 'undefined' || time[1] == '__' || parseInt(time[1]) > 59)
+                    time[1] = '';
+                var newVal = time[0] + ":" + time[1];
+                if (newVal.indexOf("undefined") != -1) {
+                    newVal = "";
+                }
+                $(this).val(newVal);
+            });
+
+            $(document).on('click', '.range_change', function () {
+
+                var range = document.getElementById('Emotion'),
+                    rangeV = document.getElementById('view_emotion');
+                const
+                    newValue = Number((range.value - range.min) * 100 / (range.max - range.min)),
+                    newPosition = 10 - (range.value * 5.5);
+                rangeV.innerHTML = `<span><img src="${Global.GetEmojiName(range.value)}" class="imgemoji" /></span>`;
+                rangeV.style.left = `calc(${newValue}% + (${newPosition}px))`;
+
+            });
+        })
+    </script>
+}
+
+

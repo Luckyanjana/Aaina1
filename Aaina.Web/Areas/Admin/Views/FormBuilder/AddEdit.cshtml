@@ -1,0 +1,90 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@model FormBuilderDto
+@{
+    ViewData["Title"] = "AddEdit";
+}
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>Form Builder</li>
+                <li>/</li>
+                <li>List</li>
+            </ul>
+
+        </div>
+    </div>
+
+</div>
+
+<div class="middlebox">
+    <form asp-action="addedit" asp-controller="formbuilder" asp-area="admin" method="post">
+        <div class="tablediv tablediv1 tabledivbtn">
+            <div class="stepbox">
+                <div class="container">
+                    <div id="frm-add-edit-builder-template" class="row">
+
+                        <div id="validation-summary"></div>
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="CopyId" />
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="step1">
+                                <div class="step1-in">
+                                    <div class="form-group">
+                                        <label asp-for="Name">Title</label>
+                                        <input asp-for="Name" class="form-control mb15" type="text" placeholder="Title" data-msg-required="*required" data-rule-required="true">
+                                        <span asp-validation-for="Name" class="field-validation-error"></span>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label asp-for="Header"> Description</label>
+                                        <textarea asp-for="Header" class="form-control" placeholder="Description"></textarea>
+                                        <span asp-validation-for="Header" class="field-validation-error"></span>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label style="margin-top:25px;">
+                                            <input type="checkbox" asp-for="IsActive" />
+                                            Is Active
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="step1">
+                                <div class="step1-in">
+                                    <div class="form-group">
+                                        <label>Content</label>
+                                        <textarea  rows="2" cols="4" class="form-control" placeholder="Content"></textarea>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+        <div class="top-Rbox1 botdiv">
+            <div class="top-Rbtn">
+                <a href="/admin/formbuilder" class="btn btn-secondary backBtn">Back</a>
+                <button class="btn btn-primary btn-submit" id="btn-submit" type="submit">Submit</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
+@section scripts{
+    <script src="~/js/Customejs/FormBuilder/AddEdit.js" asp-append-version="true"></script>
+}

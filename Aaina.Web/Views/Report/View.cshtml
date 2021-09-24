@@ -1,0 +1,117 @@
+﻿@model ReportGiveSaveDto
+@{
+    ViewData["Title"] = "Give";
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+}
+
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>@Model.Name</li>
+                <li>/</li>
+                <li>@Model.Game</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="middlebox">
+
+    <div class="tablediv tablediv1 tabledivbtn">
+        <div class="stepbox">
+            <div class="container">
+                <div id="frm-add-edit-builder-template" class="row">
+                    <div id="validation-summary"></div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        @if (Model.Details.Any(a => a.EntityId.HasValue))
+                                        {
+                                            <th>
+                                                User   Name
+                                            </th>
+                                        }
+                                        @foreach (var item in Model.FormBuilderAttribute)
+                                        {
+                                            <th>
+                                                @item.AttributeName
+                                            </th>
+                                        }
+
+                                        <th>
+                                            Remark
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @foreach (var user in Model.Details)
+                                    {
+                                        int index = 0;
+                                        <tr>
+                                            @if (user.EntityId.HasValue)
+                                            {
+                                                <td>
+                                                    @user.Name
+                                                </td>
+                                            }
+
+                                            @foreach (var item in Model.FormBuilderAttribute)
+                                            {
+                                                FormBuilderAttributeValueDto attr = user.Attribute.Any(x => x.FormBuilderAttributeId == item.Id) ? user.Attribute.FirstOrDefault(x => x.FormBuilderAttributeId == item.Id) : new FormBuilderAttributeValueDto();
+
+                                        <td>
+
+                                            @if (item.DataType == (int)Aaina.Common.OptionType.Dropdown || item.DataType == (int)Aaina.Common.OptionType.RadioButton)
+                                            {
+                                                <span>@attr.LookUp</span>
+                                            }
+                                            else if (item.DataType == (int)Aaina.Common.OptionType.Emotion)
+                                            {
+                                                <img src="/DYF/@CurrentUser.CompanyId/EmojiImages/@(attr.AttributeValue).png" class="imgemoji">
+                                            }
+                                            else
+                                            {
+                                                <span>@attr.AttributeValue</span>
+                                            }
+
+                                        </td>
+
+                                                index++;
+                                            }
+
+                                            <td>
+                                                @user.Remark
+                                            </td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">                                
+                                @Model.Remark
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="top-Rbox1 botdiv">
+        <div class="top-Rbtn">
+            <a href="/@tenant/Report/Index" class="btn btn-secondary backBtn">Back</a>
+        </div>
+    </div>
+
+</div>
+
+

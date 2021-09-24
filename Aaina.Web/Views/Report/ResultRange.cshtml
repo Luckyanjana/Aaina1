@@ -1,0 +1,442 @@
+﻿@model List<ReportGiveSaveDto>
+@using Aaina.Common;
+@{
+    ViewData["Title"] = "Give";
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+    int id = ViewBag.id;
+    DateTime? start = ViewBag.start;
+    DateTime? end = ViewBag.end;
+}
+
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        @if (Model.Any())
+        {
+            <div class="top-Ltextli">
+                <ul>
+                    <li>@Model.FirstOrDefault().Name</li>
+                    <li>/</li>
+                    <li>@Model.FirstOrDefault().Game</li>
+                </ul>
+            </div>
+        }
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="top-Rbtn">
+            <button class="btn btn btn-primary buttons-pdf" data-id="div_table" type="button"><span>PDF</span></button>
+            <a href="/@tenant/Report/ExportRange/@id?start=@(start.HasValue?start.Value.ToString("MM/dd/yyyy"):"")&end=@(end.HasValue?end.Value.ToString("MM/dd/yyyy"):"")" class="btn btn btn-primary delegate">Export</a>
+            <a href="/@tenant/Report/ExportRangeWithoutRemark/@id?start=@(start.HasValue?start.Value.ToString("MM/dd/yyyy"):"")&end=@(end.HasValue?end.Value.ToString("MM/dd/yyyy"):"")" class="btn btn btn-primary delegate">Export Without Remark</a>
+        </div>
+    }
+</div>
+
+<div class="middlebox">
+
+    <div class="tablediv tablediv1 tabledivbtn">
+        <div class="stepbox">
+            <div class="container">
+                <input type="hidden" id="reportId" value="@id" />
+                <div class="row">
+
+                    <div class="col-lg-6 col-sm-12">
+                        <div class="step1">
+                            <div class="step1-in">
+                                <div class="form-group">
+                                    <label><i class="fa fa-info-circle"></i> From Date</label>
+                                    <input id="from_date" class="form-control datepicker" placeholder="From Date" value="@(start.HasValue?start.Value.ToString("dd/MM/yyyy"):"")" />
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-sm-12">
+                        <div class="step1">
+                            <div class="step1-in">
+                                <div class="form-group">
+                                    <label><i class="fa fa-info-circle"></i> To Date</label>
+                                    <input id="to_date" class="form-control datepicker" placeholder="to Date" value="@(end.HasValue?end.Value.ToString("dd/MM/yyyy"):"")" />
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-sm-12">
+                        <div class="step1-in">
+                            <button class="btn btn-secondary" id="show_report">Show Report</button>
+                        </div>
+                    </div>
+
+                </div>
+                <br />
+                <div id="frm-add-edit-builder-template" class="row">
+                    @if (Model.Any())
+                    {
+                        ReportGiveSaveDto firstrecord = Model.FirstOrDefault();
+                        
+                            <div class="row">                                
+                                <div class="col-md-12">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    Give Date
+                                                </th>
+                                                @if (firstrecord.Details.Any(a => a.EntityId.HasValue))
+                                                {
+                                                    <th>
+                                                        User   Name
+                                                    </th>
+                                                }
+                                                @foreach (var item1 in firstrecord.FormBuilderAttribute)
+                                                {
+                                                    <th>
+                                                        @item1.AttributeName
+                                                    </th>
+                                                }
+
+                                                <th>
+                                                    Remark
+                                                </th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model.OrderBy(o => o.GiveDate))
+                                            {
+                                            foreach (var user in item.Details)
+                                            {
+                                                int index = 0;
+                                            <tr>
+                                                <td>
+                                                    @item.GiveDate.ToString("dd/MM/yyyy")
+                                                </td>
+                                                @if (user.EntityId.HasValue)
+                                                {
+                                                    <td>
+                                                        @user.Name
+                                                    </td>
+                                                }
+
+                                                @foreach (var item1 in item.FormBuilderAttribute)
+                                                {
+                                                    FormBuilderAttributeValueDto attr = user.Attribute.Any(x => x.FormBuilderAttributeId == item1.Id) ? user.Attribute.FirstOrDefault(x => x.FormBuilderAttributeId == item1.Id) : new FormBuilderAttributeValueDto();
+
+                                                    <td>
+
+                                                        @if (item1.DataType == (int)Aaina.Common.OptionType.Dropdown || item1.DataType == (int)Aaina.Common.OptionType.RadioButton)
+                                                        {
+                                                            <span>@attr.LookUp</span>
+                                                        }
+                                                        else if (item1.DataType == (int)Aaina.Common.OptionType.Emotion)
+                                                        {
+                                                            <img src="/DYF/@CurrentUser.CompanyId/EmojiImages/@(attr.AttributeValue).png" class="imgemoji">
+                                                        }
+                                                        else
+                                                        {
+                                                            <span>@attr.AttributeValue</span>
+                                                        }
+
+                                                    </td>
+
+                                                    index++;
+                                                }
+
+                                                <td>
+                                                    @user.Remark
+                                                </td>
+
+                                            </tr>
+                                            }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        @firstrecord.Remark
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+
+                                    @if (firstrecord.Accountability.Any(a => int.Parse(a.Id) == (int)AccountAbilityType.Creator))
+                                    {
+                                        <div class="col-md-3">
+                                            <label>Creator</label>
+                                            <br />
+                                            <label>@firstrecord.Accountability.FirstOrDefault(a => int.Parse(a.Id) == (int)AccountAbilityType.Creator).Name</label>
+                                        </div>
+                                    }
+                                    @if (firstrecord.Accountability.Any(a => int.Parse(a.Id) == (int)AccountAbilityType.Confirmed))
+                                    {
+                                        <div class="col-md-3">
+                                            <label>Confirmed</label>
+                                            <br />
+                                            <label>@firstrecord.Accountability.FirstOrDefault(a => int.Parse(a.Id) == (int)AccountAbilityType.Confirmed).Name</label>
+                                        </div>
+                                    }
+                                    @if (firstrecord.Accountability.Any(a => int.Parse(a.Id) == (int)AccountAbilityType.Verifier))
+                                    {
+                                        <div class="col-md-3">
+                                            <label>Verifier</label>
+                                            <br />
+                                            <label>@firstrecord.Accountability.FirstOrDefault(a => int.Parse(a.Id) == (int)AccountAbilityType.Verifier).Name</label>
+                                        </div>
+                                    }
+                                    @if (firstrecord.Accountability.Any(a => int.Parse(a.Id) == (int)AccountAbilityType.Approved))
+                                    {
+                                        <div class="col-md-3">
+                                            <label>Approved</label>
+                                            <br />
+                                            <label>@firstrecord.Accountability.FirstOrDefault(a => int.Parse(a.Id) == (int)AccountAbilityType.Approved).Name</label>
+                                        </div>
+                                    }
+                                    @if (firstrecord.Accountability.Any(a => int.Parse(a.Id) == (int)AccountAbilityType.Observer))
+                                    {
+                                        <div class="col-md-3">
+                                            <label>Observer</label>
+                                            <br />
+                                            <label>@firstrecord.Accountability.FirstOrDefault(a => int.Parse(a.Id) == (int)AccountAbilityType.Observer).Name</label>
+                                        </div>
+                                    }
+
+
+                                </div>
+                            </div>
+                        
+
+
+                        <div id="div_table" style="display:none">
+
+                            <style>
+                                .tablediv .table {
+                                    border: 1px solid #efefef;
+                                    background: #fff;
+                                }
+
+                                .table {
+                                    width: 100%;
+                                    max-width: 100%;
+                                    margin-bottom: 20px;
+                                }
+
+                                table {
+                                    border-collapse: collapse;
+                                    border-spacing: 0;
+                                }
+
+                                tablediv .table tr th {
+                                    background: #e5e5e5;
+                                    border-right: 1px solid #efefef;
+                                    color: #000000;
+                                }
+
+                                .tablediv .table tr th {
+                                    font-size: 15px;
+                                    text-align: center;
+                                    font-weight: 500;
+                                }
+
+                                .table > thead > tr > th {
+                                    vertical-align: bottom;
+                                    border-bottom: 2px solid #ddd;
+                                }
+
+                                .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+                                    padding: 8px;
+                                    line-height: 1.42857143;
+                                    vertical-align: top;
+                                    border-top: 1px solid #ddd;
+                                }
+                            </style>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                   
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>
+                                                        Give Date
+                                                    </th>
+                                                    @if (firstrecord.Details.Any(a => a.EntityId.HasValue))
+                                                    {
+                                                        <th>
+                                                            User   Name
+                                                        </th>
+                                                    }
+                                                    @foreach (var item1 in firstrecord.FormBuilderAttribute)
+                                                    {
+                                                        <th>
+                                                            @item1.AttributeName
+                                                        </th>
+                                                    }
+
+                                                    <th>
+                                                        Remark
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in Model.OrderBy(o => o.GiveDate))
+                                                {
+                                                    foreach (var user in item.Details)
+                                                    {
+                                                        int index = 0;
+                                                        <tr>
+                                                            <td>@item.GiveDate.ToString("dd/MM/yyyy")</td>
+                                                            @if (user.EntityId.HasValue)
+                                                            {
+                                                                <td>
+                                                                    @user.Name
+                                                                </td>
+                                                            }
+
+                                                            @foreach (var item1 in item.FormBuilderAttribute)
+                                                            {
+                                                                FormBuilderAttributeValueDto attr = user.Attribute.Any(x => x.FormBuilderAttributeId == item1.Id) ? user.Attribute.FirstOrDefault(x => x.FormBuilderAttributeId == item1.Id) : new FormBuilderAttributeValueDto();
+
+                                                                <td>
+
+                                                                    @if (item1.DataType == (int)Aaina.Common.OptionType.Dropdown || item1.DataType == (int)Aaina.Common.OptionType.RadioButton)
+                                                                    {
+                                                                        <span>@attr.LookUp</span>
+                                                                    }
+                                                                    else if (item1.DataType == (int)Aaina.Common.OptionType.Emotion)
+                                                                    {
+                                                                        <img src="@SiteKeys.Domain/DYF/@CurrentUser.CompanyId/EmojiImages/@(attr.AttributeValue)-mini.png" class="imgemoji">
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span>@attr.AttributeValue</span>
+                                                                    }
+
+                                                                </td>
+
+                                                                index++;
+                                                            }
+
+                                                            <td>
+                                                                @user.Remark
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+
+                                            </tbody>
+                                        </table>
+
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                @firstrecord.Remark
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            @foreach (var item1 in firstrecord.Accountability)
+                                            {
+                                                if ((int)AccountAbilityType.Creator == int.Parse(item1.Id))
+                                                {
+                                                    <div class="col-md-3">
+                                                        <label>Creator</label>
+                                                        <br />
+                                                        <label>@item1.Name</label>
+                                                    </div>
+                                                }
+                                                else if ((int)AccountAbilityType.Confirmed == int.Parse(item1.Id))
+                                                {
+                                                    <div class="col-md-3">
+                                                        <label>Confirmed</label>
+                                                        <br />
+                                                        <label>@item1.Name</label>
+                                                    </div>
+                                                }
+                                                else if ((int)AccountAbilityType.Verifier == int.Parse(item1.Id))
+                                                {
+                                                    <div class="col-md-3">
+                                                        <label>Verifier</label>
+                                                        <br />
+                                                        <label>@item1.Name</label>
+                                                    </div>
+                                                }
+                                                else if ((int)AccountAbilityType.Approved == int.Parse(item1.Id))
+                                                {
+                                                    <div class="col-md-3">
+                                                        <label>Approved</label>
+                                                        <br />
+                                                        <label>@item1.Name</label>
+                                                    </div>
+                                                }
+                                                else if ((int)AccountAbilityType.Observer == int.Parse(item1.Id))
+                                                {
+                                                    <div class="col-md-3">
+                                                        <label>Observer</label>
+                                                        <br />
+                                                        <label>@item1.Name</label>
+                                                    </div>
+                                                }
+                                            }
+                                        </div>
+                                    
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="top-Rbox1 botdiv">
+        <div class="top-Rbtn">
+            <a href="/@tenant/Report/Index" class="btn btn-secondary backBtn">Back</a>
+        </div>
+    </div>
+
+</div>
+
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+
+            $('.datepicker').datepicker({
+                keyboardNavigation: false,
+                forceParse: false,
+                toggleActive: false,
+                autoclose: true,
+                format: 'dd/mm/yyyy'
+            }).inputmask("dd/mm/yyyy", { "placeholder": "dd/mm/yyyy" });
+
+            $("#show_report").on('click', function () {                
+                var reportId = $("#reportId").val();
+                var from_date = $("#from_date").val();
+                var to_date = $("#to_date").val();
+                if (from_date != "" && to_date != "") {
+                    from_date = moment(from_date, 'DD/MM/YYYY').format('MM/DD/YYYY');
+                    to_date = moment(to_date, 'DD/MM/YYYY').format('MM/DD/YYYY');
+                    window.location.href = `/@tenant/Report/ResultRange/${reportId}?start=${from_date}&end=${to_date}`;
+                }
+            })
+
+            $(".buttons-pdf").on('click', function () {
+                var id = $(this).data('id');
+                var $html = $("#" + id).html();
+                $html = $html.replace('display: none;', '');
+                var newHtml = '<html><head><title>PDF Export</title></head><body >' + $html + '</body></html>';
+                Global.Pdf(newHtml);
+            });
+        })
+
+    </script>
+}

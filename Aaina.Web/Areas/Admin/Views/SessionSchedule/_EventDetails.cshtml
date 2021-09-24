@@ -1,0 +1,42 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@model SessionEventDetails
+
+@Html.Partial("_ModalHeader", new ModalHeader { Heading = Model.SessionName })
+
+<div class="modal-body">
+    <div class="row">
+        <div class="col-lg-12 col-sm-12">
+            <span>@Model.StartDate.ToString("dd MMM") |@Model.StartDate.ToString("hh:mm tt") to @Model.EndDate.ToString("hh:mm tt") </span>
+        </div>
+    </div>
+    <div class="row">
+
+        <div class="col-lg-12 col-sm-12">
+            <div class="col-md-3">Attendees</div>
+            <div class="col-md-3">@Model.Confirmed Confirmed</div>
+            <div class="col-md-3">@Model.Rejected Rejected</div>
+            <div class="col-md-3">@Model.Pending Pending</div>
+        </div>
+
+        <div class="col-lg-12 col-sm-12">
+            <div class="col-md-4"> <a href="javascript:void(0);">ATTEND</a> </div>
+            <div class="col-md-4"> <a href="/admin/SessionSchedule/agenda?sessionId=@Model.SessionId&start=@Model.StartDate.ToString("MM/dd/yyyy HH:mm")&end=@Model.EndDate.ToString("MM/dd/yyyy HH:mm")">AGENDA</a> </div>
+            <div class="col-md-4"> <a href="javascript:void(0);">POLL</a> </div>
+
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-lg-12 col-sm-12">
+            <span>Session Coordinator: @Model.Coordinator </span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12 col-sm-12">
+            <span>Session Manager: @Model.Manager </span>
+        </div>
+    </div>
+</div>
+
+
+

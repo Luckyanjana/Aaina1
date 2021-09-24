@@ -1,0 +1,247 @@
+﻿@model PlayMainDto
+@using Aaina.Common;
+@using Newtonsoft.Json;
+@{
+    ViewData["Title"] = "Index";
+
+    string iview = Model.ViewType;
+    int? gId = Model.GameId;
+
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+
+}
+
+<form action="/shared/ExporttoPDF" method="post" id="frmExportPdf" class="skip">
+    <input type="hidden" name="uiParameters" value="" />
+</form>
+<form action="/shared/ExporttoExcel" method="post" id="frmExportExcel" class="skip">
+    <input type="hidden" name="uiParameters" value="" />
+</form>
+
+<div class="row">
+    <div class="col-md-12">
+
+        @*<div class="modal-body clearfix">
+                <div class="dvprimaryfilterBody-col" data-table="dvprimaryfilterBody">
+
+                </div>
+                <div class="" align="center" style="border:none;">
+                    <button type="button" class="btn btn-flat btn-success" data-table="search" title="Search Record"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+                </div>
+            </div>*@
+
+        <div class="table-wrap-div dataTable-holder" data-scrolly="@Model">
+            <div class="table-responsive">
+                <div class="navbar-custom-menu pull-right" style="float:right;" id="navbar_custom_menu_div">
+                    <ul class="nav navbar-nav custome-nav-header-btn">
+                        <li class="dropdown messages-menu"><a href="javascript:void(0);" id="addnewbutton"> </a></li>
+                    </ul>
+                    <div class="top-Rbox1">
+                        <div class="top-Rbtn">
+                            <div class="dropdown">
+                                <ul class="btn btn btn-primary dropdown-toggle">
+                                    <li class="dropdown messages-menu">
+                                        <a href="javascript:void(0);" class="dropdown-toggle" id="printGrid" data-toggle="dropdown" aria-expanded="true">
+                                            <i class="fa fa-print"></i>&nbsp;Print
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="fa fa-gears"></i>&nbsp;Options </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" data-table="togglefilter" href="javascript:void(0);" style="display:none"><i class="fa fa-filter text-green"></i>&nbsp; Add Filter</a>
+                                    <a class="dropdown-item" href="javascript:void(0);" data-table="reset" style="display:none"><i class="fa fa-filter text-red"></i>&nbsp; Remove Filter (Reset)</a>
+                                    <a class="dropdown-item" href="javascript:void(0);" id="pdfExport"><i class="fa fa-file-pdf text-green"></i>&nbsp; PDF Download</a>
+                                    <a class="dropdown-item" href="javascript:void(0);" id="excellExport"><i class="fa fa-file-excel text-green"></i>&nbsp; Excel Download</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <table class="table table-striped" id="tbl_filter">
+                    <thead>
+                        <tr>
+                            <th scope="col">
+                                <input type="checkbox" class="all_action_check" />
+                            </th>
+                            <th scope="col">Play Id</th>
+                            <th scope="col">Game</th>
+                            <th scope="col">Sub Game</th>
+                            <th scope="col">Play</th>
+                            <th scope="col">Parent</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Accountable Persion</th>
+                            <th scope="col">Dependancy</th>
+                            <th scope="col">Priority</th>
+                            <th scope="col">
+                                Realtime
+                                Status
+                            </th>
+                            <th scope="col">
+                                Planned Start
+                            </th>
+                            <th scope="col">
+                                Deadline
+                            </th>
+                            <th scope="col">
+                                Actual Start
+                            </th>
+
+                            <th scope="col">Actual  End</th>
+                            <th scope="col">Emotion</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.PlayGridDtoList.Any())
+                        {
+                            int index = 1;
+                            foreach (var item in Model.PlayGridDtoList.Where(x => x.ParentId == "" || x.ParentId == null))
+                            {
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" class="action_check" value="@item.Id" />
+                                    </td>
+                                    <td>
+                                        @item.Id
+                                    </td>
+                                    <td>
+                                        @item.GameId
+                                    </td>
+                                    <td>
+                                        @item.SubGameId
+                                    </td>
+                                    <td>
+                                        @item.Name
+                                    </td>
+                                    <td>@item.ParentId</td>
+                                    <td>
+                                        @item.Description
+                                    </td>
+
+                                    <td>
+                                        @item.AccountableId
+                                    </td>
+                                    <td>@item.DependancyId</td>
+                                    <td>
+                                        @item.Priority
+                                    </td>
+                                    <td>
+                                        <select class="form-control action_play_status"
+                                                data-id="@item.Id" data-accountable="@item.Accountable"
+                                                data-accountableid="@item.AccountableId" data-text="@item.Status">
+                                            @foreach (var st in Model.StatusList)
+                                            {
+                                                if (st.Value.ToString() == item.Status)
+                                                {
+                                                    <option value="@st.Value" selected>@st.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@st.Value">@st.Text</option>
+                                                }
+
+                                            }
+
+                                        </select>
+                                    </td>
+                                    <td>
+                                        @item.StartDate
+
+                                    </td>
+                                    <td>
+                                        @item.DeadlineDate
+
+                                    </td>
+                                    <td>
+                                        @item.ActualStartDate
+
+                                    </td>
+                                    <td>
+                                        @item.ActualEndDate
+
+                                    </td>
+                                    <td>
+                                        <img src="/DYF/@CurrentUser.CompanyId/EmojiImages/@(item.Emotion).png" class="imgemoji" />
+                                    </td>
+                                    <td>
+                                        @if (CurrentMenuPermission.IsEdit)
+                                        {
+                                            <a href="/@tenant/play/Edit/@item.Id"><i class="fa fa-pencil-square-o mtx"></i></a>
+                                        }
+                                        @if (CurrentMenuPermission.IsDelete)
+                                        {
+                                            <a href="/@tenant/play/Delete/@item.Id" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-action-delete-play"><i class="fa fa-trash-o mtx"></i></a>
+                                        }
+                                    </td>
+                                </tr>
+                                index++;
+
+                            }
+                        }
+                        else
+                        {
+                    <tr>
+                        <td colspan="16">Record not found</td>
+                    </tr>
+                        }
+
+                    </tbody>
+                </table>
+                <table class="table table-hover table-header dataTable no-footer display responsive " data-table="grid">
+                    <thead>
+                    </thead>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="modal data-filter-modal" tabindex="-1" data-table="dvfilterBox">
+    <div class="valign">
+        <div>
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Advance Filter</h4>
+                        <button type="button" class="close" aria-label="Close" data-table="close-filter"><span aria-hidden="true">&times;</span></button>
+
+                    </div>
+                    <div class="modal-body clearfix">
+                        <div class="dvfilterBody-col" data-table="dvfilterBody">
+                        </div>
+                        <div class="" align="center" style="border:none;">
+                            <button type="button" class="btn btn-flat btn-success" data-table="search" title="Search Record"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade bs-example-modal-lg" data-table="pdfsetting" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" id="exportPdfModeldiv" style="min-height:150px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="loading">Loading.........</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="myModal1" class="modal  fade bs-example-modal-lg" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="myModalContent">
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+
+}
+

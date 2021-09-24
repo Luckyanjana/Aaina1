@@ -1,0 +1,272 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@model TeamDto
+@using Aaina.Common;
+@using Newtonsoft.Json;
+@{
+    List<GameMenuDto> playerChart = new List<GameMenuDto>();
+    playerChart.Add(new GameMenuDto() { Id = -1, Name = Model.Id.HasValue ? Model.Name : "New Team", ParentId = 0 });
+    playerChart.AddRange(Model.RoleList.Select(s => new GameMenuDto() { Id = int.Parse(s.Id), Name = s.Name, ParentId = -1 }));
+
+    int maxRoleId = (Model.RoleList.Any() ? Model.RoleList.Max(x => int.Parse(x.Id)) : 0) + 100;
+
+    if (Model.Id.HasValue)
+        playerChart.AddRange(Model.TeamPlayer.Select(s => new GameMenuDto() { Id = maxRoleId + s.UserId, Name = Model.UserList.FirstOrDefault(a => int.Parse(a.Id) == s.UserId).Name, ParentId = s.RoleId }));
+}
+<script>
+    function set(value) {
+        return value;
+    }
+    var gamedata = '@Model.AllForChart' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.AllForChart.Select(x=> new { id=x.Id,name=x.Name, parent=x.ParentId}).ToList())));
+    var playerdata = '@playerChart' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(playerChart.Select(x=> new { id=x.Id,name=x.Name, parent=x.ParentId}).ToList())));
+    var roleListarr = '@Model.RoleList' == null ? "" : set(@Html.Raw(JsonConvert.SerializeObject(Model.RoleList)));
+    var maxuserId = set(@Html.Raw(JsonConvert.SerializeObject(maxRoleId)));
+</script>
+<link href="~/plugins/Org-Chart/jquery.orgchart.css" rel="stylesheet" />
+<link href="~/css/Stepwizard.css" rel="stylesheet" />
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>Add/Edit Team</li>
+                <li>/</li>
+                <li><b>Basic Info</b></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div id="frm-add-edit-game">
+    <form asp-action="addedit" asp-controller="team" asp-area="admin" method="post" autocomplete="off">
+        <div id="validation-summary"></div>
+        <input type="hidden" asp-for="Id" />
+        <div class="middlebox">
+            <div class="tablediv tablediv1 tabledivbtn">
+                <div class="stepbox">
+                    <ul class="nav nav-tabs responsive-tabs">
+                        <li class="active"><a href="#tab01"><span>1</span> Basic Info</a></li>
+                        <li><a href="#tab02"><span>2</span> Add Players & Roles</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tab01">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-sm-12">
+                                                <div class="form-group">
+                                                    <label><i class="fa fa-info-circle"></i> Team Name</label>
+                                                    <input asp-for="Name" class="form-control mb15" type="text" placeholder="Core Team">
+                                                    <span asp-validation-for="Name" class="field-validation-error"></span>
+                                                    <textarea asp-for="Desciption" class="form-control" placeholder="Description"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-12 col-sm-12">
+                                                <div class="form-group">
+                                                    <label>Parent Game [if any]</label>
+                                                    <select asp-for="GameId" class="form-control" asp-items="@(new SelectList(Model.GameList,"Id","Name"))"> <option value="">Select</option> </select>
+                                                </div>
+                                            </div>
+                                            <div class="clearfix"></div>
+                                            <div class="col-lg-4 col-sm-12">
+                                                <div class="form-group">
+                                                    <label>Game Weightage</label>
+                                                    <input type="number" asp-for="Weightage" class="form-control" />
+                                                    <span asp-validation-for="Weightage" class="field-validation-error"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4 col-sm-12">
+                                                <div class="form-group">
+                                                    <label style="margin-top:25px;">
+                                                        <input type="checkbox" asp-for="IsActive" />
+                                                        Is Active
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-sm-12">
+                                                <div class="step1">
+                                                    <table class="table" id="tbl_team">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">S.No</th>
+                                                                <th scope="col">Name</th>
+                                                                <th scope="col">Weightage</th>
+                                                                <th scope="col">Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @if (Model.AllRecord.Any())
+                                                            {
+                                                                int index = 1;
+                                                                foreach (var item in Model.AllRecord)
+                                                                {
+                                                                    <tr>
+                                                                        <td>
+                                                                            @index
+                                                                        </td>
+                                                                        <td>
+                                                                            @item.Name
+                                                                        </td>
+                                                                        <td>@item.Weightage</td>
+                                                                        <td>
+                                                                            <a href="/admin/team/AddEdit/@item.Id"><i class="fa fa-pencil-square-o mtx"></i></a>
+
+                                                                        </td>
+                                                                    </tr>
+                                                                    index++;
+
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <tr>
+                                                                    <td colspan="4">Team not found</td>
+                                                                </tr>
+                                                            }
+
+                                                        </tbody>
+                                                    </table>
+
+                                                    <div id="gameorgChart" style="display:none;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="tab02">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+
+                                                <div class="table-responsive">
+                                                    <table class="table" id="tbl_user">
+                                                        <thead>
+                                                            <tr>
+
+                                                                <th scope="col">Sr. No.</th>
+                                                                <th scope="col">Players</th>
+                                                                <th scope="col">Type</th>
+                                                                <th scope="col">Role</th>
+                                                                <th scope="col">Is Add</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @{
+                                                                int i = 0;
+                                                            }
+                                                            @foreach (var item in Model.UserList)
+                                                            {
+                                                                var player = Model.TeamPlayer.FirstOrDefault(x => x.UserId == int.Parse(item.Id));
+                                                                bool isAdded = player != null && player.Id.HasValue;
+                                                                <tr>
+                                                                    <td>
+                                                                        @(i+1)
+
+                                                                        @if (isAdded)
+                                                                        {
+                                                                            <input type="hidden" name="TeamPlayer[@i].id" value="@player.Id" />
+                                                                        }
+                                                                    </td>
+
+                                                                    <td>
+                                                                        <input type="hidden" name="TeamPlayer[@i].UserId" value="@item.Id" />
+                                                                        @item.Name
+                                                                    </td>
+
+                                                                    <td>
+                                                                        <input type="hidden" name="TeamPlayer[@i].TypeId" value="@item.Additional" />
+                                                                        @(((Aaina.Common.PlayersType)int.Parse(item.Additional)).ToString())
+                                                                    </td>
+                                                                    <td>
+                                                                        @if (isAdded)
+                                                                        {
+                                                                            <select name="TeamPlayer[@i].roleId" class="form-control roledrop">
+                                                                                <option value="">Select</option>
+                                                                                @foreach (var role in Model.RoleList)
+                                                                                {
+                                                                                    if (player.RoleId == int.Parse(role.Id))
+                                                                                    {
+                                                                                        <option value="@role.Id" selected>@role.Name</option>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <option value="@role.Id">@role.Name</option>
+                                                                                    }
+
+                                                                                }
+                                                                            </select>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <select name="TeamPlayer[@i].roleId" class="form-control roledrop ignore" asp-items="@(new SelectList(Model.RoleList,"Id","Name"))"> <option value="">Select</option> </select>
+                                                                        }
+
+
+                                                                    </td>
+
+                                                                    <td>
+                                                                        @if (isAdded)
+                                                                        {
+                                                                            <input type="checkbox" name="TeamPlayer[@i].IsAdded" data-username="@item.Name" data-user="@item.Id" checked class="added" value="true" />
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <input type="checkbox" name="TeamPlayer[@i].IsAdded" data-username="@item.Name" data-user="@item.Id" class="added" value="false" />
+                                                                        }
+
+                                                                    </td>
+
+                                                                </tr>
+                                                                i++;
+                                                            }
+
+                                                        </tbody>
+                                                    </table>
+                                                    <a href="/admin/user/register" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-add-edit-user" class="btn btn-warning fright wauto">Add User</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-sm-12">
+                                                <div class="step1 sele-r-right" style="overflow:auto;">
+                                                    <div id="playerorgChart"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="top-Rbox1 botdiv">
+                <div class="top-Rbtn">
+                    <a href="javascript:void(0);" class="btn btn-secondary backBtn">Back</a>
+                    <button class="btn btn-primary btn-submit" id="btn-submit" type="submit">Submit</button>
+                    <a href="javascript:void(0);" class="btn btn-primary nextBtn">Next</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+@Html.Partial("_Modal", new Modal { ID = "modal-add-edit-user", AreaLabeledId = "modal-add-edit-user-label", Size = ModalSize.Medium })
+@Html.Partial("_Modal", new Modal { ID = "modal-action-delete-team", AreaLabeledId = "modal-action-delete-team-label", Size = ModalSize.Small })
+@section scripts{
+    <script src="~/plugins/Org-Chart/jquery.orgchart.js" asp-append-version="true"></script>
+    <script src="~/js/Customejs/Team/TeamAddEdit.js" asp-append-version="true"></script>
+}

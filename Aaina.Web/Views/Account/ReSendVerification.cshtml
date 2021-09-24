@@ -1,0 +1,92 @@
+﻿@model LoginDto
+@using Microsoft.AspNetCore.Http;
+@using Aaina.Common;
+@{
+    Layout = null;
+    ViewData["Title"] = "Log in";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Forgot password</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="~/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/bower_components/font-awesome/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="~/bower_components/Ionicons/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/css/AdminLTE.min.css">
+    <!-- iCheck -->
+    <link rel="stylesheet" href="~/css/skins/skin-blue.css">
+    <link href="~/plugins/waitMe/waitMe.min.css" rel="stylesheet" />
+
+</head>
+<body class="body-bg">
+    <div id="dvWaitMe"></div>
+
+
+    <div class="loginPage">
+        <div class="loginCol">
+            <div class="logoCol">
+
+                <h1>Aaina</h1>
+
+
+                @if (TempData["message"] != null)
+                {
+                    <div class="alert alert-success alert-dismissable">
+                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                        @TempData["message"]
+                    </div>
+                }
+
+            </div>
+            <div class="loginSec signup-inner" id="account_login">
+
+                <div class="login-title">Account Verification ?</div>
+
+                <form asp-action="ReSendVerification" asp-controller="account" method="post" autocomplete="off">
+                    <h6>No worries, enter your email-id/user-name. We will send you account verification link.</h6>
+                    <br />
+                    <div id="validation-summary"></div>
+                    <div class="form-group log-inp">
+                        <label>User name/Email</label>
+                        <input class="form-control" asp-for="UserName" type="text" data-msg-required="*required" data-rule-required="true" />
+                        <span asp-validation-for="UserName" class="field-validation-error"></span>
+                    </div>
+                    <div class="form-group text-center">
+                        <button type="submit" id="btn-submit" class="btn custom-btn signup-btn">Submit</button>
+                    </div>
+                    <div class="form-group">
+                    </div>
+
+                    <div class="form-group">
+                        <br />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="~/bower_components/jquery/dist/jquery.min.js" asp-append-version="true"></script>
+    <script src="~/plugins/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/plugins/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/waitMe.js"></script>
+    <script src="~/js/global.js"></script>
+    <script src="~/js/Customejs/Account/Login.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(".close").on('click', function () {
+                $(this).parent().remove();
+            })
+        })
+    </script>
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+
+    }
+</body>
+</html>

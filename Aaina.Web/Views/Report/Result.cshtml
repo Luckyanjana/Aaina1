@@ -1,0 +1,349 @@
+﻿@model ReportGiveSaveDto
+@using Aaina.Common;
+@{
+    ViewData["Title"] = "Give";
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+}
+
+
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>@Model.Name</li>
+                <li>/</li>
+                <li>@Model.Game</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="top-Rbtn">
+        <button class="btn btn btn-primary buttons-pdf" data-id="div_table" type="button"><span>PDF</span></button>
+        <a href="/@tenant/Report/Export/@Model.ReportId" class="btn btn btn-primary delegate">Export</a>
+        <a href="/@tenant/Report/ExportWithoutRemark/@Model.ReportId" class="btn btn btn-primary delegate">Export Without Remark</a>
+    </div>
+
+</div>
+
+<div class="middlebox">
+
+    <div class="tablediv tablediv1 tabledivbtn">
+        <div class="stepbox">
+            <div class="container">
+                <div id="frm-add-edit-builder-template" class="row">
+                    <div id="validation-summary"></div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        @if (Model.Details.Any(a => a.EntityId.HasValue))
+                                        {
+                                            <th>
+                                                User   Name
+                                            </th>
+                                        }
+                                        @foreach (var item in Model.FormBuilderAttribute)
+                                        {
+                                            <th>
+                                                @item.AttributeName
+                                            </th>
+                                        }
+
+                                        <th>
+                                            Remark
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @foreach (var user in Model.Details)
+                                    {
+                                        int index = 0;
+                                        <tr>
+                                            @if (user.EntityId.HasValue)
+                                            {
+                                                <td>
+                                                    @user.Name
+                                                </td>
+                                            }
+
+                                            @foreach (var item in Model.FormBuilderAttribute)
+                                            {
+                                                FormBuilderAttributeValueDto attr = user.Attribute.Any(x => x.FormBuilderAttributeId == item.Id) ? user.Attribute.FirstOrDefault(x => x.FormBuilderAttributeId == item.Id) : new FormBuilderAttributeValueDto();
+
+                                        <td>
+
+                                            @if (item.DataType == (int)Aaina.Common.OptionType.Dropdown || item.DataType == (int)Aaina.Common.OptionType.RadioButton)
+                                            {
+                                                <span>@attr.LookUp</span>
+                                            }
+                                            else if (item.DataType == (int)Aaina.Common.OptionType.Emotion)
+                                            {
+                                                <img src="/DYF/@CurrentUser.CompanyId/EmojiImages/@(attr.AttributeValue).png" class="imgemoji">
+                                            }
+                                            else
+                                            {
+                                                <span>@attr.AttributeValue</span>
+                                            }
+
+                                        </td>
+
+                                                index++;
+                                            }
+
+                                            <td>
+                                                @user.Remark
+                                            </td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                @Model.Remark
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+
+                            @if (Model.Accountability.Any(a => int.Parse(a.Id) == (int)AccountAbilityType.Creator))
+                            {
+                                <div class="col-md-3">
+                                    <label>Creator</label>
+                                    <br />
+                                    <label>@Model.Accountability.FirstOrDefault(a => int.Parse(a.Id) == (int)AccountAbilityType.Creator).Name</label>
+                                </div>
+                            }
+                            @if (Model.Accountability.Any(a => int.Parse(a.Id) == (int)AccountAbilityType.Confirmed))
+                            {
+                                <div class="col-md-3">
+                                    <label>Confirmed</label>
+                                    <br />
+                                    <label>@Model.Accountability.FirstOrDefault(a => int.Parse(a.Id) == (int)AccountAbilityType.Confirmed).Name</label>
+                                </div>
+                            }
+                            @if (Model.Accountability.Any(a => int.Parse(a.Id) == (int)AccountAbilityType.Verifier))
+                            {
+                                <div class="col-md-3">
+                                    <label>Verifier</label>
+                                    <br />
+                                    <label>@Model.Accountability.FirstOrDefault(a => int.Parse(a.Id) == (int)AccountAbilityType.Verifier).Name</label>
+                                </div>
+                            }
+                            @if (Model.Accountability.Any(a => int.Parse(a.Id) == (int)AccountAbilityType.Approved))
+                            {
+                                <div class="col-md-3">
+                                    <label>Approved</label>
+                                    <br />
+                                    <label>@Model.Accountability.FirstOrDefault(a => int.Parse(a.Id) == (int)AccountAbilityType.Approved).Name</label>
+                                </div>
+                            }
+                            @if (Model.Accountability.Any(a => int.Parse(a.Id) == (int)AccountAbilityType.Observer))
+                            {
+                                <div class="col-md-3">
+                                    <label>Observer</label>
+                                    <br />
+                                    <label>@Model.Accountability.FirstOrDefault(a => int.Parse(a.Id) == (int)AccountAbilityType.Observer).Name</label>
+                                </div>
+                            }
+                          
+
+                        </div>
+                    </div>
+
+                    <div id="div_table" style="display:none">
+
+                        <style>
+                            .tablediv .table {
+                                border: 1px solid #efefef;
+                                background: #fff;
+                            }
+
+                            .table {
+                                width: 100%;
+                                max-width: 100%;
+                                margin-bottom: 20px;
+                            }
+
+                            table {
+                                border-collapse: collapse;
+                                border-spacing: 0;
+                            }
+
+                            tablediv .table tr th {
+                                background: #e5e5e5;
+                                border-right: 1px solid #efefef;
+                                color: #000000;
+                            }
+
+                            .tablediv .table tr th {
+                                font-size: 15px;
+                                text-align: center;
+                                font-weight: 500;
+                            }
+
+                            .table > thead > tr > th {
+                                vertical-align: bottom;
+                                border-bottom: 2px solid #ddd;
+                            }
+
+                            .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+                                padding: 8px;
+                                line-height: 1.42857143;
+                                vertical-align: top;
+                                border-top: 1px solid #ddd;
+                            }
+                        </style>
+
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    @if (Model.Details.Any(a => a.EntityId.HasValue))
+                                    {
+                                        <th>
+                                            User   Name
+                                        </th>
+                                    }
+                                    @foreach (var item in Model.FormBuilderAttribute)
+                                    {
+                                        <th>
+                                            @item.AttributeName
+                                        </th>
+                                    }
+
+                                    <th>
+                                        Remark
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @foreach (var user in Model.Details)
+                                {
+                                    int index = 0;
+                                    <tr>
+                                        @if (user.EntityId.HasValue)
+                                        {
+                                            <td>
+                                                @user.Name
+                                            </td>
+                                        }
+
+                                        @foreach (var item in Model.FormBuilderAttribute)
+                                        {
+                                            FormBuilderAttributeValueDto attr = user.Attribute.Any(x => x.FormBuilderAttributeId == item.Id) ? user.Attribute.FirstOrDefault(x => x.FormBuilderAttributeId == item.Id) : new FormBuilderAttributeValueDto();
+
+                                    <td>
+
+                                        @if (item.DataType == (int)Aaina.Common.OptionType.Dropdown || item.DataType == (int)Aaina.Common.OptionType.RadioButton)
+                                        {
+                                            <span>@attr.LookUp</span>
+                                        }
+                                        else if (item.DataType == (int)Aaina.Common.OptionType.Emotion)
+                                        {
+                                            <img src="@SiteKeys.Domain/DYF/@CurrentUser.CompanyId/EmojiImages/@(attr.AttributeValue)-mini.png" class="imgemoji">
+                                        }
+                                        else
+                                        {
+                                            <span>@attr.AttributeValue</span>
+                                        }
+
+                                    </td>
+
+                                            index++;
+                                        }
+
+                                        <td>
+                                            @user.Remark
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                @Model.Remark
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            @foreach (var item in Model.Accountability)
+                            {
+                                if ((int)AccountAbilityType.Creator == int.Parse(item.Id))
+                                {
+                                    <div class="col-md-3">
+                                        <label>Creator</label>
+                                        <br />
+                                        <label>@item.Name</label>
+                                    </div>
+                                }
+                                else if ((int)AccountAbilityType.Confirmed == int.Parse(item.Id))
+                                {
+                                    <div class="col-md-3">
+                                        <label>Confirmed</label>
+                                        <br />
+                                        <label>@item.Name</label>
+                                    </div>
+                                }
+                                else if ((int)AccountAbilityType.Verifier == int.Parse(item.Id))
+                                {
+                                    <div class="col-md-3">
+                                        <label>Verifier</label>
+                                        <br />
+                                        <label>@item.Name</label>
+                                    </div>
+                                }
+                                else if ((int)AccountAbilityType.Approved == int.Parse(item.Id))
+                                {
+                                    <div class="col-md-3">
+                                        <label>Approved</label>
+                                        <br />
+                                        <label>@item.Name</label>
+                                    </div>
+                                }
+                                else if ((int)AccountAbilityType.Observer == int.Parse(item.Id))
+                                {
+                                    <div class="col-md-3">
+                                        <label>Observer</label>
+                                        <br />
+                                        <label>@item.Name</label>
+                                    </div>
+                                }
+                            }
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="top-Rbox1 botdiv">
+        <div class="top-Rbtn">
+            <a href="/@tenant/Report/Index" class="btn btn-secondary backBtn">Back</a>
+        </div>
+    </div>
+
+</div>
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $(".buttons-pdf").on('click', function () {
+                var id = $(this).data('id');
+                var $html = $("#" + id).html();
+                $html = $html.replace('display: none;', '');
+                var newHtml = '<html><head><title>PDF Export</title></head><body >' + $html + '</body></html>';
+                Global.Pdf(newHtml);
+            });
+        })
+       
+    </script>
+}

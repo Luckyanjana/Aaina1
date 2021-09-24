@@ -1,0 +1,193 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = null;    
+}
+
+<!------ Include the above in your HEAD tag ---------->
+
+<!DOCTYPE html>
+<html class=''>
+<head>
+    <meta charset='UTF-8'>
+    <meta name="robots" content="noindex">
+    <link rel="canonical" href="https://codepen.io/emilcarlsson/pen/ZOQZaV?limit=all&page=74&q=contact+" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet' type='text/css'>
+    <script src="https://use.typekit.net/hoy3lrg.js"></script>
+    <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css'>
+    <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css'>
+    @*<link rel="stylesheet" href="~/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">*@
+    <link href="~/plugins/waitMe/waitMe.min.css" rel="stylesheet" />
+
+    <link href="~/css/Chat_Style.css" rel="stylesheet" />
+    <title>Chat-@CurrentUser.Name</title>
+
+</head>
+<body>
+    <div id="dvWaitMe"></div>
+    
+    <div id="frame">
+        <div id="sidepanel">
+            <div class="chat_panel">
+                <div class="profile">
+                    <div class="wrap">
+                        <img src="@CurrentUser.Avatar" class="online" alt="" />
+                        <p>@CurrentUser.Name</p>
+
+                        <i class="fa fa-user-plus expand-button btnCreateGrp" aria-hidden="true"></i>
+
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+
+                </div>
+
+                <div class="search">
+                    <label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
+                    <input type="text" placeholder="Search contacts..." onkeyup="userSearch(this,'.chat_panel')" />
+                </div>
+
+                <div class="contacts">
+                    <ul class="contacts-list">
+                    </ul>
+
+                </div>
+
+                <div class="bottom-bar" style="background: #f5f5f5;">
+                    @*<button id="addcontact"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> <span>Add contact</span></button>*@
+                    <label class="switch">
+                        <input type="checkbox" class="usertype_checkbox" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    @*<button id="settings"><i class="fa fa-cog fa-fw" aria-hidden="true"></i> <span>Settings</span></button>*@
+                    <a href="/home/index" style="float: right;"><i class="fa fa-backward" aria-hidden="true"></i> <span>Home</span></a>
+
+                </div>
+            </div>
+
+            <div class="group_create_panel" style="display:none;">
+                <div class="profile">
+                    <div class="wrap">
+                        <img src="@CurrentUser.Avatar" class="online" alt="" />
+                        <p>@CurrentUser.Name</p>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+
+                </div>
+
+                <div class="search">
+                    <label for=""><i class="fa fa-object-group" aria-hidden="true"></i></label>
+                    <input type="text" placeholder="Group Name" class="txtgroupname" />
+                    <input type="hidden" class="txtgroupid" />
+                </div>
+
+                <div class="search">
+                    <label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
+                    <input type="text" placeholder="Search contacts..." onkeyup="userSearch(this,'.group_create_panel')" />
+                </div>
+
+                <div class="contacts">
+                    <ul class="group-contacts-list">
+                    </ul>
+
+                </div>
+
+                <div class="bottom-bar">
+                    <button class="btnCreate"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> <span>Add/Update Group</span></button>
+                    <button class="btnCancel"><i class="fa fa-close fa-fw" aria-hidden="true"></i> <span>Cancle</span></button>
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            <div class="contact-profile contact-profile-div">
+                <img src="" class="profile-user-main-img" alt="" />
+                <p class="users-main-name"></p>
+                <div class="social-media">
+                    <a href="javascript:void(0)" class="pdf-export" style="display:none;"> <i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
+                    <a href="javascript:void(0)" class="group-info" style="display:none"> <i class="fa fa-info-circle" aria-hidden="true"></i></a>
+                </div>
+            </div>
+
+            <div class="contact-profile group-info-header" style="display:none;">
+                <img src="" class="profile-user-main-img" alt="" />
+                <p class="users-main-name"></p>
+                <div class="social-media">
+                    <a href="javascript:void(0)" style="display:none" class="delete-group"> <i class="fa fa-close" aria-hidden="true"></i></a>
+
+                    <a href="javascript:void(0)" style="display:none" class="edit-group"> <i class="fa fa-edit" aria-hidden="true"></i></a>
+
+                    <a href="javascript:void(0)" style="display:none" class="delete-user"> <i class="fa fa-trash" aria-hidden="true"></i></a>
+                    <a href="javascript:void(0)" style="display:none" class="group-info-back"> <i class="fa fa-backward" aria-hidden="true"></i></a>
+
+                </div>
+            </div>
+
+            <div class="contact-profile pdf-export-div" style="display:none;">
+                <div class="row">
+                    <div class="col-md-4" style="width: 38%;float: left;">
+                        <label>From Date</label>
+                        <input type="date" class="form-control fromdate" placeholder="From Date" />
+                    </div>
+
+                    <div class="col-md-4" style="width: 30%;float: right;">
+                        <div class="social-media">
+                            <a href="javascript:void(0)" class="pdf-export-pdf"> <i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
+                            <a href="javascript:void(0)" class="pdf-export-close"> <i class="fa fa-close" aria-hidden="true"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-md-4" style="width: 32%;float: right;">
+                        <label>To Date</label>
+                        <input type="date" class="form-control todate" placeholder="To Date" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="messages">
+                <ul>
+                </ul>
+            </div>
+
+            <div class="message-input" style="display:none;">
+                <div class="wrap">
+                    <input type="text" id="type_txt_message" placeholder="Write your message..." />
+                    @*<i class="fa fa-paperclip attachment" aria-hidden="true"></i>*@
+                    <button class="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script>
+        var userId = '@CurrentUser.UserId';
+        var companyId = '@CurrentUser.CompanyId';
+        var userName = '@CurrentUser.Name';
+        var userAvatar = '@CurrentUser.Avatar';
+
+    </script>
+    <script src="~/Themes/Theme1/js/jquery.min.js"></script>
+    <script src="~/Themes/Theme1/js/bootstrap.js"></script>
+    <script src="/lib/signalr/signalr.js"></script>
+    <script src="~/bower_components/moment/min/moment.min.js" asp-append-version="true"></script>
+    <script src="~/js/waitMe.js"></script>
+    @*<script src="http://www.openjs.com/scripts/events/keyboard_shortcuts/shortcut.js"></script>*@
+    @*<script src="~/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js" asp-append-version="true"></script>*@
+    <script src="~/js/global.js" asp-append-version="true"></script>
+    <script src="~/js/ChatService.js" asp-append-version="true"></script>
+    <script>
+        //$(document).ready(function () {
+        //    $('.datepicker').datepicker({
+        //        keyboardNavigation: false,
+        //        forceParse: false,
+        //        toggleActive: false,
+        //        autoclose: true,
+        //        format: 'dd/mm/yyyy'
+        //    })
+        //})
+    </script>
+</body>
+</html>
+

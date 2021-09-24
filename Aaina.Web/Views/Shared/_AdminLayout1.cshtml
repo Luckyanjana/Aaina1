@@ -1,0 +1,116 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Aaina</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,700;0,800;1,600;1,700&display=swap" rel="stylesheet">
+    <link href="~/Themes/Theme1/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="~/Themes/Theme1/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="~/bower_components/bootstrap-daterangepicker/daterangepicker.css">
+    <link rel="stylesheet" href="~/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+    <link rel="stylesheet" href="~/bower_components/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css" />
+    <link href="~/Themes/Theme1/css/style.css" rel="stylesheet" type="text/css">
+    <link href="~/Themes/Theme1/css/responsive.css" rel="stylesheet" type="text/css">
+    <link href="~/plugins/waitMe/waitMe.min.css" rel="stylesheet" />
+    <style>
+        .field-validation-error {
+            color: red;
+        }
+
+        .validation-summary-errors {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="dvWaitMe"></div> 
+    <div class="footbot2 mobfoot">
+        <ul>
+            <li><a href="javascript:void(0);"><span class="bo-round br-0"></span></a></li>
+            <li><a href="javascript:void(0);"><span class="bo-round br-b"></span></a></li>
+            <li><a href="javascript:void(0);"><span class="bo-round br-y"></span></a></li>
+        </ul>
+        <a href="javascript:void(0);" class="fo-logo"><img src="" @(!string.IsNullOrEmpty(CurrentUser.Avatar) ? $"/{CurrentUser.CompanyId}/EmployeeImages/{CurrentUser.Avatar}" : "/Themes/Theme1/images/fo-icon2.png") "></a>
+        <ul>
+            <li><a href="javascript:void(0);"><span class="bo-round br-g"></span></a></li>
+            <li><a href="javascript:void(0);"><span class="bo-round br-p"></span></a></li>
+            <li><a href="javascript:void(0);"><span class="bo-round"></span></a></li>
+        </ul>
+    </div>
+    <div class="mainwapper">
+        <div class="top-box">
+            <div class="top-boxL">
+                <div class="top-logo"> <img src="/img/logo.png" title="logo" alt="logo"></div>
+                <nav id="column_left">
+                    @await Component.InvokeAsync("GameMenu", new { companyId = CurrentUser.CompanyId })
+                </nav>
+            </div>
+            <div class="top-boxR">
+                <div class="top-Rbox">
+                    @RenderBody()
+                </div>
+            </div>
+            <div class="footbot">
+                <partial name="_Footer" />
+            </div>
+        </div>
+    </div>
+    <script src="~/Themes/Theme1/js/jquery.min.js"></script>
+    <script src="~/Themes/Theme1/js/bootstrap.js"></script>
+    <script src="~/Themes/Theme1/js/custom.js"></script>
+    <script src="~/plugins/input-mask/jquery.inputmask.js" asp-append-version="true"></script>
+    <script src="~/plugins/input-mask/jquery.inputmask.date.extensions.js" asp-append-version="true"></script>
+    <script src="~/plugins/input-mask/jquery.inputmask.extensions.js" asp-append-version="true"></script>
+    <script src="~/bower_components/moment/min/moment.min.js" asp-append-version="true"></script>
+    <script src="~/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js" asp-append-version="true"></script>
+    <script src="~/bower_components/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js" asp-append-version="true"></script>
+
+    <script src="~/bower_components/datatables.net/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+    <script src="~/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js" asp-append-version="true"></script>
+    <script src="~/plugins/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/plugins/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/plugins/toastr/toastr.min.js" asp-append-version="true"></script>
+    <script src="~/js/waitMe.js"></script>
+    <script src="~/js/global.js"></script>
+    @RenderSection("scripts", required: false)
+
+
+    @{
+        var model = ViewData["NotificationModel"] as Notification;
+        if (model == null)
+        {
+            if (TempData["NotificationModel"] != null)
+            {
+
+                model = Newtonsoft.Json.JsonConvert.DeserializeObject<Notification>(TempData["NotificationModel"].ToString());
+            }
+        }
+    }
+
+    @if (model != null)
+    {
+
+        <script>
+        $(document).ready(function () {
+            if ('@(model.Type.ToString().ToLower())' == 'success') {
+                Global.ToastrSuccess('@(model.Message)');
+            } else if ('@(model.Type.ToString().ToLower())' == 'danger') {
+                Global.ToastrError('@(model.Message)');
+            }
+            else if ('@(model.Type.ToString().ToLower())' == 'warning') {
+                Global.ToastrWarning('@(model.Message)');
+            } else  {
+                Global.ToastrInfo('@(model.Message)');
+            }
+        });
+
+        </script>
+    }
+
+
+</body>
+</html>

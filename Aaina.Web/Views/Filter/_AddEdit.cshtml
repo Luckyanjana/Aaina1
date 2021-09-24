@@ -1,0 +1,341 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@model FilterDto
+@using Aaina.Common;
+@using Newtonsoft.Json;
+@{
+    int tenant = Convert.ToInt32(HttpContextAccessor.HttpContext.Request.RouteValues["tenant"]);
+}
+
+
+<link href="~/css/Stepwizard.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<div class="top-Rbox1">
+    <div class="top-Ltext">
+        <div class="overlap"></div>
+        <a href="javascript:void(0);" class="naleftbtn"><span></span></a>
+        <div class="top-Ltextli">
+            <ul>
+                <li>Emotions Filter</li>
+                <li>/</li>
+                <li><b>@(DateTime.Now.ToString("dd MMMM yy"))</b></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div id="frm-add-edit-filter">
+    <form asp-action="add" asp-controller="filter" asp-area="" asp-route-tenant="@tenant" method="post" autocomplete="off">
+        <div id="validation-summary"></div>
+        <input type="hidden" asp-for="Id" />
+
+        <div class="middlebox">
+            <div class="tablediv tablediv1 tabledivbtn">
+                <div class="stepbox">
+                    <ul class="nav nav-tabs responsive-tabs">
+                        <li class="active"><a href="#tab01"><span>1</span> Set</a></li>
+                        <li><a href="#tab02"><span>2</span> Entities</a></li>
+                        <li><a href="#tab03"><span>3</span> Calculation</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tab01">
+                            <div class="container">
+                                <div class="row">
+
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-sm-12">
+                                                <div class="step1">
+                                                    <table class="table" id="tbl_filter">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">S.No</th>
+                                                                <th scope="col">Name</th>
+                                                                <th scope="col">For</th>
+                                                                <th scope="col">From</th>
+                                                                <th scope="col">Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @if (Model.AllRecord.Any())
+                                                            {
+                                                                int index = 1;
+                                                                foreach (var item in Model.AllRecord)
+                                                                {
+                                                                    <tr>
+                                                                        <td>
+                                                                            @index
+                                                                        </td>
+                                                                        <td>
+                                                                            @item.Name
+                                                                        </td>
+                                                                        <td>@(((EmotionsFor)item.EmotionsFor).GetEnumDescription())</td>
+                                                                        <td>@(((EmotionsFrom)item.EmotionsFrom).GetEnumDescription())</td>
+                                                                        <td>
+                                                                            @if (CurrentUser.RoleId == (int)UserType.User && item.CreatedBy == CurrentUser.UserId)
+                                                                            {
+                                                                                if (CurrentMenuPermission.IsEdit)
+                                                                                {
+                                                                                    <a href="/@tenant/filter/edit/@item.Id"><i class="fa fa-pencil-square-o mtx"></i></a>
+                                                                                }
+
+                                                                                if (CurrentMenuPermission.IsDelete)
+                                                                                {
+                                                                                    <a href="/@tenant/filter/Delete/@item.Id" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-action-delete-filter"><i class="fa fa-trash-o mtx"></i></a>
+                                                                                }
+                                                                            }
+
+                                                                            @if (CurrentUser.RoleId == (int)UserType.Admin)
+                                                                            {
+                                                                                <a href="/@tenant/filter/edit/@item.Id"><i class="fa fa-pencil-square-o mtx"></i></a>
+                                                                                <a href="/@tenant/filter/Delete/@item.Id" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-target="#modal-action-delete-filter"><i class="fa fa-trash-o mtx"></i></a>
+
+                                                                            }
+
+
+                                                                        </td>
+                                                                    </tr>
+                                                                    index++;
+
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <tr>
+                                                                    <td colspan="5">Filter not found</td>
+                                                                </tr>
+                                                            }
+
+                                                        </tbody>
+                                                    </table>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-sm-12">
+                                                <div class="form-group">
+                                                    <label><i class="fa fa-info-circle"></i> Filter Name</label>
+                                                    <input asp-for="Name" class="form-control mb15" type="text" placeholder="Filter Name" data-msg-required="*required" data-rule-required="true">
+                                                    <span asp-validation-for="Name" class="field-validation-error"></span>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label><i class="fa fa-info-circle"></i> Select Date</label>
+                                                    <div class="row">
+                                                        <div class="col-lg-5 col-sm-12">
+                                                            <input type="text" asp-for="StartDateTime" class="form-control" data-msg-required="*required" data-rule-required="true" />
+                                                            <span asp-validation-for="StartDateTime" class="field-validation-error"></span>
+                                                        </div>
+                                                        <div class="col-lg-1 col-sm-12 text-center"> <span class="toc">To</span> </div>
+                                                        <div class="col-lg-6 col-sm-12">
+                                                            <input type="text" asp-for="EndDateTime" class="form-control" data-msg-required="*required" data-rule-required="true" />
+                                                            <span asp-validation-for="EndDateTime" class="field-validation-error"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label><i class="fa fa-info-circle"></i> Select Time</label>
+                                                    <div class="row">
+                                                        <div class="col-lg-5 col-sm-12">
+                                                            <input type="text" asp-for="StartTime" class="form-control timepicker" />
+                                                            <span asp-validation-for="StartTime" class="field-validation-error"></span>
+                                                        </div>
+                                                        <div class="col-lg-1 col-sm-12 text-center"> <span class="toc">To</span> </div>
+                                                        <div class="col-lg-6 col-sm-12">
+                                                            <input type="text" asp-for="EndTime" class="form-control timepicker" />
+                                                            <span asp-validation-for="EndTime" class="field-validation-error"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <div class="col-lg-4 col-sm-12">
+                                                        <label style="margin-top:25px;">
+                                                            <input type="checkbox" asp-for="IsSelf" />
+                                                            Is Self
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="tab02">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-4 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+                                                <div class="form-group">
+                                                    <label><i class="fa fa-info-circle"></i> Emotions For</label>
+                                                    <select asp-for="EmotionsFor" class="form-control" asp-items="@(new SelectList(Model.EmotionsForTypeList,"Value","Text"))" data-msg-required="*required" data-rule-required="true"></select>
+                                                    <span asp-validation-for="EmotionsFor" class="field-validation-error"></span>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <select asp-for="ForIds" class="form-control select2" style="width:100%" asp-items="@(new SelectList(Model.EmotionsForList,"Value","Text"))" data-msg-required="*required" data-rule-required="true"></select>
+                                                    <span asp-validation-for="ForIds" class="field-validation-error"></span>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+                                                <div class="form-group">
+                                                    <label><i class="fa fa-info-circle"></i> Emotions From (Team)</label>
+                                                    <input type="hidden" asp-for="EmotionsFrom" value="@((int)EmotionsFrom.Team)" />
+                                                    <select asp-for="FromIds" class="form-control select2" style="width:100%" asp-items="@(new SelectList(Model.EmotionsFromList,"Value","Text"))"></select>
+                                                    <span asp-validation-for="FromIds" class="field-validation-error"></span>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label><i class="fa fa-info-circle"></i> Emotions From (Player)</label>
+                                                    <input type="hidden" asp-for="EmotionsFromP" value="@((int)EmotionsFrom.Player)" />
+                                                    <select asp-for="FromPIds" class="form-control select2" style="width:100%" asp-items="@(new SelectList(Model.EmotionsFromPList,"Value","Text"))"></select>
+                                                    <span asp-validation-for="FromPIds" class="field-validation-error"></span>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+                                                <div class="form-group">
+                                                    <label><i class="fa fa-info-circle"></i> Attributes</label>
+                                                    <select asp-for="AttributeIds" class="form-control select2" style="width:100%" asp-items="@(new SelectList(Model.AttributeList,"Value","Text"))" data-msg-required="*required" data-rule-required="true"></select>
+                                                    <span asp-validation-for="AttributeIds" class="field-validation-error"></span>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="tab03">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="step1">
+                                            <div class="step1-in">
+
+                                                <div class="table-responsive">
+                                                    <table class="table" id="tbl_user">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">Sr. No.</th>
+                                                                <th scope="col">Players</th>
+                                                                <th scope="col">View</th>
+                                                                <th scope="col">Calculation</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @{
+                                                                int i = 0;
+                                                            }
+                                                            @foreach (var item in Model.PlayerListList)
+                                                            {
+                                                                var player = Model.Players.FirstOrDefault(x => x.UserId == item.Value);
+                                                                bool isAdded = player != null;
+                                                                <tr>
+                                                                    <td>
+                                                                        @(i+1)
+
+                                                                    </td>
+
+                                                                    <td>
+                                                                        <input type="hidden" name="Players[@i].UserId" value="@item.Value" />
+                                                                        @item.Text
+                                                                    </td>
+
+
+                                                                    <td>
+                                                                        @if (isAdded && player.IsView)
+                                                                        {
+                                                                            <input type="checkbox" name="Players[@i].IsView" checked class="IsView" value="true" />
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <input type="checkbox" name="Players[@i].IsView" class="IsView" value="false" />
+                                                                        }
+
+                                                                    </td>
+
+                                                                    <td>
+                                                                        @if (isAdded && player.IsCalculation)
+                                                                        {
+                                                                            <input type="checkbox" name="Players[@i].IsCalculation" checked class="IsView" value="true" />
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <input type="checkbox" name="Players[@i].IsCalculation" class="IsView" value="false" />
+                                                                        }
+
+                                                                    </td>
+
+                                                                </tr>
+                                                                i++;
+                                                            }
+
+                                                        </tbody>
+                                                    </table>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-sm-12">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label asp-for="CalculationType">Calculation Type</label>
+                                                    <select asp-for="CalculationType" class="form-control" asp-items="@(new SelectList(Model.CalculatiotTypeList,"Value","Text"))" data-msg-required="*required" data-rule-required="true"></select>
+                                                    <span asp-validation-for="CalculationType" class="field-validation-error"></span>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="top-Rbox1 botdiv">
+                <div class="top-Rbtn">
+                    <a href="javascript:void(0);" class="btn btn-secondary backBtn">Back</a>
+                    @if (CurrentMenuPermission.IsAdd || CurrentMenuPermission.IsEdit)
+                    {
+                        <button class="btn btn-primary btn-submit" id="btn-submit" type="submit">Submit</button>
+                    }
+                    <a href="javascript:void(0);" class="btn btn-primary nextBtn">Next</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@Html.Partial("_Modal", new Modal { ID = "modal-action-delete-filter", AreaLabeledId = "modal-action-delete-filter-label", Size = ModalSize.Small })
+@section scripts{
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="~/js/Customejs/Filter/FilterAddEdit.js" asp-append-version="true"></script>
+}
